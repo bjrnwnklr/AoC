@@ -48,3 +48,5 @@ Template:
 |    1 | [Day 1](2019_1.md) | Fuel levels. Using either iteration or recursion                                                                                                                                                                   |
 |    2 | [Day 2](2019_2.md) | First appearane of `intcode` interpreter.                                                                                                                                                                          |
 |    3 | [Day 3](2019_3.md) | Wires crossing. Using a Union between sets to find intersections. Solve part 2 by looking up index of intersection in a list; could have done also by adding number of steps into a dictionary for each gridpoint. |
+|   4 |  [Day 4](2019_4.md) | Finding number combinations. Some regex and clever comparisons |
+| 5 | [Day 5](2019_5.md) | 2nd appearance of `intcode` interpreter. Some new instructions. `zfill` to pad strings with leading zeros!  |
