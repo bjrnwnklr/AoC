@@ -1,6 +1,6 @@
 # Using intcode...
 
-### Part 2
+### Part 1
 
 from itertools import permutations
 
@@ -16,13 +16,6 @@ class Amplifier():
         # (signals that we need to read the phase when getting to the first input_f command)
         self.phase = phase
         self.init_flag = True
-        # set feedback_mode if phase > 4
-        if phase > 4:
-            self.feedback_mode = True
-        else:
-            self.feedback_mode = False
-        # use this flag to pause if have output
-        self.output_pause = False
         # create a copy of the passed memory
         self.mem = mem[:]
         # use a reference to the msg_stk
@@ -42,15 +35,12 @@ class Amplifier():
 
     #### Main run function ####
     def run_intcode(self):
-        while (not self.do_halt and not self.output_pause):
+        while (not self.do_halt):
             # get opcode and parameter mode instructions
             param, op = self.get_opcode(self.mem[self.ip])
 
             # execute the opcode
             self.opcodes[op](param)
-        else:
-            if self.output_pause:
-                self.output_pause = False
 
 
     #### Support functions ####
@@ -133,11 +123,8 @@ class Amplifier():
 
         #print('IP: {} -- OUTPUT: {}, phases: {}'.format(ip, out, args[0]))
 
+        ## TO DO: This needs to change for part 2 - set a flag that we have passed on an output
         self.ip += param_count + 1
-
-        # in feedback mode, pause execution here!
-        if self.feedback_mode:
-            self.output_pause = True
 
 
     ### OP CODE = 5
@@ -232,7 +219,7 @@ if __name__ == '__main__':
         # retrieve result
         res = msg_stk[0]
 
-        #print('Result for {}: {}'.format(temp_phase, res))
+        print('Result for {}: {}'.format(temp_phase, res))
         results[temp_phase] = res
 
     # get max from dictionary
@@ -240,48 +227,3 @@ if __name__ == '__main__':
     print('-- Max phase: {}, output: {}'.format(max_key, results[max_key]))
 
     print('PART 1: End!')
-
-    ##### Part 2
-
-    print('PART 2: Starting!')
-
-    results = dict()
-
-    for p in permutations(range(5, 10)):
-        # take a copy of the phases to store
-        temp_phase = p[:]
-
-        # create a list (permutations gives you a tuple)
-        phases = list(p)
-
-        # initialize message stack
-        msg_stk = [0]
-
-        # amplifier list
-        amps_queue = []
-
-        # initialize amplifier queue
-        for i, p in enumerate(phases):
-            amps_queue.append(Amplifier(i, p, inp, msg_stk))
-            
-        while any([not amp.do_halt for amp in amps_queue]):            
-            # pop the first amp
-            amp = amps_queue.pop(0)
-            # ... and add it back to the end of the queue
-            amps_queue.append(amp)
-            # run the amplifier until it pauses for output, or halts
-            amp.run_intcode()
-
-        # retrieve result
-        res = msg_stk[0]
-
-        #print('Result for {}: {}'.format(temp_phase, res))
-        results[temp_phase] = res
-
-    # get max from dictionary
-    max_key = max(results, key=results.get)
-    print('-- Max phase: {}, output: {}'.format(max_key, results[max_key]))
-
-    print('PART 2: End!')
-
-    # part 2 solution: 34579864

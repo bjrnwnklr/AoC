@@ -224,3 +224,5 @@ max_key = max(results, key=results.get)
 print('-- Max phase: {}, output: {}'.format(max_key, results[max_key]))
 
 print('PART 1: End!')
+
+# Part 1 solution: 273814
