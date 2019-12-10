@@ -3,30 +3,33 @@
 ### Part 2
 
 from itertools import permutations
+from collections import deque
+import logging
+
+
+class InputInterrupt(Exception):
+    pass
+
+class OutputInterrupt(Exception):
+    pass
+
 
 class Amplifier():
 
-    def __init__(self, amp_id, phase, mem, msg_stk):
+    def __init__(self, amp_id, mem):
         # set ip to 0
         self.ip = 0
+        
         # set halt parameter
-        self.do_halt = False
+        self.done = False
         self.amp_id = amp_id
-        # assign initial phase value and set the init flag to True 
-        # (signals that we need to read the phase when getting to the first input_f command)
-        self.phase = phase
-        self.init_flag = True
-        # set feedback_mode if phase > 4
-        if phase > 4:
-            self.feedback_mode = True
-        else:
-            self.feedback_mode = False
-        # use this flag to pause if have output
-        self.output_pause = False
+                  
         # create a copy of the passed memory
         self.mem = mem[:]
-        # use a reference to the msg_stk
-        self.msg_stk = msg_stk
+        
+        # input and output queues
+        self.in_queue = deque()
+        self.out_queue = deque()
 
         self.opcodes = {
             1: self.add, 
@@ -42,27 +45,30 @@ class Amplifier():
 
     #### Main run function ####
     def run_intcode(self):
-        while (not self.do_halt and not self.output_pause):
+        while (not self.done):
             # get opcode and parameter mode instructions
             param, op = self.get_opcode(self.mem[self.ip])
 
             # execute the opcode
             self.opcodes[op](param)
-        else:
-            if self.output_pause:
-                self.output_pause = False
 
 
     #### Support functions ####
     def get_opcode(self, opcode):
+        # pad opcode to 6 digits with zeroes
         ops = str(opcode).zfill(6)
-        # decode opcode - get last two digits
+        # decode opcode - get last two digits, rest are parameter modes
         op = int(ops[-2:])
         param = ops[:-2]
         
         return param, op
 
     def get_param(self, param_count, param):
+        """
+        Get the values for each paramater, based on parameter mode.
+
+        Return a list of values for the memory retrieved from parameters.
+        """
         mems = []
         # go through each parameter and retrieve value based on parameter mode
         for i in range(1, param_count + 1):
@@ -108,18 +114,21 @@ class Amplifier():
         param_count = 1
 
         # get input - 
-        # - get the phase if this is the first time (use self.init_flag to determine)
-        # pop the first element from the phases input
-        if self.init_flag:
-            s = self.phase
-            self.init_flag = False
+        try:
+            s = self.in_queue.popleft()
+            self.mem[self.mem[self.ip+1]] = s
+            logging.debug('IP: {} -- INPUT: popped {}, remaining: {}'.format(self.ip, s, self.in_queue))
+        except(IndexError):
+            raise InputInterrupt
         else:
-            s = self.msg_stk.pop()
-        #print('IP: {} -- INPUT: popped {}, remaining: {}'.format(ip, s, self.msg_stk))
+            # only advance the instruction pointer if we haven't taken the input
+            self.ip += param_count + 1
 
-        self.mem[self.mem[self.ip+1]] = s
 
-        self.ip += param_count + 1
+
+        
+
+        
 
 
     ### OP CODE = 4
@@ -129,15 +138,14 @@ class Amplifier():
         p = self.get_param(param_count, param)
 
         # store message in message stack
-        self.msg_stk.append(p[0])
+        self.out_queue.append(p[0])
 
-        #print('IP: {} -- OUTPUT: {}, phases: {}'.format(ip, out, args[0]))
+        logging.debug('IP: {} -- OUTPUT: {}'.format(self.ip, self.out_queue))
 
         self.ip += param_count + 1
 
-        # in feedback mode, pause execution here!
-        if self.feedback_mode:
-            self.output_pause = True
+        # pause execution since we passed an output
+        raise OutputInterrupt
 
 
     ### OP CODE = 5
@@ -197,8 +205,8 @@ class Amplifier():
     ### OP CODE = 99
     # HALT
     def halt(self, param):
-        #print('IP: {} ### HALT ###'.format(ip))
-        self.do_halt = True
+        logging.debug('IP: {} ### HALT ###'.format(self.ip))
+        self.done = True
 
 
 
@@ -207,27 +215,44 @@ class Amplifier():
 #### main program ####
 
 if __name__ == '__main__':
+    # set logging level
+    logging.basicConfig(level=logging.INFO)
+
+
     # read input
     f_name = 'input.txt'
     inp = list(map(int, open(f_name).readline().split(',')))
 
-    print('PART 1: Starting!')
-
+    # dictionary with results - store output value for each phase permutation
     results = dict()
+
+    logging.info('PART 1: Starting!')
 
     for p in permutations(range(5)):
         # take a copy of the phases to store
         temp_phase = p[:]
-
         # create a list (permutations gives you a tuple)
         phases = list(p)
 
-        # initialize message stack
-        msg_stk = [0]
+        # message queue, preconfigured with 0 as input for first amplifier
+        msg_stk = deque([0])
 
+        # run the main amplifier loop
         for i, p in enumerate(phases):
-            amp = Amplifier(i, p, inp, msg_stk)
-            amp.run_intcode()
+            # initialize the amplifier
+            amp = Amplifier(i, inp)
+            # add the phase to the amplifier
+            amp.in_queue.append(p)
+            # add the output from the previous amp to the amplifier in_queue
+            amp.in_queue.append(msg_stk.pop())
+            # run the amplifier until it halts
+            while(not amp.done):
+                try:
+                    amp.run_intcode()
+                except(OutputInterrupt):
+                    pass
+            # retrieve the output and add to msg_queue
+            msg_stk.append(amp.out_queue.popleft())
 
         # retrieve result
         res = msg_stk[0]
@@ -239,38 +264,62 @@ if __name__ == '__main__':
     max_key = max(results, key=results.get)
     print('-- Max phase: {}, output: {}'.format(max_key, results[max_key]))
 
-    print('PART 1: End!')
+    logging.info('PART 1: End!')
+
+    ## part 1 result: 273814
 
     ##### Part 2
 
-    print('PART 2: Starting!')
-
+    # dictionary with results - store output value for each phase permutation
     results = dict()
+
+    logging.info('PART 2: Starting!')
 
     for p in permutations(range(5, 10)):
         # take a copy of the phases to store
         temp_phase = p[:]
-
         # create a list (permutations gives you a tuple)
         phases = list(p)
 
-        # initialize message stack
-        msg_stk = [0]
+        # message queue, preconfigured with 0 as input for first amplifier
+        msg_stk = deque([0])
 
         # amplifier list
-        amps_queue = []
+        amps_queue = deque()
 
-        # initialize amplifier queue
+        # initialize amplifier queue with phases
         for i, p in enumerate(phases):
-            amps_queue.append(Amplifier(i, p, inp, msg_stk))
-            
-        while any([not amp.do_halt for amp in amps_queue]):            
-            # pop the first amp
-            amp = amps_queue.pop(0)
-            # ... and add it back to the end of the queue
+            amp = Amplifier(i, inp)
+            amp.in_queue.append(p)
             amps_queue.append(amp)
-            # run the amplifier until it pauses for output, or halts
-            amp.run_intcode()
+            
+        while amps_queue:  
+            # pop the first amp
+            amp = amps_queue.popleft()
+            
+            logging.debug('Amp {} running'.format(amp.amp_id))          
+            
+            # add the output from the previous amp to the amplifier in_queue
+            amp.in_queue.append(msg_stk.pop())
+            # run the amplifier until it requests more input - fill the output queue until input requested
+            # stop when input requested and move on to next amp.
+            while(not amp.done):
+                try:
+                    amp.run_intcode()
+                except(OutputInterrupt):
+                    msg_stk.append(amp.out_queue.popleft())
+                    continue # the continue here ensures the amp runs to the next input point or halts
+                except(InputInterrupt):
+                    break # if we need input, break and stop, move to next amp
+
+            logging.debug('Amp {} stopping'.format(amp.amp_id))   
+
+            # add amp back into queue if not done
+            if not amp.done:
+                amps_queue.append(amp)
+            else:
+                logging.debug('Amp {} taken out of queue.'.format(amp.amp_id))
+              
 
         # retrieve result
         res = msg_stk[0]
@@ -282,6 +331,6 @@ if __name__ == '__main__':
     max_key = max(results, key=results.get)
     print('-- Max phase: {}, output: {}'.format(max_key, results[max_key]))
 
-    print('PART 2: End!')
+    logging.info('PART 2: End!')
 
     # part 2 solution: 34579864
