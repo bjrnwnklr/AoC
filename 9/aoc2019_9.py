@@ -25,38 +25,40 @@ class Intcode():
         self.amp_id = amp_id
                   
         # create a defaultdict of the memory values to allow for positive addresses with 0 value
-        self.mem = defaultdict(int)
-        for i, m in enumerate(mem):
-            self.mem[i] = m
+        self.mem = defaultdict(int, enumerate(mem))
         
         # input and output queues
         self.in_queue = deque()
         self.out_queue = deque()
 
         self.opcodes = {
-            1: self.add, 
-            2: self.multiply, 
-            3: self.input_f, 
-            4: self.output_f, 
-            5: self.jump_if_true, 
-            6: self.jump_if_false, 
-            7: self.less_than,
-            8: self.equals,
-            9: self.adj_rel_base,
-            99: self.halt}
-    
+            1: (self.add, 3),
+            2: (self.multiply, 3), 
+            3: (self.input_f, 1),
+            4: (self.output_f, 1),
+            5: (self.jump_if_true, 2),
+            6: (self.jump_if_false, 2),
+            7: (self.less_than, 3),
+            8: (self.equals, 3),
+            9: (self.adj_rel_base, 1),
+            99: (self.halt, 0)}
+  
 
     #### Main run function ####
     def run_intcode(self):
         while (not self.done):
             # get opcode and parameter mode instructions
-            param, op = self.get_opcode(self.mem[self.ip])
+            op, param = self.get_opcode(self.mem[self.ip])
 
             logging.debug('IP {}: Op {}, params {}, rel_base {}'.format(self.ip, op, param, self.rel_base))
             logging.debug('\tMem: {}'.format(self.mem))
 
+            # get number of params per opcode and get the params
+            opcode, p_count = self.opcodes[op]
+            addresses = self.get_param(p_count, param)
+
             # execute the opcode
-            self.opcodes[op](param)
+            opcode(addresses, p_count)
 
 
     #### Support functions ####
@@ -67,7 +69,7 @@ class Intcode():
         op = int(ops[-2:])
         param = ops[:-2]
         
-        return param, op
+        return op, param
 
     def get_param(self, param_count, param):
         """
@@ -110,10 +112,7 @@ class Intcode():
 
     ### OP CODE = 1
     # ADD
-    def add(self, param):
-        param_count = 3
-        p = self.get_param(param_count, param)
-
+    def add(self, p, param_count):
         # Allow writing in both position and relative mode -- use 3rd parameter
         self.mem[p[2]] = self.mem[p[0]] + self.mem[p[1]]
 
@@ -146,7 +145,7 @@ class Intcode():
         except(IndexError):
             raise InputInterrupt
         else:
-            # only advance the instruction pointer if we haven't taken the input
+            # only advance the instruction pointer if we have taken the input
             self.ip += param_count + 1
 
     ### OP CODE = 4
@@ -251,8 +250,7 @@ if __name__ == '__main__':
 
     # provide 1 as input for test mode
     # provide 2 as input for BOOST mode
-    init_inp = 2
-    
+    init_inp = 1
     int_comp.in_queue.append(init_inp)
 
     # run the amplifier until it halts
