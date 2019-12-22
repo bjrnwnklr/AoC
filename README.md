@@ -47,6 +47,8 @@ Template:
 |    5 | [Day 5](2019_5.md) | 2nd appearance of `intcode` interpreter. Some new instructions. `zfill` to pad strings with leading zeros!                                                                                                         |
 |    6 | [Day 6](2019_6.md) | First graph problem. Use BFS to find shortest path. Some nice examples of using `networkx` library in the other solutions.                                                                                         |
 |    7 | [Day 7](2019_7.md) | 3rd appearance of `intcode`. Introduced input and output queues and intcode machines running in a loop. Some interesting solutions to handle input / output queues using Exceptions / Interrupts                   |
+| 8 | [Day 8](2019_8.md) | Get a password from an image file - easily solved using numpy. Best solution to not convert to 3 dimensional array, but use a 2 dimensional array and only convert to 3 dimensions at the end. |
+| 9 | [Day 9](2019_9.md) | |
 
 
 cookie: 53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d

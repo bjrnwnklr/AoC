@@ -125,12 +125,6 @@ class Amplifier():
             self.ip += param_count + 1
 
 
-
-        
-
-        
-
-
     ### OP CODE = 4
     # OUTPUT
     def output_f(self, param):
