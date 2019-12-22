@@ -32,80 +32,58 @@ class Intcode():
         self.out_queue = deque()
 
         self.opcodes = {
-            1: (self.add, 3),
-            2: (self.multiply, 3), 
-            3: (self.input_f, 1),
-            4: (self.output_f, 1),
-            5: (self.jump_if_true, 2),
-            6: (self.jump_if_false, 2),
-            7: (self.less_than, 3),
-            8: (self.equals, 3),
-            9: (self.adj_rel_base, 1),
+            1: (self.add, 4),
+            2: (self.multiply, 4), 
+            3: (self.input_f, 2),
+            4: (self.output_f, 2),
+            5: (self.jump_if_true, 3),
+            6: (self.jump_if_false, 3),
+            7: (self.less_than, 4),
+            8: (self.equals, 4),
+            9: (self.adj_rel_base, 2),
             99: (self.halt, 0)}
   
 
     #### Main run function ####
     def run_intcode(self):
         while (not self.done):
-            # get opcode and parameter mode instructions
-            op, param = self.get_opcode(self.mem[self.ip])
-
-            logging.debug('IP {}: Op {}, params {}, rel_base {}'.format(self.ip, op, param, self.rel_base))
-            logging.debug('\tMem: {}'.format(self.mem))
-
-            # get number of params per opcode and get the params
-            opcode, p_count = self.opcodes[op]
-            addresses = self.get_param(p_count, param)
+            # get executable intcode method, the number of parameters and the read/write addresses
+            int_command, param_count, addresses = self.get_opcode(self.mem[self.ip])
 
             # execute the opcode
-            opcode(addresses, p_count)
+            int_command(addresses, param_count)
 
 
     #### Support functions ####
     def get_opcode(self, opcode):
+        """
+        Retrieve opcode and parameter modes from memory, then evaluate parameter modes and return read/write 
+        memory positions.
+
+        Returns:
+        - int_command: executable intcode methode, e.g. add
+        - param_count: number of parameters used by the int_command
+        - addresses: list of memory pointers for the read/write parameters
+        """
         # pad opcode to 6 digits with zeroes
         ops = str(opcode).zfill(6)
-        # decode opcode - get last two digits, rest are parameter modes
+        # decode opcode - opcode is last two digits, the rest are parameter modes
         op = int(ops[-2:])
-        param = ops[:-2]
-        
-        return op, param
+        param_modes = ops[:-2]
 
-    def get_param(self, param_count, param):
-        """
-        Get the values for each paramater, based on parameter mode.
-        Supports unlimited positive memory addresses beyond the memory initially provided (all values start at 0). 
-        Trying to access negative memory produces an Exception.
+        # get the executable function for the opcode and number of params
+        int_command, param_count = self.opcodes[op]
 
-        Return a list of values for the memory retrieved from parameters
-        """
-        addresses = []
-        # go through each parameter and retrieve value based on parameter mode
-        for i in range(1, param_count + 1):
-            p_mode = int(param[-i]) # -i since param mode goes from right to left
-            
-            # parameter modes:
-            # 1 = immediate mode
-            if p_mode == 1:
-                addr = self.ip + i
+        # get the read / write addresses based on parameter mode
+        # 0 = position mode
+        # 1 = immediate mode
+        # 2 = relative mode
+        addresses = [
+            [self.mem[self.ip + i], self.ip + i, self.mem[self.ip + i] + self.rel_base][int(param_modes[-i])]
+            for i in range(1, param_count)
+        ]
 
-            # 0 = position mode
-            elif p_mode == 0: 
-                addr = self.mem[self.ip + i]
-                # check if we try to access negative memory address
-                if addr < 0:
-                    raise ValueError('Trying to access negative memory at {}!'.format(addr))
-
-            # 2 = relative mode
-            elif p_mode == 2:
-                addr = self.mem[self.ip + i] + self.rel_base
-                # check if we try to access negative memory address
-                if addr < 0:
-                    raise ValueError('Trying to access negative memory at {}!'.format(addr))
-            
-            addresses.append(addr)
-
-        return addresses
+        return int_command, param_count, addresses
 
 
     #### OP CODE EXECUTION FUNCTIONS ####
@@ -116,27 +94,21 @@ class Intcode():
         # Allow writing in both position and relative mode -- use 3rd parameter
         self.mem[p[2]] = self.mem[p[0]] + self.mem[p[1]]
 
-        self.ip += param_count + 1
+        self.ip += param_count
 
 
     ### OP CODE = 2
     # MULTIPLY
-    def multiply(self, param):
-        param_count = 3
-        p = self.get_param(param_count, param)
-
+    def multiply(self, p, param_count):
         # Allow writing in both position and relative mode -- use 3rd parameter
         self.mem[p[2]] = self.mem[p[0]] * self.mem[p[1]]
 
-        self.ip += param_count + 1
+        self.ip += param_count
 
 
     ### OP CODE = 3
     # INPUT
-    def input_f(self, param):
-        param_count = 1
-        p = self.get_param(param_count, param)
-
+    def input_f(self, p, param_count):
         # get input - 
         try:
             s = self.in_queue.popleft()
@@ -146,18 +118,15 @@ class Intcode():
             raise InputInterrupt
         else:
             # only advance the instruction pointer if we have taken the input
-            self.ip += param_count + 1
+            self.ip += param_count
 
     ### OP CODE = 4
     # OUTPUT
-    def output_f(self, param):
-        param_count = 1
-        p = self.get_param(param_count, param)
-
+    def output_f(self, p, param_count):
         # store message in message stack
         self.out_queue.append(self.mem[p[0]])
 
-        self.ip += param_count + 1
+        self.ip += param_count
 
         # pause execution since we passed an output
         raise OutputInterrupt
@@ -165,63 +134,48 @@ class Intcode():
 
     ### OP CODE = 5
     # JUMP IF TRUE
-    def jump_if_true(self, param):
-        param_count = 2
-        p = self.get_param(param_count, param)
-
+    def jump_if_true(self, p, param_count):
         if self.mem[p[0]] != 0:
             self.ip = self.mem[p[1]]
         else:
-            self.ip += param_count + 1
+            self.ip += param_count
 
 
     ### OP CODE = 6
     # JUMP IF FALSE
-    def jump_if_false(self, param):
-        param_count = 2
-        p = self.get_param(param_count, param)
-
+    def jump_if_false(self, p, param_count):
         if self.mem[p[0]] == 0:
             self.ip = self.mem[p[1]]
         else:
-            self.ip += param_count + 1
+            self.ip += param_count
 
 
     ### OP CODE = 7
     # LESS THAN
-    def less_than(self, param):
-        param_count = 3
-        p = self.get_param(param_count, param)
-
+    def less_than(self, p, param_count):
         self.mem[p[2]] = int(self.mem[p[0]] < self.mem[p[1]])
 
-        self.ip += param_count + 1
+        self.ip += param_count
 
 
     ### OP CODE = 8
     # EQUAL
-    def equals(self, param):
-        param_count = 3
-        p = self.get_param(param_count, param)
-
+    def equals(self, p, param_count):
         self.mem[p[2]] = int(self.mem[p[0]] == self.mem[p[1]])
 
-        self.ip += param_count + 1
+        self.ip += param_count
 
     ### OP CODE = 9
     # ADJUST RELATIVE BASE
-    def adj_rel_base(self, param):
-        param_count = 1
-        p = self.get_param(param_count, param)
-
+    def adj_rel_base(self, p, param_count):
         # increase the relative base by the value of the first parameter
         self.rel_base += self.mem[p[0]]
 
-        self.ip += param_count + 1
+        self.ip += param_count
 
     ### OP CODE = 99
     # HALT
-    def halt(self, param):
+    def halt(self, p, param_count):
         logging.debug('IP: {} ### HALT ###'.format(self.ip))
         self.done = True
 
@@ -250,7 +204,7 @@ if __name__ == '__main__':
 
     # provide 1 as input for test mode
     # provide 2 as input for BOOST mode
-    init_inp = 1
+    init_inp = 2
     int_comp.in_queue.append(init_inp)
 
     # run the amplifier until it halts
