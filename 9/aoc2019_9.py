@@ -1,8 +1,5 @@
-# Using intcode...
+# Day 9 - final version of intcode computer!
 
-### Part 2
-
-from itertools import permutations
 from collections import deque, defaultdict
 import logging
 
@@ -97,8 +94,6 @@ class Intcode():
                 if addr < 0:
                     raise ValueError('Trying to access negative memory at {}!'.format(addr))
 
-                logging.debug('p_mode = 0 (position): i: {}, addr: {}'.format(i, addr))
-
             # 2 = relative mode
             elif p_mode == 2:
                 addr = self.mem[self.ip + i] + self.rel_base
@@ -162,8 +157,6 @@ class Intcode():
 
         # store message in message stack
         self.out_queue.append(self.mem[p[0]])
-
-        logging.debug('IP: {} -- OUTPUT: {}'.format(self.ip, self.out_queue))
 
         self.ip += param_count + 1
 
@@ -257,7 +250,9 @@ if __name__ == '__main__':
     int_comp = Intcode(inp)
 
     # provide 1 as input for test mode
-    init_inp = 1
+    # provide 2 as input for BOOST mode
+    init_inp = 2
+    
     int_comp.in_queue.append(init_inp)
 
     # run the amplifier until it halts
@@ -268,7 +263,6 @@ if __name__ == '__main__':
             msg = int_comp.out_queue.popleft()
             msg_stk.append(msg)
             logging.info('Output: {}'.format(msg))
-            pass
 
     # retrieve result (last entry in out_queue)
     res = msg_stk[-1]
@@ -278,4 +272,5 @@ if __name__ == '__main__':
 
 
 # Part 1: 2682107844
+# Part 2: 34738
 
