@@ -48,7 +48,7 @@ class Intcode():
     def run_intcode(self):
         while (not self.done):
             # get executable intcode method, the number of parameters and the read/write addresses
-            int_command, param_count, addresses = self.get_opcode(self.mem[self.ip])
+            int_command, addresses, param_count = self.get_opcode(self.mem[self.ip])
 
             # execute the opcode
             int_command(addresses, param_count)
@@ -62,8 +62,8 @@ class Intcode():
 
         Returns:
         - int_command: executable intcode methode, e.g. add
-        - param_count: number of parameters used by the int_command
         - addresses: list of memory pointers for the read/write parameters
+        - param_count: number of parameters used by the int_command
         """
         # pad opcode to 6 digits with zeroes
         ops = str(opcode).zfill(6)
@@ -83,7 +83,7 @@ class Intcode():
             for i in range(1, param_count)
         ]
 
-        return int_command, param_count, addresses
+        return int_command, addresses, param_count
 
 
     #### OP CODE EXECUTION FUNCTIONS ####
