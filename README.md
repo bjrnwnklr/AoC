@@ -50,7 +50,7 @@ Template:
 | 8 | [Day 8](2019_8.md) | Get a password from an image file - easily solved using numpy. Best solution to not convert to 3 dimensional array, but use a 2 dimensional array and only convert to 3 dimensions at the end. |
 | 9 | [Day 9](2019_9.md) | 4th appearance of `intcode`. Apparently now the machine is complete and no further modifications required. This version introduced relative mode, so had to be rewritten to use relative address pointers. Pretty happy with the solution now! **Final version of `intcode` computer!!!**|
 | 10 | [Day 10](2019_10.md) | Find line of sight to asteroids. Use numpy to generate vectors and `np.arctan2` to get angle between vectors - then compare vectors to see which asteroids have line of sight of each other. First solution was slow as it checked all combinations of vectors if they have line of sight of each other - unnecessary as we only need to count number of unique angles. |
-| 11 | [Day 11](2019_11.md) |  |
+| 11 | [Day 11](2019_11.md) | Next `intcode` use... Create a robot that reads colors, runs intcode based on color input, then generates two outputs (paint output color and turn) and then moves by one square. Had to get the sequence of moves, inputs and outputs correct to work. In 2nd part, print the matrix of painted squares (dump defaultdict into a string and print each line) |
 
 
 cookie: 53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d
