@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # create np array of length of vectors from station to each asteroid
     asts_dist = np.linalg.norm(asts_rel, axis=1)
 
-    # create np array of angle to the "up" vector using np.arctan2(y, x)
+    # create np array of angle to the "up" vector using np.arctan2(x, y) (not (y, x) - this gives angle to 'right' vector)
     asts_angle = np.arctan2(asts_rel[:, 0], asts_rel[:, 1]) * 180 / np.pi
     # convert quadrants (e.g. -90) into full polar coordinates (e.g. 270)
     asts_angle = (asts_angle + 360) % 360
@@ -83,7 +83,8 @@ if __name__ == '__main__':
             # no further asteroid found under this angle, so remove it
             angles.popleft()
 
-twohundred = destroyed[200]
-logging.info('Part 2: {} (200th asteroid: {})'.format(twohundred[0] * 100 + twohundred[1], twohundred))
+    twohundred = destroyed[200]
+    logging.info('Part 2: {} (200th asteroid: {})'.format(twohundred[0] * 100 + twohundred[1], twohundred))
 
 # Part 1: 267 asteroids can be seen from (26, 28)
+# Part 2: 1309 (200th asteroid: (13, 9))

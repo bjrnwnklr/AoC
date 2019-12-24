@@ -49,6 +49,8 @@ Template:
 |    7 | [Day 7](2019_7.md) | 3rd appearance of `intcode`. Introduced input and output queues and intcode machines running in a loop. Some interesting solutions to handle input / output queues using Exceptions / Interrupts                   |
 | 8 | [Day 8](2019_8.md) | Get a password from an image file - easily solved using numpy. Best solution to not convert to 3 dimensional array, but use a 2 dimensional array and only convert to 3 dimensions at the end. |
 | 9 | [Day 9](2019_9.md) | 4th appearance of `intcode`. Apparently now the machine is complete and no further modifications required. This version introduced relative mode, so had to be rewritten to use relative address pointers. Pretty happy with the solution now! **Final version of `intcode` computer!!!**|
+| 10 | [Day 10](2019_10.md) | Find line of sight to asteroids. Use numpy to generate vectors and `np.arctan2` to get angle between vectors - then compare vectors to see which asteroids have line of sight of each other. First solution was slow as it checked all combinations of vectors if they have line of sight of each other - unnecessary as we only need to count number of unique angles. |
+| 11 | [Day 11](2019_11.md) |  |
 
 
 cookie: 53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d

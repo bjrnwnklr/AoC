@@ -1,4 +1,4 @@
-# Day 11 - using final version of intcode computer from day 9!
+# Day 9 - final version of intcode computer!
 
 from collections import deque, defaultdict
 import logging
@@ -113,7 +113,7 @@ class Intcode():
         try:
             s = self.in_queue.popleft()
             self.mem[p[0]] = s
-            #logging.debug('IP: {} -- INPUT: popped {}, remaining: {}'.format(self.ip, s, self.in_queue))
+            logging.debug('IP: {} -- INPUT: popped {}, remaining: {}'.format(self.ip, s, self.in_queue))
         except(IndexError):
             raise InputInterrupt
         else:
@@ -179,19 +179,8 @@ class Intcode():
         logging.debug('IP: {} ### HALT ###'.format(self.ip))
         self.done = True
 
-# dictionary of moves (0: up, 1: right, 2: down, 3: left). Coordinates are (r, c) format
-direction = {
-    0: (-1, 0),
-    1: (0, 1),
-    2: (1, 0),
-    3: (0, -1)
-}
 
-# get new direction - if command = 0, turn left (convert command to -1), if command = 1, turn right
-def change_dir(curr, command):
-    if command == 0:
-        command = -1
-    return (curr + command) % 4
+
 
 
 #### main program ####
@@ -213,54 +202,27 @@ if __name__ == '__main__':
     # initialize the amplifier
     int_comp = Intcode(inp)
 
-    # hull grid - default 0 (black)
-    hull = defaultdict(int)
-    # starting position = (0, 0)
-    pos = (0, 0)
-    # starting direction = up (0)
-    curr_dir = 0
-
-    # set of painted hull squares
-    painted = set()
-
-    # paint / turn toggle - used to determine what output signal means
-    # 0 = paint
-    # 1 = turn
-    out_toggle = 0
+    # provide 1 as input for test mode
+    # provide 2 as input for BOOST mode
+    init_inp = 2
+    int_comp.in_queue.append(init_inp)
 
     # run the amplifier until it halts
     while(not int_comp.done):
-        # read input square color and provide as input to robot
-        int_comp.in_queue.append(hull[pos])
-        
-        logging.debug('Read color {} at {}'.format(hull[pos], pos))
         try:
             int_comp.run_intcode()
         except(OutputInterrupt):
             msg = int_comp.out_queue.popleft()
-            # paint
-            if out_toggle == 0: 
-                hull[pos] = msg
-                # add pos to painted
-                painted.add(pos)
-                logging.debug('Painting {} at {}'.format(msg, pos))
-            # turn
-            elif out_toggle == 1:
-                curr_dir = change_dir(curr_dir, msg)
-                logging.debug('Turning to {} at {}'.format(curr_dir, pos))
+            msg_stk.append(msg)
+            logging.info('Output: {}'.format(msg))
 
-            # toggle output switch between paint and turn mode
-            out_toggle = (out_toggle + 1) % 2
-            # move to next square
-            pos[0] += direction[curr_dir][0]
-            pos[1] += direction[curr_dir][1]
-            logging.debug('Moving to {}'.format(pos))
+    # retrieve result (last entry in out_queue)
+    res = msg_stk[-1]
 
-    
-    logging.info('Part 1 result: {}'.format(len(painted)))
+    logging.info('Part 1 result: {}'.format(res))
     logging.info('PART 1: End!')
 
 
-# Part 1: 
-# Part 2: 
+# Part 1: 2682107844
+# Part 2: 34738
 
