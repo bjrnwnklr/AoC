@@ -198,7 +198,7 @@ def change_dir(curr, command):
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
 
     # read input
@@ -217,6 +217,8 @@ if __name__ == '__main__':
     hull = defaultdict(int)
     # starting position = (0, 0)
     pos = (0, 0)
+    # part 2 - start on a white grid
+    hull[pos] = 1
     # starting direction = up (0)
     curr_dir = 0
 
@@ -261,10 +263,21 @@ if __name__ == '__main__':
             out_toggle = (out_toggle + 1) % 2
             
     
-    logging.info('Part 1 result: {}'.format(len(painted)))
-    logging.info('PART 1: End!')
+    # now dump the default grid into a matrix to display
+    # find the min / max coordinates
+    keys = hull.keys()
+    min_r = min(keys, key=lambda x: x[0])[0]
+    max_r = max(keys, key=lambda x: x[0])[0]
+    min_c = min(keys, key=lambda x: x[1])[1]
+    max_c = max(keys, key=lambda x: x[1])[1]
+
+    for r in range(min_r, max_r + 1):
+        line = ''.join('#' if hull[(r, c)] else ' ' for c in range(min_c, max_c + 1))
+        print(line)
+
+    logging.info('PART 2: End!')
 
 
 # Part 1: 1771
-# Part 2: 
+# Part 2: HGEHJHUZ
 
