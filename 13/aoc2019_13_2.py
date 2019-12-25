@@ -178,31 +178,7 @@ class Intcode():
         self.done = True
 
 
-def process_game_output(q, grid, rounds):
-
-    logging.debug('Round {}: output queue length: {}'.format(rounds, len(q)))
-    logging.debug('Queue: {}'.format(q))
-
-    # default move returned is 0 (stay put)
-    move = 0
-
-    # now process the output queue
-    while q:
-        # get next three elements
-        x, y, tile = (q.popleft() for _ in range(3))
-        
-        # check for score display
-        if (x, y) == (-1, 0):
-            logging.info('Score after {} rounds: {}'.format(rounds, tile))
-        # count the block tiles (tile type #2)
-        # if ball moves, move the paddle in the same direction
-        elif tile == 4:
-            # need position of paddle and position of ball here
-        else:
-            grid[(x, y)] = tile
-        
-    return grid
-
+    
 tiles = {
     0: ' ',
     1: '#',
@@ -217,13 +193,17 @@ def draw_game(grid):
         print(''.join([tiles[grid[(x, y)]] for x in range(43)]))
 
 
-
+def paddle_ai(paddle, ball):
+    if paddle[0] == ball[0]:
+        return 0
+    else:
+        return 1 if ball[0] > paddle[0] else -1
 
 #### main program ####
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
 
     # read input
@@ -232,50 +212,62 @@ if __name__ == '__main__':
 
     logging.info('PART 1: Starting!')
 
-    # message queue, preconfigured with 0 as input for first amplifier
-    msg_stk = deque()
-
     # part 2: set mem 0 to 2
     inp[0] = 2
 
-    # initialize the amplifier
-    int_comp = Intcode(inp)
-
-    # the grid
+    # the playing field grid
     grid = dict()
-
-    # try some initial input
-    joystick = [0, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 
-
-    for x in joystick:
-        int_comp.in_queue.append(x)
 
     # count how many rounds we play
     rounds = 0
 
-    # run the amplifier until it halts
+    # ball and paddle positions
+    ball = (0, 0)
+    paddle = (0, 0)
+
+    # initialize the intcode machine
+    int_comp = Intcode(inp)
+
+    # run the intcode until it halts
     while(not int_comp.done):
         try:
             int_comp.run_intcode()
         except(InputInterrupt):
-            grid = process_game_output(int_comp.out_queue, grid, rounds)
-            draw_game(grid)
+            #draw_game(grid)
+
             rounds += 1
+
         except(OutputInterrupt):
-            #logging.info('Output: {}'.format(int_comp.out_queue[-1]))
-            pass
-            # let the output queue fill up until the game finishes
+            
+            if len(int_comp.out_queue) == 3:
 
+                logging.debug('Round {}, queue: {}'.format(rounds, int_comp.out_queue))
     
+                # get next three elements
+                x, y, tile = (int_comp.out_queue.popleft() for _ in range(3))
+                
+                # check for score display
+                if (x, y) == (-1, 0):
+                    logging.info('Score after {} rounds: {}'.format(rounds, tile))
+                # if ball moves, move the paddle in the same direction
+                else:
+                    grid[(x, y)] = tile
+                    # handle paddle (3) and ball (4) coordinates
+                    if tile == 3:
+                        paddle = (x, y)
+                    elif tile == 4:
+                        ball = (x, y)
+                        # now that ball has moved, generate next paddle move
+                        # need to build in a check for initial grid generation, i.e. if paddle does not yet exist
+                        if rounds == 0:
+                            # for first round, do not move as we have not yet drawn the paddle
+                            int_comp.in_queue.append(0)
+                        else:
+                            move = paddle_ai(paddle, ball)
+                            int_comp.in_queue.append(move)
         
-
-
-    #logging.info('Part 1 - number of block tiles: {}'.format(blocks))
     logging.info('PART 1: End!')
 
 
 # part 1: 363 block tiles!
-
-# Part 1: 2682107844
-# Part 2: 34738
-
+# part 2: 17159 score
