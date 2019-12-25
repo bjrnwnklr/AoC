@@ -51,7 +51,8 @@ Template:
 | 9 | [Day 9](2019_9.md) | 4th appearance of `intcode`. Apparently now the machine is complete and no further modifications required. This version introduced relative mode, so had to be rewritten to use relative address pointers. Pretty happy with the solution now! **Final version of `intcode` computer!!!**|
 | 10 | [Day 10](2019_10.md) | Find line of sight to asteroids. Use numpy to generate vectors and `np.arctan2` to get angle between vectors - then compare vectors to see which asteroids have line of sight of each other. First solution was slow as it checked all combinations of vectors if they have line of sight of each other - unnecessary as we only need to count number of unique angles. |
 | 11 | [Day 11](2019_11.md) | Next `intcode` use... Create a robot that reads colors, runs intcode based on color input, then generates two outputs (paint output color and turn) and then moves by one square. Had to get the sequence of moves, inputs and outputs correct to work. In 2nd part, print the matrix of painted squares (dump defaultdict into a string and print each line) |
-| 12 | [Day 12](2019_12.md) |   |
+| 12 | [Day 12](2019_12.md) | Movement of 4 moons. Part 1 was almost trivial in simulating the movement of the moons. Part 2 was difficult as brute force wouldnt work to find the cycles where movements repeat. Had to find the cycles for each dimension independently and then take the Least Common Multiple (LCM) of the three. LCM didnt produce accurate result using `np.lcm`, so had to write own version using `math.gcd`.  |
+| 13 | [Day 13](2019_13.md) |  |
 
 
 cookie: 53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d

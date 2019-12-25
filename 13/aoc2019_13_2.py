@@ -110,15 +110,12 @@ class Intcode():
     # INPUT
     def input_f(self, p, param_count):
         # get input - 
-        try:
-            s = self.in_queue.popleft()
-            self.mem[p[0]] = s
-            logging.debug('IP: {} -- INPUT: popped {}, remaining: {}'.format(self.ip, s, self.in_queue))
-        except(IndexError):
-            raise InputInterrupt
-        else:
-            # only advance the instruction pointer if we have taken the input
-            self.ip += param_count
+        s = self.in_queue.popleft()
+        self.mem[p[0]] = s
+        
+        self.ip += param_count
+
+        raise InputInterrupt
 
     ### OP CODE = 4
     # OUTPUT
@@ -180,6 +177,38 @@ class Intcode():
         self.done = True
 
 
+def process_game_output(q, grid, rounds):
+
+    logging.debug('Round {}: output queue length: {}'.format(rounds, len(q)))
+    logging.debug('Queue: {}'.format(q))
+
+    # now process the output queue
+    while q:
+        # get next three elements
+        x, y, tile = (q.popleft() for _ in range(3))
+        
+        # check for score display
+        if (x, y) == (-1, 0):
+            logging.info('Score after {} rounds: {}'.format(rounds, tile))
+        # count the block tiles (tile type #2)
+        else:
+            grid[(x, y)] = tile
+        
+    return grid
+
+tiles = {
+    0: ' ',
+    1: '#',
+    2: '%',
+    3: '-',
+    4: '*'
+}
+
+def draw_game(grid):
+    # grid is 42 wide (x) and 22 tall (y)
+    for y in range(23):
+        print(''.join([tiles[grid[(x, y)]] for x in range(43)]))
+
 
 
 
@@ -187,7 +216,7 @@ class Intcode():
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
 
     # read input
@@ -199,33 +228,42 @@ if __name__ == '__main__':
     # message queue, preconfigured with 0 as input for first amplifier
     msg_stk = deque()
 
+    # part 2: set mem 0 to 2
+    inp[0] = 2
+
     # initialize the amplifier
     int_comp = Intcode(inp)
+
+    # the grid
+    grid = dict()
+
+    # try some initial input
+    joystick = [1, 0, 0] * 15
+
+    for x in joystick:
+        int_comp.in_queue.append(x)
+
+    # count how many rounds we play
+    rounds = 0
 
     # run the amplifier until it halts
     while(not int_comp.done):
         try:
             int_comp.run_intcode()
+        except(InputInterrupt):
+            rounds += 1
+            grid = process_game_output(int_comp.out_queue, grid, rounds)
+            draw_game(grid)
         except(OutputInterrupt):
+            #logging.info('Output: {}'.format(int_comp.out_queue[-1]))
             pass
             # let the output queue fill up until the game finishes
 
-    # number of block tiles
-    blocks = 0
-
-    # now process the output queue
-    while int_comp.out_queue:
-        # get next three elements
-        x, y, tile = (int_comp.out_queue.popleft() for _ in range(3))
-        
-        # count the block tiles (tile type #2)
-        if tile == 2:
-            blocks += 1
-
+    
         
 
 
-    logging.info('Part 1 - number of block tiles: {}'.format(blocks))
+    #logging.info('Part 1 - number of block tiles: {}'.format(blocks))
     logging.info('PART 1: End!')
 
 
