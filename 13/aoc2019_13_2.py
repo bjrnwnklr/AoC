@@ -2,6 +2,7 @@
 
 from collections import deque, defaultdict
 import logging
+import math
 
 
 class InputInterrupt(Exception):
@@ -182,6 +183,9 @@ def process_game_output(q, grid, rounds):
     logging.debug('Round {}: output queue length: {}'.format(rounds, len(q)))
     logging.debug('Queue: {}'.format(q))
 
+    # default move returned is 0 (stay put)
+    move = 0
+
     # now process the output queue
     while q:
         # get next three elements
@@ -191,6 +195,9 @@ def process_game_output(q, grid, rounds):
         if (x, y) == (-1, 0):
             logging.info('Score after {} rounds: {}'.format(rounds, tile))
         # count the block tiles (tile type #2)
+        # if ball moves, move the paddle in the same direction
+        elif tile == 4:
+            # need position of paddle and position of ball here
         else:
             grid[(x, y)] = tile
         
@@ -200,8 +207,8 @@ tiles = {
     0: ' ',
     1: '#',
     2: '%',
-    3: '-',
-    4: '*'
+    3: '=',
+    4: '@'
 }
 
 def draw_game(grid):
@@ -238,7 +245,7 @@ if __name__ == '__main__':
     grid = dict()
 
     # try some initial input
-    joystick = [1, 0, 0] * 15
+    joystick = [0, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 
 
     for x in joystick:
         int_comp.in_queue.append(x)
@@ -251,9 +258,9 @@ if __name__ == '__main__':
         try:
             int_comp.run_intcode()
         except(InputInterrupt):
-            rounds += 1
             grid = process_game_output(int_comp.out_queue, grid, rounds)
             draw_game(grid)
+            rounds += 1
         except(OutputInterrupt):
             #logging.info('Output: {}'.format(int_comp.out_queue[-1]))
             pass
