@@ -71,12 +71,13 @@ if __name__ == '__main__':
     start_pos = [tuple([m.pos[i] for m in moons]) for i in range(3)]
     start_vel = [tuple([m.vel[i] for m in moons]) for i in range(3)]
 
-    freq = [set() for i in range(3)]
+    freq = dict()
+    t = 1
 
     # time epoch - start at 0
-    epochs = 500000
-    for t in range(1, epochs + 1):
-
+    #epochs = 500000
+    while len(freq) < 3:
+    
         # get pairs of moons - use combinations
         # apply gravity to each pair of moons
         for a, b in combinations(moons, 2):
@@ -91,15 +92,17 @@ if __name__ == '__main__':
         for i in range(3):
             pos = tuple([m.pos[i] for m in moons])
             vel = tuple([m.vel[i] for m in moons])
-            if (pos, vel) == (start_pos[i], start_vel[i]):
-                
+            if (pos, vel) == (start_pos[i], start_vel[i]):     
                 # store frequency of repeated position
-                freq[i].add(t)
+                if not freq.get(i, 0):
+                    freq[i] = t
+
+        # increase time passed
+        t += 1
 
 
-    min_freqs = [min(freq[i]) for i in range(3)]
-
-    result = _lcm(_lcm(min_freqs[0], min_freqs[1]), min_freqs[2])
+    # we're done, calculate the least common multiple of the three dimension frequencies
+    result = _lcm(_lcm(freq[0], freq[1]), freq[2])
 
     logging.info('LCM of frequencies: {}'.format(result))
 
