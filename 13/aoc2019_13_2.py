@@ -194,11 +194,8 @@ def draw_game(grid):
 
 
 def paddle_ai(paddle, ball):
-    if paddle[0] == ball[0]:
-        return 0
-    else:
-        return 1 if ball[0] > paddle[0] else -1
-
+    return (ball[0] > paddle[0]) - (ball[0] < paddle[0])
+    
 #### main program ####
 
 if __name__ == '__main__':
