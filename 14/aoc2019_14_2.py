@@ -2,13 +2,7 @@
 import logging
 from collections import defaultdict
 import math
-
-def graph_layers(element):
-    if element != 'FUEL':
-        for x in successors[element]:
-            layers[x] = max(layers[x], layers[element] + 1)
-            graph_layers(x)
-
+from copy import deepcopy
 
 
 #### main program ####
@@ -18,48 +12,36 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     f_name = 'input.txt'
-
-    # process input and generate recipes (format: dict[output element] = [quantity of output, [(input element, quantity)]])
-    # successors is a dict of each input element's successors, used to generate a layered graph to select which element to 
-    # substitute next 
+    
+    # process input and generate recipes (format: dict[output element] = [left_quantity of output, [(input element, left_quantity)]])
+    # `incoming_to` is a dict of each input element's incoming edges, 
+    # used to generate a topological sort order 
     recipes = dict()
-    successors = defaultdict(list)
+    incoming_to = defaultdict(list)
 
     with open(f_name) as f:
         for line in f.readlines():
-            inp, outp = line.split(' => ')
+            left, right = line.strip('\n').split(' => ')
             
             # prepare output recipe
-            out_q, out_c = outp.split(' ')
-            out_q = int(out_q)
-            out_c = out_c.strip('\n')
+            right_quantity, right_element = right.split(' ')
+            right_quantity = int(right_quantity)
             
             # prepare input recipe
-            inputs = [(x[1], int(x[0])) for x in (i.split(' ') for i in inp.split(', '))]
+            left_ingredients = [(x[1], int(x[0])) for x in (i.split(' ') for i in left.split(', '))]
 
             # generate recipe dictionary
-            recipes[out_c] = [out_q, inputs[:]]
+            recipes[right_element] = [right_quantity, left_ingredients[:]]
 
-            # add to graph of successors
-            for c, _ in inputs:
-                successors[c].append(out_c)
+            # add to graph of incoming edges
+            for left_element, _ in left_ingredients:
+                incoming_to[left_element].append(right_element)
 
     logging.debug('Recipes: {}'.format(recipes))
-    logging.debug('Successors: {}'.format(successors))
-
-
-    # generate layers for graph
-    # start at ORE and add one layer at a time
-    # if value is already there, check if new layer is bigger than previous layer, if yes assign new layer
-    layers = defaultdict(int)
-    graph_layers('ORE')    
-    logging.debug('Layers: {}'.format(layers))
-
-    # Now process the substitutions
-    # starting with FUEL, generate the first recipe
-    element = 'FUEL'
-
-
+    logging.debug('incoming_to: {}'.format(incoming_to))
+  
+    # set up binary search for part 2
+    # result from part 1
     o_per_f = 522031
     tril = 1_000_000_000_000
 
@@ -67,50 +49,48 @@ if __name__ == '__main__':
 
     lower = start
     upper = start * 2
-    #recipes[element][0] = 500
 
+    # initial starting value for binary search
     fuel = lower + ((upper - lower) // 2)
 
-    while True:
-        rec = [('FUEL', fuel)]
-        
+    while (((upper - fuel) > 0) and ((fuel - lower) > 0)):
+        # needed stores the amount of each element in current recipe
+        needed = defaultdict(int)
+        # create a queue to store the next recipe elements, and a dictionary with the quantities needed
+        # Set up the starting value as FUEL with quantity 1 - to find out how much ORE is needed to generate 1 FUEL
+
+        # create a copy of the incoming edges dictionary as we will be removing from it
+        temp_incoming_to = deepcopy(incoming_to)
+
+        # starting with FUEL, generate the first recipe
+        element = 'FUEL'
+        recipe_queue = [element]
+        needed[element] = fuel
+
         logging.info('Trying with fuel {}'.format(fuel))
 
-        logging.debug('rec: {}'.format(rec))
+        # Run a topological sort by removing incoming edges from elements that have been substituted
+        while(recipe_queue):
 
-        # run until all elements have been substituted with ORE
-        while(set(x[0] for x in rec) - {'ORE'}):
-
+            # get next element from heapq
+            right_element = recipe_queue.pop()
             
-            # check which of the elements can be substituted with multiples of the recipe output
-            subs = [x[0] for x in rec if x[0] != 'ORE' and x[1] % recipes[x[0]][0] == 0]
-            logging.debug('Subs: {}'.format(subs))
+            # determine multiplicator for recipe quantity
+            multiplier = math.ceil(needed[right_element] / recipes[right_element][0])
 
-            # check if we need to do a wasteful substitution - only of no clean subs found
-            if not subs:
-                logging.debug('No more subs!')
-                sub_candidates = [x[0] for x in rec if x[0] != 'ORE']
-                subs = [max(sub_candidates, key=lambda x: layers[x])]
-                logging.debug('Next wasteful substitution: {}'.format(subs))
-
-            next_rec = []  
-            for r in rec:
-                if not r[0] in subs:
-                    next_rec.append(r)
-                else:
-                    # determine multiplicator for recipe quantity
-                    multiplier = math.ceil(r[1] / recipes[r[0]][0])
-                    # append recipe
-                    next_rec.extend([(x[0], x[1] * multiplier) for x in recipes[r[0]][1]])
-
-            rec = next_rec
-            logging.debug('After subs: {}'.format(rec))
-
-            # Add all same elements together
-            rec = [(e, sum(q[1] for q in rec if q[0] == e)) for e in set(x[0] for x in rec)]
-            logging.debug('New_rec: {}'.format(rec))
-
-        ore_needed = rec[0][1]
+            for left_element, left_quantity in recipes[right_element][1]:
+                # append recipe
+                needed[left_element] += left_quantity * multiplier
+                # remove edge from predecessors
+                temp_incoming_to[left_element].remove(right_element)
+                # check if no more predecessors, then add to recipe queue
+                if not left_element == 'ORE' and not temp_incoming_to[left_element]:
+                    recipe_queue.append(left_element)
+                
+            # since we processed the substitution, we don't need any further amount of the substituted element
+            needed[right_element] = 0
+        
+        ore_needed = needed['ORE']
         logging.info('{} fuel produced with {} ORE'.format(fuel, ore_needed))
 
         if ore_needed < tril:
@@ -119,6 +99,8 @@ if __name__ == '__main__':
         else:
             upper = fuel
             fuel -= (fuel - lower) // 2
+
+        logging.debug('Upper: {}, lower: {}, fuel: {}'.format(upper, lower, fuel))
 
 
 # part 1: 522031
