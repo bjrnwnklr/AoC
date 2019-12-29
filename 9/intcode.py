@@ -1,7 +1,8 @@
-# Day 9 - final version of intcode computer!
+# Day 13 - game with intcode!
 
 from collections import deque, defaultdict
 import logging
+import math
 
 
 class InputInterrupt(Exception):
@@ -110,15 +111,12 @@ class Intcode():
     # INPUT
     def input_f(self, p, param_count):
         # get input - 
-        try:
-            s = self.in_queue.popleft()
-            self.mem[p[0]] = s
-            logging.debug('IP: {} -- INPUT: popped {}, remaining: {}'.format(self.ip, s, self.in_queue))
-        except(IndexError):
-            raise InputInterrupt
-        else:
-            # only advance the instruction pointer if we have taken the input
-            self.ip += param_count
+        s = self.in_queue.popleft()
+        self.mem[p[0]] = s
+        
+        self.ip += param_count
+
+        raise InputInterrupt
 
     ### OP CODE = 4
     # OUTPUT
@@ -180,9 +178,24 @@ class Intcode():
         self.done = True
 
 
+    
+tiles = {
+    0: ' ',
+    1: '#',
+    2: '%',
+    3: '=',
+    4: '@'
+}
+
+def draw_game(grid):
+    # grid is 42 wide (x) and 22 tall (y)
+    for y in range(23):
+        print(''.join([tiles[grid[(x, y)]] for x in range(43)]))
 
 
-
+def paddle_ai(paddle, ball):
+    return (ball[0] > paddle[0]) - (ball[0] < paddle[0])
+    
 #### main program ####
 
 if __name__ == '__main__':
@@ -196,33 +209,62 @@ if __name__ == '__main__':
 
     logging.info('PART 1: Starting!')
 
-    # message queue, preconfigured with 0 as input for first amplifier
-    msg_stk = deque()
+    # part 2: set mem 0 to 2
+    inp[0] = 2
 
-    # initialize the amplifier
+    # the playing field grid
+    grid = dict()
+
+    # count how many rounds we play
+    rounds = 0
+
+    # ball and paddle positions
+    ball = (0, 0)
+    paddle = (0, 0)
+
+    # initialize the intcode machine
     int_comp = Intcode(inp)
 
-    # provide 1 as input for test mode
-    # provide 2 as input for BOOST mode
-    init_inp = 2
-    int_comp.in_queue.append(init_inp)
-
-    # run the amplifier until it halts
+    # run the intcode until it halts
     while(not int_comp.done):
         try:
             int_comp.run_intcode()
+        except(InputInterrupt):
+            #draw_game(grid)
+
+            rounds += 1
+
         except(OutputInterrupt):
-            msg = int_comp.out_queue.popleft()
-            msg_stk.append(msg)
-            logging.info('Output: {}'.format(msg))
+            
+            if len(int_comp.out_queue) == 3:
 
-    # retrieve result (last entry in out_queue)
-    res = msg_stk[-1]
-
-    logging.info('Part 1 result: {}'.format(res))
+                logging.debug('Round {}, queue: {}'.format(rounds, int_comp.out_queue))
+    
+                # get next three elements
+                x, y, tile = (int_comp.out_queue.popleft() for _ in range(3))
+                
+                # check for score display
+                if (x, y) == (-1, 0):
+                    logging.info('Score after {} rounds: {}'.format(rounds, tile))
+                # if ball moves, move the paddle in the same direction
+                else:
+                    grid[(x, y)] = tile
+                    # handle paddle (3) and ball (4) coordinates
+                    if tile == 3:
+                        paddle = (x, y)
+                    elif tile == 4:
+                        ball = (x, y)
+                        # now that ball has moved, generate next paddle move
+                        # need to build in a check for initial grid generation, i.e. if paddle does not yet exist
+                        if rounds == 0:
+                            # for first round, do not move as we have not yet drawn the paddle
+                            int_comp.in_queue.append(0)
+                        else:
+                            move = paddle_ai(paddle, ball)
+                            int_comp.in_queue.append(move)
+        
     logging.info('PART 1: End!')
 
 
-# Part 1: 2682107844
-# Part 2: 34738
-
+# part 1: 363 block tiles!
+# part 2: 17159 score

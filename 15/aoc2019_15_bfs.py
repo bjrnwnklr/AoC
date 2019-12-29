@@ -180,11 +180,10 @@ class Intcode():
 
 
 ################ global constants #######################
-#  clockwise movement: north (1), east (4), south (2), west (3)
+#  north (1), south (2), west (3), and east (4)
 # grid is x, y with positive x to the east (right) and positive y to the south (down)
-n_coords = [((0, -1), 1), ((1, 0), 4), ((0, 1), 2), ((-1, 0), 3)]
+n_coords = [((0, -1), 1), ((1, 0), 4), ((0, 1), 2), ((-1, 0), 3) ]
 
-# clockwise direction
 
 status_to_grid = {
     0: '#', # wall
@@ -209,7 +208,6 @@ def draw_grid(grid, droid):
 
 def intcode_move(int_comp, dir):
     int_comp.in_queue.append(dir) 
-    # logging.debug('Input queue: {}'.format(int_comp.in_queue))
     while(not int_comp.done):   
         try:
             int_comp.run_intcode()
@@ -218,7 +216,6 @@ def intcode_move(int_comp, dir):
             pass
         except(OutputInterrupt):
             # read output and return output
-            # logging.debug('Output queue: {}'.format(int_comp.out_queue))
             return int_comp.out_queue.popleft()
 
 
@@ -227,7 +224,8 @@ def intcode_move(int_comp, dir):
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
+    # logging.basicConfig(level=logging.DEBUG, filename='droid.log')
 
 
     # read input
@@ -242,68 +240,68 @@ if __name__ == '__main__':
     # '#' = wall
     # '.' = traversable space
     grid = defaultdict(lambda: ' ')
-    start = (0, 0)
-    droid = start
-    feel_dir = 2 # start by feeling the wall to the south and going east (right wall hugging)
-    move_dir = 1
+    droid = (0, 0)
+    grid[droid] = '.'
     oxygen_pos = tuple()
-    found = False
-    prev_grid_size = -10
 
 
     # initialize the intcode machine
     int_comp = Intcode(inp)
 
-    # implement wall hugging algorithm
-    # 1) feel to the right
-    # 2a) if wall, move ahead (dir - 1)
-    # 2b) if no wall, you have moved into empty space, then turn right
-    # 3) repeat
-    while(len(grid) != prev_grid_size):
-
-        prev_grid_size = len(grid)
-
-        # feel the wall to the right
-        feel_wall = n_coords[feel_dir]
-        next_pos = (droid[0] + feel_wall[0][0], droid[1] + feel_wall[0][1])
-        status_code = intcode_move(int_comp, feel_wall[1])
-        grid[next_pos] = status_to_grid[status_code]
-
-        # if we feel a wall, continue moving ahead without turning (move into direction - 1)
-        if status_code == 0:
-            # logging.debug('At {}, wall to the right, trying to move ahead.'.format(next_pos))
-            # we have a wall to the right, now try moving ahead
-            move_pos = n_coords[move_dir]
-            next_pos = (droid[0] + move_pos[0][0], droid[1] + move_pos[0][1])
-            status_code = intcode_move(int_comp, move_pos[1])
-            grid[next_pos] = status_to_grid[status_code]
-            
-            # if we hit a wall turn counter clockwise to keep the wall to the right
-            if status_code == 0:
-                # logging.debug('\tHit a wall ahead at {}, turning counterclockwise from {}.'.format(next_pos, move_dir))
-                feel_dir = (feel_dir - 1) % 4
-                move_dir = (move_dir - 1) % 4
-            else: 
-                # logging.debug('\tMoved ahead to {} successsfully.'.format(next_pos))
-                # we hit no wall so can move straight ahead
-                droid = next_pos   
-                if status_code == 2:
-                    found = True
-                    oxygen_pos = droid 
-        else:
-            # we have no wall to the right, so turn right (we have already moved into the empty space)
-            # logging.debug('Found no wall to the right, so moved to {} and now turning clockwise from {}'.format(next_pos, move_dir))
-            feel_dir = (feel_dir + 1) % 4
-            move_dir = (move_dir + 1) % 4
-            droid = next_pos
-            if status_code == 2:
-                found = True
-                oxygen_pos = droid
+    # BFS stuff
+    # q contains the following:
+    # 0: current position (x, y) tuple
+    # 1: current path (list)
+    # 2: deepcopy of the intcode machines for easy backtracking
+    q = deque([(droid, [], int_comp)])
+    seen = set()
+    path = defaultdict(list)
 
 
+    # run BFS until we have explored every grid cell
+    while(q):
+
+        current_pos, current_path, temp_comp = q.pop() # removes element from the right side of the queue
+
+        logging.debug('Current pos: {}, current path: {}'.format(current_pos, current_path))
         draw_grid(grid, droid)
 
+        if current_pos not in seen:
+            seen.add(current_pos)
 
+            # if position is different, return to the current coordinate
+            # use a deepcopy of the intcode machine to restore previous state
+            # Alternative: build a backtracking algo based on the path (need to store complete path taken and reverse)
+            # if current_pos != droid:
+            logging.debug('Resetting position of droid / intcode from {} to {}'.format(droid, current_pos))
+                # reset the intcode computer to the previous state
+            int_comp = temp_comp
+            droid = current_pos
+
+
+            # once at current_pos, find all valid neighbours
+            for n, dir in n_coords:
+                v_next = (current_pos[0] + n[0], current_pos[1] + n[1])
+                if (v_next not in seen 
+                    and v_next not in path):
+
+                    # explore the new space - try moving to it!
+                    # ... send move instruction to new space
+                    status_code = intcode_move(int_comp, dir)
+                    grid[v_next] = status_to_grid[status_code]
+
+                    # if space is not a wall, add to queue. We already moved to the new place by giving the input instruction.
+                    # set the path to this new square
+                    if status_code != 0:
+                        path[v_next] = current_path + [v_next]
+                        q.appendleft((v_next, current_path + [v_next], deepcopy(int_comp)))
+                        # logging.debug('Appended {}, q: {}'.format(v_next, q))
+                        # update droid position for tracking
+                        droid = v_next
+                        # check if we found the oxygen thingy and store the position
+                        if status_code == 2:
+                            oxygen_pos = v_next
+                            logging.info('Found the oxygen system at {}!!'.format(oxygen_pos))
             
     # we get to here if the BFS finishes
     # 
