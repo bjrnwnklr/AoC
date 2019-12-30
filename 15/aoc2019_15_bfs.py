@@ -189,7 +189,6 @@ class Intcode():
 #  north (1), south (2), west (3), and east (4)
 # grid is x, y with positive x to the east (right) and positive y to the south (down)
 n_coords = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-# n_coords = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
 
 status_to_grid = {
@@ -209,12 +208,41 @@ def draw_grid(grid, droid):
     max_x = max(keys, key=lambda x: x[0])[0]
 
     for y in range(min_y, max_y + 1):
-        line = ''.join('D' if droid == (x, y) else grid[(x, y)] for x in range(min_x, max_x + 1))
-        print(line) 
+        line = []
+        for x in range(min_x, max_x + 1):
+            c = grid[(x, y)]
+            if (x, y) == droid:
+                c = 'D'
+            elif (x, y) == (0, 0):
+                c = 'S'
+            line.append(c)
+        print(''.join(line))
+
+def draw_path(grid, start, droid, path):
+    # now dump the default grid into a matrix to display
+    # find the min / max coordinates
+    keys = grid.keys()
+    min_y = min(keys, key=lambda x: x[1])[1]
+    max_y = max(keys, key=lambda x: x[1])[1]
+    min_x = min(keys, key=lambda x: x[0])[0]
+    max_x = max(keys, key=lambda x: x[0])[0]
+
+    for y in range(min_y, max_y + 1):
+        line = []
+        for x in range(min_x, max_x + 1):
+            c = grid[(x, y)]
+            if (x, y) == droid:
+                c = 'D'
+            elif (x, y) == start:
+                c = 'S'
+            elif (x, y) in path:
+                c = '*'
+            line.append(c)
+        print(''.join(line))
 
 
-def intcode_move(droid_copy, dir):
-    int_comp = droid_copy
+
+def intcode_move(int_comp, dir):
     int_comp.in_queue.append(dir) 
     while(not int_comp.done):   
         try:
@@ -236,8 +264,6 @@ def intcode_move(droid_copy, dir):
 if __name__ == '__main__':
     # set logging level
     logging.basicConfig(level=logging.DEBUG)
-    # logging.basicConfig(level=logging.DEBUG, filename='droid.log')
-
 
     # read input
     f_name = 'input.txt'
@@ -251,10 +277,9 @@ if __name__ == '__main__':
     # '#' = wall
     # '.' = traversable space
     grid = defaultdict(lambda: ' ')
-    droid = (0, 0)
+    droid = start = (0, 0)
     grid[droid] = '.'
     oxygen_pos = tuple()
-
 
     # initialize the intcode machine
     int_comp = Intcode(inp)
@@ -263,12 +288,10 @@ if __name__ == '__main__':
     # q contains the following:
     # 0: current position (x, y) tuple
     # 1: current path (list)
-    # 2: memory dump of the intcode program
-    # 3: instruction pointer of the intcode program
-    # 4: relative base value of the intcode program
     q = deque([(droid, [])])
+    # droid_reg stores the state of the intcode computer at a coordinate - to retrieve when backtracking
     droid_reg = {droid: int_comp}
-    seen = set()
+    # path stores the path to each individual point in the grid as explored by BFS
     path = defaultdict(list)
 
     # run BFS until we have explored every grid cell
@@ -280,15 +303,17 @@ if __name__ == '__main__':
         # once at current_pos, find all valid neighbours
         for i, n in enumerate(n_coords):
             v_next = (current_pos[0] + n[0], current_pos[1] + n[1])
-            dir = i + 1
-            if (v_next not in seen):
+            direction = i + 1
+            if (v_next not in droid_reg):
 
-                # explore the new space - try moving to it!
-                # ... send move instruction to new space
+                # explore the new space - try moving to it. 
+                # 1) Retrieve a copy of the intcode computer at the current position
+                # 2) Try moving to the new coordinate
+                # 3) update status of the new coordinate in the grid
+                # 4) store the updated droid at the new location
                 droid_copy = deepcopy(droid_reg[current_pos])
-                status_code = intcode_move(droid_copy, dir)
+                status_code = intcode_move(droid_copy, direction)
                 grid[v_next] = status_to_grid[status_code]
-                seen.add(v_next)
                 droid_reg[v_next] = droid_copy
 
                 # if space is not a wall, add to queue. We already moved to the new place by giving the input instruction.
@@ -297,21 +322,18 @@ if __name__ == '__main__':
                     droid = v_next
                     path[v_next] = current_path + [v_next]
                     q.appendleft((v_next, current_path + [v_next]))
-                    # logging.debug('Appended {}, q: {}'.format(v_next, q))
                     # check if we found the oxygen thingy and store the position
                     if status_code == 2:
                         oxygen_pos = v_next
                         logging.info('Found the oxygen system at {}!!'.format(oxygen_pos))
         
     # we get to here if the BFS finishes
-    # 
-    logging.info('BFS ended, position of oxygen system is: {}'.format(oxygen_pos))    
+    draw_path(grid, start, droid, path[oxygen_pos][:-1])    
 
-    draw_grid(grid, droid)    
-            
-        
+    logging.info('BFS ended, path from {} to oxygen system is: {}'.format(start, path[oxygen_pos]))    
+    logging.info('Part 1: shortest path to oxygen system is {} steps long'.format(len(path[oxygen_pos])))
     logging.info('PART 1: End!')
 
 
-# part 1: 
+# part 1: 262 steps
 # part 2: 
