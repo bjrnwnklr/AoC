@@ -202,9 +202,12 @@ def draw_grid(grid, droid):
     min_x = min(keys, key=lambda x: x[0])[0]
     max_x = max(keys, key=lambda x: x[0])[0]
 
+    logging.debug('Current grid dimensions: {} * {}, total size {}'.format(max_x + 1 - min_x, max_y + 1 - min_y, len(grid)))
+    logging.debug('Droid is at {}'.format(droid))
+
     for y in range(min_y, max_y + 1):
         line = ''.join('D' if droid == (x, y) else grid[(x, y)] for x in range(min_x, max_x + 1))
-        print(line)
+        print(line) 
 
 
 def intcode_move(int_comp, dir):
@@ -249,6 +252,7 @@ if __name__ == '__main__':
     oxygen_pos = tuple()
     found = False
     prev_grid_size = -10
+    seen = set()
 
 
     # initialize the intcode machine
@@ -259,15 +263,14 @@ if __name__ == '__main__':
     # 2a) if wall, move ahead (dir - 1)
     # 2b) if no wall, you have moved into empty space, then turn right
     # 3) repeat
-    while(len(grid) != prev_grid_size):
-
-        prev_grid_size = len(grid)
+    while(len(seen) < 1653):
 
         # feel the wall to the right
         feel_wall = n_coords[feel_dir]
         next_pos = (droid[0] + feel_wall[0][0], droid[1] + feel_wall[0][1])
         status_code = intcode_move(int_comp, feel_wall[1])
         grid[next_pos] = status_to_grid[status_code]
+        seen.add(next_pos)
 
         # if we feel a wall, continue moving ahead without turning (move into direction - 1)
         if status_code == 0:
@@ -277,6 +280,7 @@ if __name__ == '__main__':
             next_pos = (droid[0] + move_pos[0][0], droid[1] + move_pos[0][1])
             status_code = intcode_move(int_comp, move_pos[1])
             grid[next_pos] = status_to_grid[status_code]
+            seen.add(next_pos)
             
             # if we hit a wall turn counter clockwise to keep the wall to the right
             if status_code == 0:
@@ -300,8 +304,7 @@ if __name__ == '__main__':
                 found = True
                 oxygen_pos = droid
 
-
-        draw_grid(grid, droid)
+        # draw_grid(grid, droid)
 
 
             

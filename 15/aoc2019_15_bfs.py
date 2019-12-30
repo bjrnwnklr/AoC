@@ -15,12 +15,12 @@ class OutputInterrupt(Exception):
 
 class Intcode():
 
-    def __init__(self, mem, amp_id=1):
+    def __init__(self, mem=[], ip=0, rel_base=0, amp_id=1):
         # set ip to 0
-        self.ip = 0
+        self.ip = ip
 
         # set relative base to 0
-        self.rel_base = 0
+        self.rel_base = rel_base
         
         # set halt parameter
         self.done = False
@@ -87,6 +87,12 @@ class Intcode():
 
         return int_command, addresses, param_count
 
+
+    def dump_state(self):
+        return (self.mem.copy(), self.ip, self.rel_base)
+
+    def load_state(self, intcode_state):
+        self.mem, self.ip, self.rel_base = intcode_state
 
     #### OP CODE EXECUTION FUNCTIONS ####
 
@@ -182,7 +188,7 @@ class Intcode():
 ################ global constants #######################
 #  north (1), south (2), west (3), and east (4)
 # grid is x, y with positive x to the east (right) and positive y to the south (down)
-n_coords = [((0, -1), 1), ((1, 0), 4), ((0, 1), 2), ((-1, 0), 3) ]
+n_coords = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
 
 status_to_grid = {
@@ -203,10 +209,12 @@ def draw_grid(grid, droid):
 
     for y in range(min_y, max_y + 1):
         line = ''.join('D' if droid == (x, y) else grid[(x, y)] for x in range(min_x, max_x + 1))
-        print(line)
+        print(line) 
 
 
-def intcode_move(int_comp, dir):
+def intcode_move(dir, intcode_state):
+    int_comp = Intcode()
+    int_comp.load_state(intcode_state)
     int_comp.in_queue.append(dir) 
     while(not int_comp.done):   
         try:
@@ -216,7 +224,9 @@ def intcode_move(int_comp, dir):
             pass
         except(OutputInterrupt):
             # read output and return output
-            return int_comp.out_queue.popleft()
+            output = int_comp.out_queue.popleft()
+            new_intcode_state = int_comp.dump_state()
+            return output, new_intcode_state
 
 
     
@@ -224,7 +234,7 @@ def intcode_move(int_comp, dir):
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     # logging.basicConfig(level=logging.DEBUG, filename='droid.log')
 
 
@@ -252,57 +262,49 @@ if __name__ == '__main__':
     # q contains the following:
     # 0: current position (x, y) tuple
     # 1: current path (list)
-    # 2: deepcopy of the intcode machines for easy backtracking
-    q = deque([(droid, [], int_comp)])
+    # 2: memory dump of the intcode program
+    # 3: instruction pointer of the intcode program
+    # 4: relative base value of the intcode program
+    q = deque([(droid, [], int_comp.dump_state())])
     seen = set()
     path = defaultdict(list)
+    counter = 0
 
 
     # run BFS until we have explored every grid cell
-    while(q):
+    while(q and counter < 10):
 
-        current_pos, current_path, temp_comp = q.pop() # removes element from the right side of the queue
+         # removes element from the right side of the queue
+        current_pos, current_path, current_intcode_state = q.pop()
+        counter += 1
 
-        logging.debug('Current pos: {}, current path: {}'.format(current_pos, current_path))
+        logging.debug('\n\nCounter: {}\n'.format(counter))
         draw_grid(grid, droid)
 
-        if current_pos not in seen:
-            seen.add(current_pos)
+        # once at current_pos, find all valid neighbours
+        for i, n in enumerate(n_coords):
+            v_next = (current_pos[0] + n[0], current_pos[1] + n[1])
+            dir = i + 1
+            if (v_next not in seen):
 
-            # if position is different, return to the current coordinate
-            # use a deepcopy of the intcode machine to restore previous state
-            # Alternative: build a backtracking algo based on the path (need to store complete path taken and reverse)
-            # if current_pos != droid:
-            logging.debug('Resetting position of droid / intcode from {} to {}'.format(droid, current_pos))
-                # reset the intcode computer to the previous state
-            int_comp = temp_comp
-            droid = current_pos
+                # explore the new space - try moving to it!
+                # ... send move instruction to new space
+                status_code, upd_intcode_state = intcode_move(dir, current_intcode_state)
+                grid[v_next] = status_to_grid[status_code]
+                seen.add(v_next)
 
-
-            # once at current_pos, find all valid neighbours
-            for n, dir in n_coords:
-                v_next = (current_pos[0] + n[0], current_pos[1] + n[1])
-                if (v_next not in seen 
-                    and v_next not in path):
-
-                    # explore the new space - try moving to it!
-                    # ... send move instruction to new space
-                    status_code = intcode_move(int_comp, dir)
-                    grid[v_next] = status_to_grid[status_code]
-
-                    # if space is not a wall, add to queue. We already moved to the new place by giving the input instruction.
-                    # set the path to this new square
-                    if status_code != 0:
-                        path[v_next] = current_path + [v_next]
-                        q.appendleft((v_next, current_path + [v_next], deepcopy(int_comp)))
-                        # logging.debug('Appended {}, q: {}'.format(v_next, q))
-                        # update droid position for tracking
-                        droid = v_next
-                        # check if we found the oxygen thingy and store the position
-                        if status_code == 2:
-                            oxygen_pos = v_next
-                            logging.info('Found the oxygen system at {}!!'.format(oxygen_pos))
-            
+                # if space is not a wall, add to queue. We already moved to the new place by giving the input instruction.
+                # set the path to this new square
+                if status_code != 0:
+                    droid = v_next
+                    path[v_next] = current_path + [v_next]
+                    q.appendleft((v_next, current_path + [v_next], upd_intcode_state))
+                    # logging.debug('Appended {}, q: {}'.format(v_next, q))
+                    # check if we found the oxygen thingy and store the position
+                    if status_code == 2:
+                        oxygen_pos = v_next
+                        logging.info('Found the oxygen system at {}!!'.format(oxygen_pos))
+        
     # we get to here if the BFS finishes
     # 
     logging.info('BFS ended, position of oxygen system is: {}'.format(oxygen_pos))    
