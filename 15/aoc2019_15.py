@@ -222,7 +222,8 @@ def intcode_move(int_comp, dir):
         except(OutputInterrupt):
             # read output and return output
             # logging.debug('Output queue: {}'.format(int_comp.out_queue))
-            return int_comp.out_queue.popleft()
+            break
+    return int_comp.out_queue.popleft()
 
 
     
