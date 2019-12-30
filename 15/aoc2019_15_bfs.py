@@ -280,6 +280,8 @@ if __name__ == '__main__':
     droid = start = (0, 0)
     grid[droid] = '.'
     oxygen_pos = tuple()
+    # graph for part 2
+    graph = defaultdict(list)
 
     # initialize the intcode machine
     int_comp = Intcode(inp)
@@ -322,6 +324,9 @@ if __name__ == '__main__':
                     droid = v_next
                     path[v_next] = current_path + [v_next]
                     q.appendleft((v_next, current_path + [v_next]))
+                    # for part 2 - generate a graph with neighbors
+                    graph[current_pos].append(v_next)
+                    graph[v_next].append(current_pos)
                     # check if we found the oxygen thingy and store the position
                     if status_code == 2:
                         oxygen_pos = v_next
@@ -335,5 +340,35 @@ if __name__ == '__main__':
     logging.info('PART 1: End!')
 
 
+    ##### Part 2
+    # 
+    # Do a BFS using the graph, starting from the oxygen source
+    # - valid neighbors are contained in the graph dictionary
+
+    q = deque([(oxygen_pos, [])])
+    oxygen_bfs_seen = set()
+    oxygen_bfs_path = defaultdict(list)
+
+    while(q):
+        current_pos, current_path = q.pop()
+
+        # go through neighbors using the graph
+        for neighbor in graph[current_pos]:
+            if neighbor not in oxygen_bfs_seen:
+                oxygen_bfs_seen.add(neighbor)
+                oxygen_bfs_path[neighbor] = current_path + [neighbor]
+                q.appendleft((neighbor, current_path + [neighbor]))
+
+    logging.info('Oxygen BFS ended!')
+
+    # get the longest path length from the oxygen source
+    furthest_from_oxygen = max(oxygen_bfs_path, key=lambda x: len(oxygen_bfs_path[x]))    
+    logging.info('Longest distance from oxygen source is {} at {} steps'.format(
+        furthest_from_oxygen, 
+        len(oxygen_bfs_path[furthest_from_oxygen])
+        ))
+
+    draw_path(grid, oxygen_pos, furthest_from_oxygen, oxygen_bfs_path[furthest_from_oxygen][:-1])
+
 # part 1: 262 steps
-# part 2: 
+# part 2: 314 minutes
