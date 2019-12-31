@@ -34,30 +34,33 @@ class Intcode():
         self.out_queue = deque()
 
         self.opcodes = {
-            1: (self.add, 4),
-            2: (self.multiply, 4), 
-            3: (self.input_f, 2),
-            4: (self.output_f, 2),
-            5: (self.jump_if_true, 3),
-            6: (self.jump_if_false, 3),
-            7: (self.less_than, 4),
-            8: (self.equals, 4),
-            9: (self.adj_rel_base, 2),
-            99: (self.halt, 0)}
+            1: (self._add, 4),
+            2: (self._multiply, 4), 
+            3: (self._input_f, 2),
+            4: (self._output_f, 2),
+            5: (self._jump_if_true, 3),
+            6: (self._jump_if_false, 3),
+            7: (self._less_than, 4),
+            8: (self._equals, 4),
+            9: (self._adj_rel_base, 2),
+            99: (self._halt, 0)}
   
 
     #### Main run function ####
-    def run_intcode(self):
+    def _run_intcode(self):
+        """
+        Processes intcode commands until halt signal is received.
+        """
         while (not self.done):
             # get executable intcode method, the number of parameters and the read/write addresses
-            int_command, addresses, param_count = self.get_opcode(self.mem[self.ip])
+            int_command, addresses, param_count = self._get_opcode(self.mem[self.ip])
 
             # execute the opcode
             int_command(addresses, param_count)
 
 
     #### Support functions ####
-    def get_opcode(self, opcode):
+    def _get_opcode(self, opcode):
         """
         Retrieve opcode and parameter modes from memory, then evaluate parameter modes and return read/write 
         memory positions.
@@ -89,10 +92,19 @@ class Intcode():
 
 
     def run_input_output(self, input_signal):
+        """
+        Runs an input-output cycle on the intcode machine: 
+        - Adds 1 input signal to the input queue
+        - Runs intcode until an output is given
+        - Returns the output.
+
+        Returns:
+        - Exactly 1 output from the intcode process.
+        """
         self.in_queue.append(input_signal) 
         while(not self.done):   
             try:
-                self.run_intcode()
+                self._run_intcode()
             except(InputInterrupt):
                 # do nothing
                 pass
@@ -104,31 +116,35 @@ class Intcode():
         return output
 
     def clone(self):
+        """
+        Returns a deepcopy of the intcode VM with its current state - can be used to store the current state and use it later.
+
+        Returns:
+        - Deepcopy of the current intcode VM.
+        """
         return deepcopy(self)
 
     #### OP CODE EXECUTION FUNCTIONS ####
 
     ### OP CODE = 1
     # ADD
-    def add(self, current_path, param_count):
+    def _add(self, current_path, param_count):
         # Allow writing in both position and relative mode -- use 3rd parameter
         self.mem[current_path[2]] = self.mem[current_path[0]] + self.mem[current_path[1]]
 
         self.ip += param_count
 
-
     ### OP CODE = 2
     # MULTIPLY
-    def multiply(self, current_path, param_count):
+    def _multiply(self, current_path, param_count):
         # Allow writing in both position and relative mode -- use 3rd parameter
         self.mem[current_path[2]] = self.mem[current_path[0]] * self.mem[current_path[1]]
 
         self.ip += param_count
 
-
     ### OP CODE = 3
     # INPUT
-    def input_f(self, current_path, param_count):
+    def _input_f(self, current_path, param_count):
         # get input - 
         s = self.in_queue.popleft()
         self.mem[current_path[0]] = s
@@ -139,7 +155,7 @@ class Intcode():
 
     ### OP CODE = 4
     # OUTPUT
-    def output_f(self, current_path, param_count):
+    def _output_f(self, current_path, param_count):
         # store message in message stack
         self.out_queue.append(self.mem[current_path[0]])
 
@@ -148,43 +164,39 @@ class Intcode():
         # pause execution since we passed an output
         raise OutputInterrupt
 
-
     ### OP CODE = 5
     # JUMP IF TRUE
-    def jump_if_true(self, current_path, param_count):
+    def _jump_if_true(self, current_path, param_count):
         if self.mem[current_path[0]] != 0:
             self.ip = self.mem[current_path[1]]
         else:
             self.ip += param_count
 
-
     ### OP CODE = 6
     # JUMP IF FALSE
-    def jump_if_false(self, current_path, param_count):
+    def _jump_if_false(self, current_path, param_count):
         if self.mem[current_path[0]] == 0:
             self.ip = self.mem[current_path[1]]
         else:
             self.ip += param_count
 
-
     ### OP CODE = 7
     # LESS THAN
-    def less_than(self, current_path, param_count):
+    def _less_than(self, current_path, param_count):
         self.mem[current_path[2]] = int(self.mem[current_path[0]] < self.mem[current_path[1]])
 
         self.ip += param_count
 
-
     ### OP CODE = 8
     # EQUAL
-    def equals(self, current_path, param_count):
+    def _equals(self, current_path, param_count):
         self.mem[current_path[2]] = int(self.mem[current_path[0]] == self.mem[current_path[1]])
 
         self.ip += param_count
 
     ### OP CODE = 9
     # ADJUST RELATIVE BASE
-    def adj_rel_base(self, current_path, param_count):
+    def _adj_rel_base(self, current_path, param_count):
         # increase the relative base by the value of the first parameter
         self.rel_base += self.mem[current_path[0]]
 
@@ -192,7 +204,7 @@ class Intcode():
 
     ### OP CODE = 99
     # HALT
-    def halt(self, current_path, param_count):
+    def _halt(self, current_path, param_count):
         logging.debug('IP: {} ### HALT ###'.format(self.ip))
         self.done = True
 
