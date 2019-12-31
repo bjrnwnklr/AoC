@@ -1,5 +1,6 @@
 # AOC 2019, day 16
 import logging
+import numpy as np
 
 """
 - read in number and split into a list of digits
@@ -18,18 +19,14 @@ def create_pattern(n):
 
     for i in range(1, n + 1):
         line = [[x] * i for x in base]
+
         line = [x for l in line for x in l]
-        pattern.append(line)
+        if len(line) < n + 1:
+            line = [line] * ((n // len(line)) + 1)
+            line = [x for l in line for x in l]
+        pattern.append(line[1:n+1])
 
-    return pattern
-
-def calc_output_position(input_number, pattern):
-    pat_length = len(pattern)
-
-    output_full_number = sum(x * pattern[i % pat_length] for i, x in enumerate(input_number, start=1))
-    output = list(map(int, list(str(abs(output_full_number)))))[-1]
-    logging.debug('Output generated for {} and pattern {}: {} (full sum: {})'.format(input_number, pattern, output, output_full_number))
-    return output
+    return np.array(pattern)
 
 
 #### main program ####
@@ -38,7 +35,7 @@ if __name__ == '__main__':
     # set logging level
     logging.basicConfig(level=logging.DEBUG)
 
-    f_name = 'ex1.txt'
+    f_name = 'input.txt'
 
     with open(f_name) as f:
         inp = [int(x) for x in list(f.readline().strip('\n'))]
@@ -46,15 +43,16 @@ if __name__ == '__main__':
     # inp = inp[:8]
 
     pattern = create_pattern(len(inp))
+    next_number = np.array(inp)
 
-    next_number = inp[:]
+    for _ in range(100):
+        next_number = pattern.dot(next_number)
+        next_number = np.mod(np.abs(next_number), 10)
 
-    for _ in range(4):
-        next_number = [calc_output_position(next_number, p) for p in pattern]
-
-        logging.debug('New number: {}'.format(next_number))
 
     part1 = ''.join([str(x) for x in next_number])
 
     logging.info('Part 1: {}'.format(part1))
     logging.info('First 8 digits: {}'.format(part1[:8]))
+
+# part 1: 19944447
