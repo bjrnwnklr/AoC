@@ -79,6 +79,7 @@ if __name__ == '__main__':
     next_number = np.array(pt2_input[offset:])
     logging.debug('Part 2 input length: {}'.format(len(next_number)))
 
+    # sum up from the back (starting with last element)
     for j in range(100):
         s = 0
         new_array = []
