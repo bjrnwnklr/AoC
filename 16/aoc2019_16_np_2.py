@@ -31,6 +31,8 @@ def create_pattern(n):
 
     return np.array(pattern)
 
+def sum_index(x):
+    return np.sum(new_list[0][x[1]:]) % 10
 
 #### main program ####
 
@@ -79,9 +81,14 @@ if __name__ == '__main__':
     next_number = np.array(pt2_input[offset:])
     logging.debug('Part 2 input length: {}'.format(len(next_number)))
 
+    # generate an index
+    index = np.arange(remaining_length)
+    new_list = np.vstack([next_number, index])
+
     # generate iteration of number by summing up for each digit
     for j in range(100):
-        next_number = np.array([np.sum(next_number[i:]) % 10 for i in range(remaining_length)])
+        next_number = np.apply_along_axis(sum_index, 0, new_list)
+        new_list = np.vstack([next_number, index])
         logging.debug('{}'.format(j))
 
     part2 = ''.join([str(x) for x in next_number[:8]])
