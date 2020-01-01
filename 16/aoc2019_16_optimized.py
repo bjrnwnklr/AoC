@@ -36,7 +36,7 @@ def create_pattern(n):
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     f_name = 'input.txt'
 
@@ -77,18 +77,22 @@ if __name__ == '__main__':
     # take the input from the offset on
     pt2_input = inp * repeats
     next_number = np.array(pt2_input[offset:])
+    # next_number = pt2_input[offset:]
     logging.debug('Part 2 input length: {}'.format(len(next_number)))
 
     # sum up from the back (starting with last element)
     for j in range(100):
-        s = 0
-        new_array = []
-        for n in next_number[::-1]:
-            s += n
-            new_array.append(s)
+        ## This is a slightly slower version not using numpy, updating the same list 
+        # (uncomment the line above with the next_number definition)
+        #
+        # for i in range(len(next_number) - 1, 0, -1):
+        #     next_number[i-1] = (next_number[i-1] + next_number[i]) % 10
 
-        next_number = np.flipud(np.mod(np.array(new_array), 10))
+        next_number = np.mod(np.cumsum(next_number[::-1]), 10)
+        next_number = next_number[::-1]
+
         logging.debug('{}'.format(j))
+
 
     part2 = ''.join([str(x) for x in next_number[:8]])
     logging.info('Part 2: {}'.format(part2))
