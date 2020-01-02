@@ -148,7 +148,47 @@ if __name__ == '__main__':
     # we know where the robot is:
     start = robot
     robot, robot_dir, steps = robot_move(grid, robot, robot_dir)
-    logging.info('Robot steps to reach end ({}, {}): {}'.format(robot, robot_dir, steps))
+    # logging.info('Robot steps to reach end ({}, {}): {}'.format(robot, robot_dir, steps))
 
-    for i in range(1, len(steps), 2):
-        print('{}, {}'.format(steps[i], steps[i+1]))
+    # for i in range(1, len(steps), 2):
+        # print('{}, {}'.format(steps[i], steps[i+1]))
+
+
+    # definition of moves:
+    A = 'R,8,R,10,R,10\n'
+    B = 'R,4,R,8,R,10,R,12\n'
+    C = 'R,12,R,4,L,12,L,12\n'
+    M = 'A,B,A,C,A,B,C,A,B,C\n'
+    video = 'n\n'
+
+    instructions = M + A + B + C + video
+    ascii_instructions = [ord(x) for x in instructions]
+
+    logging.debug('Ascii instructions: {}'.format(ascii_instructions))
+
+    # change mem position of input program at position 0 to 2
+    inp[0] = 2
+    int_comp_2 = Intcode(inp)
+
+    # put instructions into input queue
+    for x in ascii_instructions:
+        int_comp_2.in_queue.append(x) 
+
+    part2_raw_output = []
+
+    while(not int_comp_2.done):
+        try:
+            int_comp_2._run_intcode()
+        except(InputInterrupt):
+            pass
+        except(OutputInterrupt):
+            # collect all input, process later
+            part2_raw_output.append(int_comp_2.out_queue.popleft())
+
+    # logging.info('Part 2 result: {}'.format(part2_raw_output))
+    
+    # convert to characters
+    char_output = [chr(x) for x in part2_raw_output]
+
+    with open('grid2.txt', 'w') as f:
+        f.write(''.join(str(x) for x in char_output))
