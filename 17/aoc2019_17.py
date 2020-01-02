@@ -134,7 +134,6 @@ if __name__ == '__main__':
 
     logging.info('PART 1: End!')
 
-    # part 1: 3608
 
     #### part 2
 
@@ -186,9 +185,16 @@ if __name__ == '__main__':
             part2_raw_output.append(int_comp_2.out_queue.popleft())
 
     # logging.info('Part 2 result: {}'.format(part2_raw_output))
+    part2_solution = part2_raw_output.pop()
+    logging.info('Part 2: {}'.format(part2_solution))
     
     # convert to characters
     char_output = [chr(x) for x in part2_raw_output]
 
     with open('grid2.txt', 'w') as f:
         f.write(''.join(str(x) for x in char_output))
+
+
+
+    # part 1: 3608
+    # part 2: 897426
