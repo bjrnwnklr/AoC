@@ -20,6 +20,13 @@ def neighbors(grid, coord):
     valid_neighbors = [n for n in neighbor_coords if grid[n] != '#']
     return valid_neighbors
 
+# find all valid neighbors of a grid element
+def reachable_keys(key_graph, current_pos):
+
+    key, key_mask = current_pos
+    logging.debug('Looking for neighbors for key {} with mask {:026b}'.format(key, key_mask))
+    valid_neighbors = [(k, key_mask) for k, _, target_mask in key_graph[key] if test_bit(target_mask, key_mask)]
+    return valid_neighbors
 
 def map_keys_BFS(grid, start, doors):
     # BFS stuff
@@ -28,7 +35,7 @@ def map_keys_BFS(grid, start, doors):
     # 1: current path (length of steps)
     # 2: doors encountered (list)
     q = deque([(start, 0, 0)])
-    seen = set()
+    seen = set([start])
     # path stores the path to each individual point in the grid as explored by BFS
     path = defaultdict(list)
     # stores a bitcoded register of doors between start and current position (bit set per door on path)
@@ -74,13 +81,11 @@ if __name__ == '__main__':
 
     # main grid, used for the first BFS to generate map of keys
     grid = dict()
-    # position of keys (e.g. keys['a'] = (x, y))
+    # position of keys (e.g. keys[(x, y)] = 'a')
     keys = dict()
-    # position of doors (e.g. doors['A'] = (x, y))
+    # position of doors (e.g. doors[(x, y)] = 'A')
     doors = dict()
-    # doors per position (e.g. door_pos[(x, y)] = 'A')
-    door_pos = dict()
-
+    
 
     # parse grid and fill the following variables:
     # - grid
@@ -106,22 +111,64 @@ if __name__ == '__main__':
     # key_graph stores the number of steps and doors between the start and the respective key
     key_graph = defaultdict(set)
 
-    # run BFS from start (later repeat from each key - 
-    # map out number of steps and doors between start (or key) and all other keys)
-    
-    for player in [start] + list(keys.keys()):
-        logging.debug('Parsing grid from {}'.format(grid[player]))
-        path, doors_from = map_keys_BFS(grid, player, doors)
+    # list of key positions - we will iterate over this
+    key_positions = {v: k for k, v in keys.items()}
+
+    # run BFS from start first and map out paths to each key from start.
+    # We will then iterate over all key positions, but ignore the start position (we don't need an edge from key to start, only from start to key)
+    path, doors_from = map_keys_BFS(grid, start, doors)
+    for other_key in key_positions:
+        key_graph['@'].add((other_key, path[key_positions[other_key]], doors_from[key_positions[other_key]]))
+    for key in key_positions:
+        # logging.debug('Parsing grid from {}'.format(key))
+        path, doors_from = map_keys_BFS(grid, key_positions[key], doors)
+        # logging.debug('Path for key {}: {}'.format(key, path))
+        # logging.debug('Doors_from for key {}: {}'.format(key, doors_from))
         # update graph_dict with edges between keys
         # edge is a set of (key, steps, bit encoded doors between) tuples
         # e.g. graph_dict['a'] = {('f', 44, 0b101)}
-        for k in keys:
-            key_graph[player].add((k, path[k], doors_from[k]))
-            key_graph[k].add((player, path[k], doors_from[k]))
+        for other_key in key_positions:
+            if other_key != key:
+                key_graph[key].add((other_key, path[key_positions[other_key]], doors_from[key_positions[other_key]]))
+                key_graph[other_key].add((key, path[key_positions[other_key]], doors_from[key_positions[other_key]]))
 
 
     # BFS from start finished, print the steps / doors between start and the keys
     for k in key_graph:
         # logging.debug('Steps and doors from start to {} ({}): {}, {:026b}'.format(
             # k, keys[k], path[k], doors_from[k]))
-        logging.debug('Graph dict for {}: {}'.format(k, key_graph[k]))
+        logging.debug('Key graph for {}: {}'.format(k, key_graph[k]))
+
+    # now run another BFS on the key_graph, starting from start position.
+    # BFS stuff
+    # q contains the following:
+    # 0: current position (key, key bitmap) tuple
+    # 1: current path (list of keys)
+    # 2: length of steps
+    keywalk_start = ('@', 0)
+    q = deque([(keywalk_start, [], 0)])
+    seen = set([keywalk_start])
+    # path stores the path to each individual point in the grid as explored by BFS
+    path = defaultdict(list)
+    steps = defaultdict(int)
+
+    # run BFS until we have explored every edge in the graph
+    while(q):
+
+        # removes element from the right side of the queue
+        current_pos, current_path, current_steps = q.pop()
+
+        # once at current_pos, find all valid neighbours
+        for next_step in reachable_keys(key_graph, current_pos):
+            if (next_step not in seen):
+
+                seen.add(next_step)
+                path[next_step] = current_path + [next_step]
+                steps[next_step] = current_steps + 1
+
+                # check if we found a key and modify the key_mask
+                if next_step[0] in keys:
+                    key_mask = set_bit(next_step[1], key_bits[next_step[0]])
+                doors_from[next_step] = current_doors  #### change this line!
+
+                q.appendleft((next_step, current_path + [next_step], current_steps + 1))
