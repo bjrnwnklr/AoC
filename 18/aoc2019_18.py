@@ -5,7 +5,7 @@ from collections import defaultdict, deque
 
 
 def test_bit(bit_baseline, bit_to_test):
-    return bit_baseline & bit_to_test
+    return (bit_baseline & bit_to_test) == bit_baseline
 
 def set_bit(bit_baseline, bit_to_set):
     return bit_baseline | bit_to_set
@@ -25,7 +25,14 @@ def reachable_keys(key_graph, current_pos):
 
     key, key_mask = current_pos
     logging.debug('Looking for neighbors for key {} with mask {:026b}'.format(key, key_mask))
-    valid_neighbors = [(k, key_mask) for k, _, target_mask in key_graph[key] if test_bit(target_mask, key_mask)]
+    # valid_neighbors = [(k, key_mask) for k, _, target_mask in key_graph[key] if test_bit(target_mask, key_mask)]
+    valid_neighbors = []
+    for k, _, target_mask in key_graph[key]:
+        logging.debug('Potential neighbor: {}, {:0b}'.format(k, target_mask))
+        if test_bit(target_mask, key_mask):
+            valid_neighbors.append((k, key_mask))
+            logging.debug('({}, {:0b}) is a valid neighbor'.format(k, target_mask))
+    logging.debug('Valid neighbors for key {} are: {}'.format(key, valid_neighbors))
     return valid_neighbors
 
 def map_keys_BFS(grid, start, doors):
@@ -33,8 +40,8 @@ def map_keys_BFS(grid, start, doors):
     # q contains the following:
     # 0: current position (x, y) tuple
     # 1: current path (length of steps)
-    # 2: doors encountered (list)
-    q = deque([(start, 0, 0)])
+    # 2: doors encountered (bitmask)
+    q = deque([(start, 0, start_key_mask)])
     seen = set([start])
     # path stores the path to each individual point in the grid as explored by BFS
     path = defaultdict(list)
@@ -68,7 +75,7 @@ def map_keys_BFS(grid, start, doors):
 # dictionary with bit set per key in alphabetical order (e.g. for 'a', 1st bit is set, for 'z' 26th bit is set)
 key_bits = {x: 1 << i for i, x in enumerate(ascii_lowercase)}
 door_bits = {x: 1 << i for i, x in enumerate(ascii_uppercase)}
-full_keys = (1 << 26) - 1
+start_key_mask = 1 << 26
 
 
 #### main program ####
@@ -77,7 +84,7 @@ if __name__ == '__main__':
     # set logging level
     logging.basicConfig(level=logging.DEBUG)
 
-    f_name = 'ex2.txt'
+    f_name = 'ex3.txt'
 
     # main grid, used for the first BFS to generate map of keys
     grid = dict()
@@ -114,6 +121,13 @@ if __name__ == '__main__':
     # list of key positions - we will iterate over this
     key_positions = {v: k for k, v in keys.items()}
 
+    # success criteria - what does the bitmask look like when we have all the keys?
+    full_keys = start_key_mask
+    for k in key_positions:
+        full_keys = set_bit(full_keys, key_bits[k])
+
+    logging.debug('Full keys bitmask: {} ({:026b})'.format(full_keys, full_keys))
+
     # run BFS from start first and map out paths to each key from start.
     # We will then iterate over all key positions, but ignore the start position (we don't need an edge from key to start, only from start to key)
     path, doors_from = map_keys_BFS(grid, start, doors)
@@ -145,9 +159,10 @@ if __name__ == '__main__':
     # 0: current position (key, key bitmap) tuple
     # 1: current path (list of keys)
     # 2: length of steps
-    keywalk_start = ('@', 0)
+    keywalk_start = ('@', start_key_mask)
     q = deque([(keywalk_start, [], 0)])
     seen = set([keywalk_start])
+    keys_taken = set()
     # path stores the path to each individual point in the grid as explored by BFS
     path = defaultdict(list)
     steps = defaultdict(int)
@@ -158,17 +173,37 @@ if __name__ == '__main__':
         # removes element from the right side of the queue
         current_pos, current_path, current_steps = q.pop()
 
+        # check if we reached the end
+        if current_pos[1] == full_keys:
+            logging.debug('Found end state at {}'.format(current_pos))
+            logging.debug('Current path: {}'.format(current_path))
+            logging.debug('Number of steps: {}'.format(current_steps))
+            break
+
         # once at current_pos, find all valid neighbours
         for next_step in reachable_keys(key_graph, current_pos):
+            # if (next_step not in seen and next_step[0] not in keys_taken):
             if (next_step not in seen):
 
                 seen.add(next_step)
                 path[next_step] = current_path + [next_step]
-                steps[next_step] = current_steps + 1
+
+                # get number of steps
+                add_steps = [s for k, s, _ in key_graph[current_pos[0]] if k == next_step[0]][0]
+                steps[next_step] = current_steps + add_steps
 
                 # check if we found a key and modify the key_mask
-                if next_step[0] in keys:
+                if next_step[0] in key_positions:
                     key_mask = set_bit(next_step[1], key_bits[next_step[0]])
-                doors_from[next_step] = current_doors  #### change this line!
+                    keys_taken.add(next_step[0])
+                    logging.debug('Picked up key {} and updated bitmask to {}'.format(next_step[0], key_mask))
+                else:
+                    key_mask = next_step[1]
 
-                q.appendleft((next_step, current_path + [next_step], current_steps + 1))
+                logging.debug('Adding key ({}, {}) to queue.'.format(next_step[0], key_mask))
+                q.appendleft(((next_step[0], key_mask), current_path + [next_step], current_steps + add_steps))
+
+    # BFS finished
+    logging.debug('Graph traversal BFS finished.')
+
+    logging.debug('Paths: {}'.format(path.keys()))
