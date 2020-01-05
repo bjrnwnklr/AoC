@@ -176,7 +176,7 @@ if __name__ == '__main__':
     seen = set()
     # path stores the path to each individual point in the grid as explored by BFS
     path = defaultdict(list)
-    steps = defaultdict(int)
+    steps = defaultdict(lambda: 1e09)
     endstates = []
 
     # run BFS until we have explored every edge in the graph
@@ -202,7 +202,7 @@ if __name__ == '__main__':
 
                 # get number of steps
                 add_steps = [s for k, s, _ in key_graph[current_pos[0]] if k == next_step[0]][0]
-                steps[next_step] = current_steps + add_steps
+
 
                 # check if we found a key and modify the key_mask
                 if next_step[0] in key_positions:
@@ -210,9 +210,11 @@ if __name__ == '__main__':
                     logging.debug('Picked up key {} and updated bitmask to {}'.format(next_step[0], key_mask))
                 else:
                     key_mask = next_step[1]
-
-                logging.debug('Adding key ({}, {}) to queue.'.format(next_step[0], key_mask))
-                q.appendleft(((next_step[0], key_mask), current_path + [next_step], current_steps + add_steps))
+                
+                if current_steps + add_steps < steps[next_step]:
+                    steps[next_step] = current_steps + add_steps
+                    logging.debug('Adding key ({}, {}) to queue.'.format(next_step[0], key_mask))
+                    q.appendleft(((next_step[0], key_mask), current_path + [next_step], current_steps + add_steps))
 
     # BFS finished
     logging.debug('Graph traversal BFS finished.')

@@ -45,24 +45,25 @@ def map_keys_BFS(grid, start, doors, keys):
     q = deque([(start, 0, start_key_mask)])
     seen = set([start])
     # path stores the path to each individual point in the grid as explored by BFS
-    path = defaultdict(list)
+    path = defaultdict(lambda: 1e09)
     # stores a bitcoded register of doors between start and current position (bit set per door on path)
     doors_from = defaultdict(int)
     # keys found neighboring "start" (only real next neighbors)
     keys_found = set()
-
+    
     # run BFS until we have explored every grid cell
     while(q):
 
         # removes element from the right side of the queue
-        current_pos, current_path, current_doors = q.pop()
+        current_pos, current_steps, current_doors = q.pop()
+        next_distance = current_steps + 1
 
         # once at current_pos, find all valid neighbours
         for next_step in neighbors(grid, current_pos):
-            if (next_step not in seen):
+            if (next_step not in seen and next_distance < path[next_step]):
 
                 seen.add(next_step)
-                path[next_step] = current_path + 1
+                path[next_step] = next_distance
 
                 # check if we found a door and add it to list of doors between start and next_step
                 if next_step in doors:
@@ -73,7 +74,7 @@ def map_keys_BFS(grid, start, doors, keys):
                 if next_step in keys:
                     keys_found.add(keys[next_step])
                 else:
-                    q.appendleft((next_step, current_path + 1, current_doors))
+                    q.appendleft((next_step, next_distance, current_doors))
 
     return path, keys_found, doors_from
 
@@ -175,7 +176,8 @@ if __name__ == '__main__':
     keywalk_start = ('@', start_key_mask)
     q = [(0, keywalk_start, ())]
     seen = set()
-    endstate = (0, ())
+    endstates = []
+    distance_to = defaultdict(lambda: 1e09)
 
     while q:
         (current_steps, current_pos, current_path) = heappop(q)
@@ -186,8 +188,8 @@ if __name__ == '__main__':
 
             # check if we reached the end
             if current_pos[1] == full_keys:
-                endstate = (current_steps, current_path)
-                break
+                endstates.append((current_steps, current_path))
+                continue
 
             for next_step in reachable_keys(key_graph, current_pos):
                 # get number of steps to next_step step count
@@ -200,10 +202,13 @@ if __name__ == '__main__':
                 else:
                     key_mask = next_step[1]
 
-                if next_step not in seen:
+                if next_step not in seen and current_steps + add_steps < distance_to[(next_step[0], key_mask)]: ##### record distance per state and compare if we found a shorter state (only then push onto queue)
+                    distance_to[(next_step[0], key_mask)] = current_steps + add_steps
                     heappush(q, (current_steps + add_steps, (next_step[0], key_mask), current_path))
 
     # BFS finished
     logging.debug('Graph traversal Dijkstra finished.')
 
-    logging.info('Endstate found at: {}'.format(endstate))
+    # logging.info('Endstate found at: {}'.format(endstates))
+    for e in endstates:
+        print('Endstate: {}'.format(e[0]))
