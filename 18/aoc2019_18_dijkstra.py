@@ -73,8 +73,8 @@ def map_keys_BFS(grid, start, doors, keys):
                 # if we find a key, stop exploring in this direction. Add it to the list of keys found
                 if next_step in keys:
                     keys_found.add(keys[next_step])
-                else:
-                    q.appendleft((next_step, next_distance, current_doors))
+                #else:
+                q.appendleft((next_step, next_distance, current_doors))
 
     return path, keys_found, doors_from
 
