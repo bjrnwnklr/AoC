@@ -2,6 +2,7 @@
 import logging
 from string import ascii_lowercase, ascii_uppercase
 from collections import defaultdict, deque
+from heapq import heappop, heappush
 
 
 def test_bit(bit_baseline, bit_to_test):
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     # set logging level
     logging.basicConfig(level=logging.INFO)
 
-    f_name = 'ex4.txt'
+    f_name = 'input.txt'
 
     # main grid, used for the first BFS to generate map of keys
     grid = dict()
@@ -165,44 +166,32 @@ if __name__ == '__main__':
             # k, keys[k], path[k], doors_from[k]))
         logging.debug('Key graph for {}: {}'.format(k, key_graph[k]))
 
-    # now run another BFS on the key_graph, starting from start position.
-    # BFS stuff
+
+    # Dijkstra stuff
     # q contains the following:
-    # 0: current position (key, key bitmap) tuple
-    # 1: current path (list of keys)
-    # 2: length of steps
+    # 0: length of steps
+    # 1: current position (key, key bitmap) tuple
+    # 2: current path (list of keys)
     keywalk_start = ('@', start_key_mask)
-    q = deque([(keywalk_start, [], 0)])
+    q = [(0, keywalk_start, ())]
     seen = set()
-    # path stores the path to each individual point in the grid as explored by BFS
-    path = defaultdict(list)
-    steps = defaultdict(int)
-    endstates = []
+    endstate = (0, ())
 
-    # run BFS until we have explored every edge in the graph
-    while(q):
+    while q:
+        (current_steps, current_pos, current_path) = heappop(q)
+        logging.debug('Dijkstra: popped {}, {}, {} from heapq.'.format(current_steps, current_pos, current_path))
+        if current_pos not in seen:
+            seen.add(current_pos)
+            current_path += (current_pos, )
 
-        # removes element from the right side of the queue
-        current_pos, current_path, current_steps = q.pop()
+            # check if we reached the end
+            if current_pos[1] == full_keys:
+                endstate = (current_steps, current_path)
+                break
 
-        # check if we reached the end
-        if current_pos[1] == full_keys:
-            logging.debug('Found end state at {}'.format(current_pos))
-            logging.debug('Current path: {}'.format(current_path))
-            logging.debug('Number of steps: {}'.format(current_steps))
-            endstates.append((current_pos, current_path, current_steps))
-            continue
-
-        # once at current_pos, find all valid neighbours
-        for next_step in reachable_keys(key_graph, current_pos):
-            if (next_step not in seen):
-
-                seen.add(next_step)
-                path[next_step] = current_path + [next_step]
-
-                # get number of steps
+            for next_step in reachable_keys(key_graph, current_pos):
+                # get number of steps to next_step step count
                 add_steps = [s for k, s, _ in key_graph[current_pos[0]] if k == next_step[0]][0]
-                steps[next_step] = current_steps + add_steps
 
                 # check if we found a key and modify the key_mask
                 if next_step[0] in key_positions:
@@ -211,12 +200,10 @@ if __name__ == '__main__':
                 else:
                     key_mask = next_step[1]
 
-                logging.debug('Adding key ({}, {}) to queue.'.format(next_step[0], key_mask))
-                q.appendleft(((next_step[0], key_mask), current_path + [next_step], current_steps + add_steps))
+                if next_step not in seen:
+                    heappush(q, (current_steps + add_steps, (next_step[0], key_mask), current_path))
 
     # BFS finished
-    logging.debug('Graph traversal BFS finished.')
+    logging.debug('Graph traversal Dijkstra finished.')
 
-    logging.info('Endstates found at: {}'.format(endstates))
-    shortest_pos, shortest_path, shortest_steps = min(endstates, key=lambda x: x[2])
-    logging.info('Shortest number of steps is {} with the path {}.'.format(shortest_steps, shortest_path))
+    logging.info('Endstate found at: {}'.format(endstate))
