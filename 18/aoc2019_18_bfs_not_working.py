@@ -24,15 +24,15 @@ def neighbors(grid, coord):
 def reachable_keys(key_graph, current_pos):
 
     key, key_mask = current_pos
-    logging.debug('Looking for neighbors for key {} with mask {:026b}'.format(key, key_mask))
+    # logging.debug('Looking for neighbors for key {} with mask {:026b}'.format(key, key_mask))
     # valid_neighbors = [(k, key_mask) for k, _, target_mask in key_graph[key] if test_bit(target_mask, key_mask)]
     valid_neighbors = []
     for k, _, target_mask in key_graph[key]:
-        logging.debug('Potential neighbor: {}, {:0b}'.format(k, target_mask))
+        # logging.debug('Potential neighbor: {}, {:0b}'.format(k, target_mask))
         if test_bit(target_mask, key_mask):
             valid_neighbors.append((k, key_mask))
-            logging.debug('({}, {:0b}) is a valid neighbor'.format(k, target_mask))
-    logging.debug('Valid neighbors for key {} are: {}'.format(key, valid_neighbors))
+            # logging.debug('({}, {:0b}) is a valid neighbor'.format(k, target_mask))
+    # logging.debug('Valid neighbors for key {} are: {}'.format(key, valid_neighbors))
     return valid_neighbors
 
 def map_keys_BFS(grid, start, doors, keys):
@@ -89,9 +89,9 @@ start_key_mask = 1 << 26
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
-    f_name = 'input.txt'
+    f_name = 'ex2.txt'
 
     # main grid, used for the first BFS to generate map of keys
     grid = dict()
@@ -137,19 +137,11 @@ if __name__ == '__main__':
 
     # run BFS from start first and map out paths to each key from start.
     # We will then iterate over all key positions, but ignore the start position (we don't need an edge from key to start, only from start to key)
-    # logging.debug('1 - Parsing grid from {}'.format('@'))
     path, keys_found, doors_from = map_keys_BFS(grid, start, doors, keys)
-    # logging.debug('1 - Path for key {}: {}'.format('@', path))
-    # logging.debug('1 - Keys found for key {}: {}'.format('@', keys_found))
-    # logging.debug('1 - Doors_from for key {}: {}'.format('@', doors_from))        
     for other_key in keys_found:
         key_graph['@'].add((other_key, path[key_positions[other_key]], doors_from[key_positions[other_key]]))
     for key in key_positions:
-        # logging.debug('2 - Parsing grid from {}'.format(key))
         path, keys_found, doors_from = map_keys_BFS(grid, key_positions[key], doors, keys)
-        # logging.debug('2 - Path for key {}: {}'.format(key, path))
-        # logging.debug('2 - Keys found for key {}: {}'.format(key, keys_found))
-        # logging.debug('2 - Doors_from for key {}: {}'.format(key, doors_from))
         # update graph_dict with edges between keys
         # edge is a set of (key, steps, bit encoded doors between) tuples
         # e.g. graph_dict['a'] = {('f', 44, 0b101)}
@@ -172,13 +164,40 @@ if __name__ == '__main__':
     # 1: current path (list of keys)
     # 2: length of steps
     keywalk_start = ('@', start_key_mask)
-    q = deque([(keywalk_start, [], 0)])
+    q = deque([(keywalk_start, (), 0)])
     seen = set()
-    # path stores the path to each individual point in the grid as explored by BFS
-    path = defaultdict(list)
-    steps = defaultdict(lambda: 1e09)
+    distance_to = defaultdict(lambda: 1e09)
     endstates = []
 
+
+    while(q):
+
+        # removes element from the right side of the queue
+        current_pos, current_path, current_steps = q.pop()
+
+        if current_pos in seen:
+            continue
+    
+        seen.add(current_pos)
+        current_path += (current_pos, )
+
+        # check if we found a key (we should since the nodes are all keys)
+        # update the keys we hold...
+        if current_pos[0] in key_positions:
+            new_keys = set_bit(current_pos[1], key_bits[current_pos[0]])
+            current_pos = (current_pos[0], new_keys)
+
+        # check if we reached the end
+        if current_pos[1] == full_keys:
+            endstates.append((current_steps, current_path))
+            break
+
+        for next_step in reachable_keys(key_graph, current_pos):
+            # get number of steps to next_step 
+            add_steps = [s for k, s, _ in key_graph[current_pos[0]] if k == next_step[0]][0]
+            q.appendleft(((next_step[0], current_pos[1]), current_path, current_steps + add_steps))
+
+    """        
     # run BFS until we have explored every edge in the graph
     while(q):
 
@@ -187,9 +206,9 @@ if __name__ == '__main__':
 
         # check if we reached the end
         if current_pos[1] == full_keys:
-            logging.debug('Found end state at {}'.format(current_pos))
-            logging.debug('Current path: {}'.format(current_path))
-            logging.debug('Number of steps: {}'.format(current_steps))
+            # logging.debug('Found end state at {}'.format(current_pos))
+            # logging.debug('Current path: {}'.format(current_path))
+            # logging.debug('Number of steps: {}'.format(current_steps))
             endstates.append((current_pos, current_path, current_steps))
             continue
 
@@ -207,18 +226,23 @@ if __name__ == '__main__':
                 # check if we found a key and modify the key_mask
                 if next_step[0] in key_positions:
                     key_mask = set_bit(next_step[1], key_bits[next_step[0]])
-                    logging.debug('Picked up key {} and updated bitmask to {}'.format(next_step[0], key_mask))
+                    # logging.debug('Picked up key {} and updated bitmask to {}'.format(next_step[0], key_mask))
                 else:
                     key_mask = next_step[1]
                 
+                ## -->> THIS is very likely incorrect - should be steps[(next_step[0], key_mask)]
                 if current_steps + add_steps < steps[next_step]:
                     steps[next_step] = current_steps + add_steps
-                    logging.debug('Adding key ({}, {}) to queue.'.format(next_step[0], key_mask))
+                    # logging.debug('Adding key ({}, {}) to queue.'.format(next_step[0], key_mask))
                     q.appendleft(((next_step[0], key_mask), current_path + [next_step], current_steps + add_steps))
+    """
 
     # BFS finished
     logging.debug('Graph traversal BFS finished.')
 
-    logging.info('Endstates found at: {}'.format(endstates))
-    shortest_pos, shortest_path, shortest_steps = min(endstates, key=lambda x: x[2])
-    logging.info('Shortest number of steps is {} with the path {}.'.format(shortest_steps, shortest_path))
+    # logging.info('Endstates found at: {}'.format(endstates))
+    # shortest_steps, shortest_path = min(endstates, key=lambda x: x[0])
+    # logging.info('Shortest number of steps is {} with the path {}.'.format(shortest_steps, shortest_path))
+
+    for e in endstates:
+        print('Endstate: {}'.format(e[0]))
