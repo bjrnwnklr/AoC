@@ -193,9 +193,10 @@ if __name__ == '__main__':
             break
 
         for next_step in reachable_keys(key_graph, current_pos):
-            # get number of steps to next_step 
-            add_steps = [s for k, s, _ in key_graph[current_pos[0]] if k == next_step[0]][0]
-            q.appendleft(((next_step[0], current_pos[1]), current_path, current_steps + add_steps))
+            if next_step not in seen:
+                # get number of steps to next_step 
+                add_steps = [s for k, s, _ in key_graph[current_pos[0]] if k == next_step[0]][0]
+                q.appendleft(((next_step[0], current_pos[1]), current_path, current_steps + add_steps))
 
     """        
     # run BFS until we have explored every edge in the graph

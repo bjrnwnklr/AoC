@@ -92,7 +92,7 @@ if __name__ == '__main__':
     # set logging level
     logging.basicConfig(level=logging.INFO)
 
-    f_name = 'input.txt'
+    f_name = 'ex2.txt'
 
     # main grid, used for the first BFS to generate map of keys
     grid = dict()
