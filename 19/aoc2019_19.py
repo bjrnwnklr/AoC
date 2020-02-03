@@ -10,6 +10,24 @@ def print_grid(grid):
         print(''.join(str(c) for c in grid[y]))
 
 
+def in_beam(inp, y, x):
+    # initialize the intcode machine
+    int_comp = Intcode(inp)
+    int_comp.in_queue.append(x)
+    int_comp.in_queue.append(y)
+
+    # logging.debug(f'in_queue: {int_comp.in_queue}')
+
+    while(not int_comp.done):
+        try:
+            int_comp._run_intcode()
+        except(InputInterrupt):
+            pass
+        except(OutputInterrupt):
+            output = int_comp.out_queue.popleft()
+
+    return output
+
 #### main program ####
 
 if __name__ == '__main__':
@@ -68,6 +86,42 @@ if __name__ == '__main__':
 
     ### part 2
 
+
+    # run intcode from line 100 on and check if we found a square match
+    square = 99
+
+    start_y = 100
+    end_y = 1100
+    start_x = 0
+
+    x = start_x
+    x_beam = 0
+    for y in range(start_y, end_y):
+        left_not_found = True
+
+        while left_not_found:
+            c = in_beam(inp, y, x)
+            # logging.info(f'Checking y: {y}, x: {x}. Result: {c}')
+            if c:
+                left_not_found = False
+                x_beam = x
+                # check top right corner
+                top_right = in_beam(inp, y - square, x + square)
+                if top_right:
+                    # we found a square that fits!
+                    logging.info(f'Found square!!! y: {y - square}, x: {x_beam}')
+                else:
+                    pass
+                    # logging.info(f'No square at y: {y - square}, x: {x_beam}')
+            else:
+                x += 1
+
+        x = x_beam - 3
+        
+
+    # part 2 solved!!!! y = 987, x = 783, result = 7830987
+
+    """
     grid_array = np.array(grid)
     grid_square_sum = np.zeros(grid_array.shape)
 
@@ -94,7 +148,7 @@ if __name__ == '__main__':
     # start from height of square
     bottom_left_y = np.arange(square - 1, y_max)
     bottom_left_x = np.around(np.tan(phi_left) * bottom_left_y)
-    bottom_right_x = np.around(np.tan(phi_left) * bottom_left_y)
+    bottom_right_x = np.around(np.tan(phi_right) * bottom_left_y)
 
 
 
@@ -116,7 +170,19 @@ if __name__ == '__main__':
 
     # Wrong answer: INFO:root:top left corner of square: (1198, 947), answer = 9471198 (too high!)
 
-    """
+    # generate segments for lines 1100 to 1400
+    test_y = np.arange(1000, 1300)
+    test_left_x = np.around(np.tan(phi_left) * test_y)
+    test_right_x = np.around(np.tan(phi_right) * test_y)
+
+    for i in range(len(test_y)):
+        print(f'y: {test_y[i]} l: {test_left_x[i]} r: {test_right_x[i]}')
+
+    print('----\n')
+    for i in range(100, len(test_y)):
+        print(f'y: {test_y[i]} t_r - b_l: {test_right_x[i - 99] - test_left_x[i]}')
+
+    
     for y in range(square - 1, 45):
         logging.debug(f'y: {y}, bottom_left_x: {bottom_left_x[y]}, top_right_x: {top_right_x[y]}')
 
