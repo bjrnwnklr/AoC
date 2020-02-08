@@ -56,143 +56,92 @@ def parse_grid(grid):
     # coordinates stored are 
     # - in: position of 2nd letter i.e. where you enter the portal
     # - out: position of dot i.e. where you exit the portal
+    # - side: 0 if outer side, 1 if inner side
     portals = defaultdict(list)
     logging.info('Finding portals.')
 
     # top and in_bottom
     rows = [0, in_bot - 1]
-    for r in rows:
+    for i, r in enumerate(rows):
         for c, x in enumerate(grid[r]):
             next_r, next_c = r + 1, c 
             if x in ascii_uppercase and grid[next_r][next_c] in ascii_uppercase:
                 name = f'{x}{grid[next_r][next_c]}'
-                portals[name].append(Portal(name, (next_r, c), (next_r + 1, c)))
+                # check if this is inner or outer side
+                side = 0 if i == 0 else 1
+                portals[name].append(Portal(name, (next_r, c), (next_r + 1, c), side))
                 logging.debug(f'Found portal {name} at {portals[name]}.')
 
     # in_top and bottom
     rows = [in_top, len(grid) - 2]
-    for r in rows:
+    for i, r in enumerate(rows):
         for c, x in enumerate(grid[r]):
             next_r, next_c = r + 1, c 
             if x in ascii_uppercase and grid[next_r][next_c] in ascii_uppercase:
                 name = f'{x}{grid[next_r][next_c]}'
-                portals[name].append(Portal(name, (r, c), (r - 1, c)))
+                # check if this is inner or outer side
+                side = 1 if i == 0 else 0
+                portals[name].append(Portal(name, (r, c), (r - 1, c), side))
                 logging.debug(f'Found portal {name} at {portals[name]}.')
 
     # left and in_right
     cols = [0, in_right - 1]
     for r, line in enumerate(grid):
-        for c in cols:
+        for i, c in enumerate(cols):
             x = line[c]
             next_r, next_c = r, c + 1 
             if x in ascii_uppercase and grid[next_r][next_c] in ascii_uppercase:
                 name = f'{x}{grid[next_r][next_c]}'
-                portals[name].append(Portal(name, (r, next_c), (r, next_c + 1)))
+                # check if this is inner or outer side
+                side = 0 if i == 0 else 1
+                portals[name].append(Portal(name, (r, next_c), (r, next_c + 1), side))
                 logging.debug(f'Found portal {name} at {portals[name]}.')
 
     # in_left and right
     cols = [in_left, len(grid[0]) - 2]
     for r, line in enumerate(grid):
-        for c in cols:
+        for i, c in enumerate(cols):
             x = line[c]
             next_r, next_c = r, c + 1 
             if x in ascii_uppercase and grid[next_r][next_c] in ascii_uppercase:
                 name = f'{x}{grid[next_r][next_c]}'
-                portals[name].append(Portal(name, (r, c), (r, c - 1)))
+                # check if this is inner or outer side
+                side = 1 if i == 0 else 0
+                portals[name].append(Portal(name, (r, c), (r, c - 1), side))
                 logging.debug(f'Found portal {name} at {portals[name]}.')
 
 
     # generate dictionary of entry / exit paths (i.e. connecting ins and outs of each pair of portals)
+    # if we go from inner portal to outer portal, go one level down
+    # if we go from outer portal to inner portal, go one level up
     portal_paths = dict()
     for portal in portals:
         if portal not in ['AA', 'ZZ']:
             p1, p2 = portals[portal]
-            portal_paths[p1.in_coord] = p2.out_coord
-            portal_paths[p2.in_coord] = p1.out_coord
+            # go one level down if p1.side is inner (==1)
+            level = 1 if p1.side == 1 else -1
+            portal_paths[p1.in_coord] = (p2.out_coord, level)
+            portal_paths[p2.in_coord] = (p1.out_coord, -level)
 
     return portals, portal_paths
 
 def get_neighbors(grid, portal_paths, current_pos):
-    r, c = current_pos
-    neighbors = [(r, c+1), (r, c-1), (r+1, c), (r-1, c)]
+    r, c , l = current_pos
+    neighbors = [(r, c+1, l), (r, c-1, l), (r+1, c, l), (r-1, c, l)]
     valid_neighbors = []
     for n in neighbors:
         x = grid[n[0]][n[1]]
         if x == '.':
             valid_neighbors.append(n)
         elif n in portal_paths:
-            valid_neighbors.append(portal_paths[n])
+            # check if we go one level up or down
+            new_r, new_c, add_l = portal_paths[n]
+            new_l = n[2] + add_l
+            # if we are on level 0, ignore any outer portals
+            if new_l >= 0:
+                valid_neighbors.append((new_r, new_c, new_l))
     
     return valid_neighbors
-
-
-def find_portals(grid):
-    portals = defaultdict(list)
-
-    # find upper and lower dimensions of grid
-    up_bound = 0
-    left_bound = 0
-    bot_bound = len(grid) - 1
-    right_bound = len(grid[0]) - 1
-
-    # find letters, then review all 4 neighbors
-    for r, line in enumerate(grid):
-        for c, x in enumerate(line):
-            if x in ascii_uppercase:
-                neighbors = [(r, c+1), (r, c-1), (r+1, c), (r-1, c)] 
-                out_coord = (-1, -1)
-                # check right neighbor for additional letter
-                n_r, n_c = neighbors[0]
-                b_r, b_c = neighbors[2]
-                if grid[n_r][n_c] in ascii_uppercase:
-                    first = x
-                    second = grid[n_r][n_c]
-                    # now the '.' is either to right or left
-                    n_l_r, n_l_c = r, c - 1
-                    n_r_r, n_r_c = r, n_c + 1
-                    # to the left
-                    if grid[n_l_r][n_l_c] == '.':
-                        # out coordinate is n_l_r, n_l_c
-                        out_coord = (n_l_r, n_l_c)
-                        in_coord = (r, c)
-                    # to the right
-                    elif grid[n_r_r][n_r_c] == '.':
-                        # out coordinate is n_r_r, n_r_c
-                        out_coord = (n_r_r, n_r_c)
-                        in_coord = (n_r, n_c)
-                # check bottom neighbor for additional letter
-                elif grid[b_r][b_c] in ascii_uppercase:
-                    first = x
-                    second = grid[b_r][b_c]
-                    # now the '.' is either above or below
-                    n_a_r, n_a_c = r - 1, c
-                    n_b_r, n_b_c = b_r + 1, c
-                    # above
-                    if grid[n_a_r][n_a_c] == '.':
-                        # out coordinate is n_a_r, n_a_c
-                        out_coord = (n_a_r, n_a_c)
-                        in_coord = (r, c)
-                    # below
-                    elif grid[n_b_r][n_b_c] == '.':
-                        # out coordinate is n_b_r, n_b_c
-                        out_coord = (n_b_r, n_b_c)
-                        in_coord = (b_r, b_c)
-
-                # if we found an out_coord, create a new portal
-                if out_coord != (-1, -1):
-                    name = f'{first}{second}'
-                    portals[name].append(Portal(name, in_coord, out_coord))
-                    logging.debug(f'Found portal {name} at {portals[name]}.')
-
-    # generate dictionary of entry / exit paths (i.e. connecting ins and outs of each pair of portals)
-    portal_paths = dict()
-    for portal in portals:
-        if portal not in ['AA', 'ZZ']:
-            p1, p2 = portals[portal]
-            portal_paths[p1.in_coord] = p2.out_coord
-            portal_paths[p2.in_coord] = p1.out_coord
-
-    return portals, portal_paths
 
 
 
@@ -202,7 +151,7 @@ if __name__ == '__main__':
     # set logging level
     logging.basicConfig(level=logging.INFO)
 
-    Portal = namedtuple('Portal', ['name', 'in_coord', 'out_coord'])
+    Portal = namedtuple('Portal', ['name', 'in_coord', 'out_coord', 'side'])
 
     f_name = 'input.txt'
 
