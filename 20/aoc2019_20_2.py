@@ -120,8 +120,8 @@ def parse_grid(grid):
             p1, p2 = portals[portal]
             # go one level down if p1.side is inner (==1)
             level = 1 if p1.side == 1 else -1
-            portal_paths[p1.in_coord] = (p2.out_coord, level)
-            portal_paths[p2.in_coord] = (p1.out_coord, -level)
+            portal_paths[p1.in_coord] = (*p2.out_coord, level)
+            portal_paths[p2.in_coord] = (*p1.out_coord, -level)
 
     return portals, portal_paths
 
@@ -133,9 +133,9 @@ def get_neighbors(grid, portal_paths, current_pos):
         x = grid[n[0]][n[1]]
         if x == '.':
             valid_neighbors.append(n)
-        elif n in portal_paths:
+        elif (n[0], n[1]) in portal_paths:
             # check if we go one level up or down
-            new_r, new_c, add_l = portal_paths[n]
+            new_r, new_c, add_l = portal_paths[(n[0], n[1])]
             new_l = n[2] + add_l
             # if we are on level 0, ignore any outer portals
             if new_l >= 0:
@@ -190,10 +190,11 @@ if __name__ == '__main__':
 
 
     # traverse grid using BFS, starting from AA and finding ZZ
-    aa = portals['AA'][0].out_coord
-    zz = portals['ZZ'][0].out_coord
+    aa = (*portals['AA'][0].out_coord, 0)
+    zz = (*portals['ZZ'][0].out_coord, 0)
 
     logging.info(f'Looking for shortest path from {aa} to {zz}.')
+
 
     # queue = position, number of steps
     q = deque([(aa, 0)])
@@ -220,4 +221,4 @@ if __name__ == '__main__':
     logging.info('BFS ended!')
 
     # Part 1 answer: 400
-    
+    # Part 2 answer: 4986

@@ -59,7 +59,7 @@ Template:
 | 17 | [Day 17](2019_17.md) | `Intcode` again. Didn't really like this one as it was not particularly interesting or challenging. Part1 - read in a maze and find intersections (some basic grid stuff). Part2 - visit every cell of the path and construct a "macro" based path - this required looking at the steps and then manually splitting them into repeating segments. Not really challenging or interesting.  |
 | 18 | [Day 18](2019_18.md) | This one sucked the life out of me!!! Part 1 alone took days to get right. Basically apply BFS and Dijkstra to find the shortest path including keys and doors. Some learning included getting BFS and Dijkstra to work correctly, but also using bitwise flags.  |
 | 19 | [Day 19](2019_19.md) | `Intcode`, but really simple. Scanning a grid for a tractor beam and calculating if a square fits in. Nothing really to learn here. Intcode implementation worked without any changes required. |
-| 20 | [Day 20](2019_20.md) |  |
+| 20 | [Day 20](2019_20.md) | Fun exercise, biggest challenge was reading in the grid with the portals. Otherwise, it was a BFS challenge; part 2 took a small modification to include different levels. |
 
 
 
