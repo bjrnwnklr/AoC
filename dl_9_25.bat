@@ -1,4 +1,7 @@
-curl https://adventofcode.com/2019/day/19 --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 19\2019_19_1.html
-curl https://adventofcode.com/2019/day/19/input --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 19\input.txt
-curl https://adventofcode.com/2019/day/20 --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 20\2019_20_1.html
-curl https://adventofcode.com/2019/day/20/input --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 20\input.txt
+rem curl https://adventofcode.com/2019/day/19 --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 19\2019_19_1.html
+curl https://adventofcode.com/2019/day/21/input --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 21\input.txt
+rem curl https://adventofcode.com/2019/day/20 --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 20\2019_20_1.html
+curl https://adventofcode.com/2019/day/22/input --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 22\input.txt
+curl https://adventofcode.com/2019/day/23/input --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 23\input.txt
+curl https://adventofcode.com/2019/day/24/input --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 24\input.txt
+curl https://adventofcode.com/2019/day/25/input --cookie "session=53616c7465645f5fef72a3265f626c2b8f72497f9e328be92389299523c8d085ceb7e291c9deebbffac116a25f69e85d" -o 25\input.txt

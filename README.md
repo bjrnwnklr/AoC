@@ -60,6 +60,7 @@ Template:
 | 18 | [Day 18](2019_18.md) | This one sucked the life out of me!!! Part 1 alone took days to get right. Basically apply BFS and Dijkstra to find the shortest path including keys and doors. Some learning included getting BFS and Dijkstra to work correctly, but also using bitwise flags.  |
 | 19 | [Day 19](2019_19.md) | `Intcode`, but really simple. Scanning a grid for a tractor beam and calculating if a square fits in. Nothing really to learn here. Intcode implementation worked without any changes required. |
 | 20 | [Day 20](2019_20.md) | Fun exercise, biggest challenge was reading in the grid with the portals. Otherwise, it was a BFS challenge; part 2 took a small modification to include different levels. |
+| 21 | [Day 21](2019_21.md) | Intcode, similar to day 17 requires use of ASCII program, so had to write code to code and decode ASCII programs. Fairly easy and fun to implement. Finding the solution (jumping droid using logical / boolean instructions) was no fun though, had to look up the solutions. |
 
 
 
