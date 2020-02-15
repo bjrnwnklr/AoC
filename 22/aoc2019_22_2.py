@@ -23,33 +23,34 @@ def deal_new(inc, pos, size):
 def deal_inc(inc, pos, size):
     return (inc * pos) % size
 
+def calc_pos(coeff, inc, pos, size):
+    a, b = coeff
+    return (a * inc + b * pos) % size
+
 def shuffle2(stack, lines):
     for l in lines:
         if 'stack' in l:
             # reverse stack
             logging.debug(f'Dealing into new stack.')
-            new_stack = [-1] * size
-            for i, c in enumerate(stack):
-                new_stack[deal_new(0, i, size)] = c
-            stack = new_stack[:]
-            logging.debug(f'Stack: {stack}.')
+            coeff = (-1, -1)
+            inc = 1
+            
         elif 'increment' in l:
             n = find_number(l)
             logging.debug(f'Increment: {n}.')
-            # Step through stack with increment
-            new_stack = [-1] * size
-            for i, c in enumerate(stack):
-                new_stack[deal_inc(n, i, size)] = c
-            stack = new_stack[:]
-            logging.debug(f'Stack: {stack}.')
+            coeff = (0, n)
+            inc = 0
         elif 'cut' in l:
             n = find_number(l)
             logging.debug(f'Cut: {n}.')
-            new_stack = [-1] * size
-            for i, c in enumerate(stack):
-                new_stack[cut(n, i, size)] = c
-            stack = new_stack[:]
-            logging.debug(f'Stack: {stack}.')
+            coeff = (-1, 1)
+            inc = n
+
+        new_stack = [-1] * size
+        for i, c in enumerate(stack):
+            new_stack[calc_pos(coeff, inc, i, size)] = c
+        stack = new_stack[:]
+        logging.debug(f'Stack: {stack}.')
 
     return stack
 
