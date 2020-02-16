@@ -37,6 +37,14 @@ if __name__ == '__main__':
     done = False
     i = 0
 
+    # Initialize the nat memory as a tuple
+    nat_mem = (-1, -1)
+    nat_y = [0]
+    # all computers are considered to be idle from the start
+    # we can then check if the sum of the values of the idle dict == n 
+    # - meaning all computers have been idle
+    idle_dict = {i: False for i in range(n)}
+
     # try this... run each intcode computer in turns?
     while not done:
         int_comp = comps[i]
@@ -60,18 +68,21 @@ if __name__ == '__main__':
                 int_comp._run_intcode()
             except(InputInterrupt):
                 int_comp.in_queue.append(-1)
+                idle_dict[i] = True
                 break
             except(OutputInterrupt):
                 # collect all input, process later
                 c = int_comp.out_queue.popleft()
                 output_msg.append(c)
+                idle_dict[i] = False
                 if output_counter == 2:
                     # we got a complete message, so add it to the msg_queue
                     address, x, y = output_msg
                     # check if we found the message addressed to 255:
                     if address == 255:
                         logging.info(f'Comp {i}: Message to 255 received: ({x}, {y})')
-                        done = True
+                        # store nat values - we don't need to check here if two received in a row!
+                        nat_mem = (x, y)
                     msg_queue[address].append((x, y))
                     logging.info(f'Comp {i}: sending msg to comp {address}: ({x}, {y})')
                     output_counter = 0
@@ -82,9 +93,26 @@ if __name__ == '__main__':
 
         # next computer
         i = (i + 1) % n
+        if i == 0:
+            idle_count = sum(idle_dict.values())
+            # check if all computers have been idle
+            if idle_count == n:
+                logging.info(f'Comp {i}: Network idle detected. Idle count = {idle_count}.')
+                # send nat_mem to computer 0
+                x, y = nat_mem
+                comps[0].in_queue.append(x)
+                comps[0].in_queue.append(y)
+
+                # check y values for messages sent to computer 0
+                if nat_y[-1] == y:
+                    logging.info(f'Comp {i}: Same y value detected: {y}. Stopping!')
+                    done = True
+                else:
+                    nat_y.append(y)
     
     
     logging.info('PART 1: End!')
 
     # part 1 answer: 24106
+    # part 2 answer: 17895
 
