@@ -61,7 +61,8 @@ Template:
 | 19 | [Day 19](2019_19.md) | `Intcode`, but really simple. Scanning a grid for a tractor beam and calculating if a square fits in. Nothing really to learn here. Intcode implementation worked without any changes required. |
 | 20 | [Day 20](2019_20.md) | Fun exercise, biggest challenge was reading in the grid with the portals. Otherwise, it was a BFS challenge; part 2 took a small modification to include different levels. |
 | 21 | [Day 21](2019_21.md) | Intcode, similar to day 17 requires use of ASCII program, so had to write code to code and decode ASCII programs. Fairly easy and fun to implement. Finding the solution (jumping droid using logical / boolean instructions) was no fun though, had to look up the solutions. |
-| 22 | [Day 22](2019_22.md) |  |
+| 22 | [Day 22](2019_22.md) | Shuffling cards. Part 1 was very simple, just needed to figure out how to read in the input (simple search for keywords and then regex to find numbers). Then use some Python list slicing. Part 2 unsolved for me, it requires running part 1 a large number of times with a huge set of cards, which doesn't fit into memory. The right way to resolve involves a lot of maths of reversing the card shuffle and doing it many times (key words: modular inverse). Haven't done this - copy solution from reddit?  |
+| 23 | [Day 23](2019_23.md) |  |
 
 
 
