@@ -9,6 +9,7 @@ def count_adjacent(r, c, l):
     if (r, c) != (2, 2):
         neighbors = [(r-1, c), (r, c+1), (r+1, c), (r, c-1)]
         for n in neighbors:
+            logging.debug(f'Checking neighbor {n} for ({r}, {c}) on level {l}.')
             # check if the neighbor is a middle tile - process differently
             if n == (2, 2):
                 next_layer = l + 1
@@ -24,33 +25,35 @@ def count_adjacent(r, c, l):
                 result += sum(levels[next_layer][x[0]][x[1]] for x in next_neighbors)
 
             # check if the neighbor is an outside tile - process differently
-            elif n[0] < 0 or n[0] >= n_rows or n[1] < 0 or n[1] >= n_cols:
+            elif n[0] < 0 or n[0] >= n_rows:
                 next_layer = l - 1
                 # determine which side we need to check in next layer
-                if r == 0 or r == n_rows - 1:
-                    next_r = 1 if r == 0 else 3
-                    result += levels[next_layer][next_r][c]
-                elif c == 0 or c == n_cols - 1:
-                    next_c = 1 if c == 0 else 3
-                    result += levels[next_layer][r][next_c]
-
+                next_r = 1 if r == 0 else 3
+                result += levels[next_layer][next_r][2]
+                logging.debug(f'Row neighbor on outer level for ({r}, {c}) on level {l}: {n}. Result: {result}')
+            elif n[1] < 0 or n[1] >= n_cols:
+                next_layer = l - 1
+                # determine which side we need to check in next layer
+                next_c = 1 if c == 0 else 3
+                result += levels[next_layer][2][next_c]
+                logging.debug(f'Column neighbor on outer level for ({r}, {c}) on level {l}: {n}. Result: {result}')
             else:
                 result += levels[l][n[0]][n[1]]
 
+    logging.debug(f'Adj count for ({r}, {c}) on layer {l}: {result}')
     return result
 
 
 def grid_count(grid, l):
+    logging.debug(f'Counting adjacents on level {l}.')
     return [
         [count_adjacent(r, c, l) for c in range(n_cols)]
         for r in range(n_rows)
     ]
 
 
-def process_state(l, levels):
-    logging.debug(f'processing level {l}.')
-    grid = levels[l]
-    bugs_count = grid_count(grid, l)
+def process_state(grid, l, bugs_count):
+    logging.debug(f'Processing level {l}.')
 
     # we can update the grid directly
     for r in range(n_rows):
@@ -63,13 +66,20 @@ def process_state(l, levels):
                 # if one or two bugs next to it, space gets infested
                 grid[r][c] = True if 1 <= bugs_count[r][c] <= 2 else False
 
+def print_grid(grid, l):
+    logging.debug(f'Printing grid level {l}')
+    for r in range(n_rows):
+        logging.debug(''.join('#' if grid[r][c] else '.' for c in range(n_cols)))
+
+    logging.debug('\n')
+
 #### main program ####
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
-    f_name = 'example1.txt'
+    f_name = 'input.txt'
 
     with open(f_name) as f:
         grid = [
@@ -87,18 +97,35 @@ if __name__ == '__main__':
     levels = defaultdict(lambda: [[False for _ in range(n_cols)] for _ in range(n_rows)])
     levels[0] = grid
 
-    print(levels) 
-    # print(levels[-1])
+    # number of epochs
+    minutes = 200
 
-
-
-    for epoch in range(1):
+    for epoch in range(minutes):
         
         min_level = min(levels.keys())
         max_level = max(levels.keys())
         logging.debug(f'EPOCH: {epoch}. Min: {min_level}, Max: {max_level}')
 
+        bugs_counts = dict()
+
+        # first count the adjacent bugs for each level...
         for l in range(min_level - 1, max_level + 2):
-            process_state(l, levels)
-            print(f'Level {l}: {levels[l]}')
+            bugs_counts[l] = grid_count(levels[l], l)
+
+        # ...then process and update all levels
+        for l in range(min_level - 1, max_level + 2):
+            process_state(levels[l], l, bugs_counts[l])
+            # if no bugs on this level, delete it. Save processing time...
+            if sum(sum(row) for row in levels[l]) == 0:
+                del levels[l]
+
+    # count the bugs across all levels
+    result = sum(sum(row) for grid in levels.values() for row in grid)
+    logging.info(f'Number of bugs after {minutes} minute(s): {result}')
+
+    logging.info(f'Number of layers: {len(levels)}')
+
+    for r in range(n_rows):
+        logging.info(''.join('#' if levels[0][r][c] else '.' for c in range(n_cols)))
         
+# part 2 result: 1963
