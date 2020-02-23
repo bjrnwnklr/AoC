@@ -28,18 +28,6 @@ def process_state(grid):
                 # if one or two bugs next to it, space gets infested
                 grid[r][c] = True if 1 <= bugs_count[r][c] <= 2 else False
 
-def fingerprint(grid):
-    bit_power = 0
-    bit_print = 1
-    for r in range(n_rows):
-        for c in range(n_cols):
-            if grid[r][c]:
-                bit_print = bit_print << bit_power
-                logging.debug(f'fingerprint: setting bit {bit_power} for ({r}, {c})')
-            bit_power += 1
-    logging.debug(f'fingerprint: {bit_print}')
-    return bit_print
-
 def bio_score(grid):
     score = 0
     bit = 0
