@@ -16,8 +16,7 @@ def decode_ascii(raw_output):
     return ''.join(chr(x) for x in raw_output)
 
 def get_input():
-    cmd = input('Please enter command:')
-    return code_ascii(cmd)
+    return input('Please enter command: ')
     
 #### main program ####
 
@@ -34,28 +33,69 @@ if __name__ == '__main__':
     # start up the intcode computer
     int_comp = Intcode(inp)
 
-    """
+    
     # define / update instructions here!
     instructions = [
-        'east'
+        'east',
+        'take antenna',
+        'west',
+        'north',
+        'take weather machine',
+        'north',
+        'take klein bottle',
+        'east',
+        'take spool of cat6',
+        'east',
+        'south',
+        'take mug',
+        'north',
+        'north',
+        'west',
+        'north',
+        'take cake',
+        'south',
+        'east',
+        'east',
+        'north',
+        'north',
+        'take tambourine',
+        'south',
+        'south',
+        'south',
+        'take shell',
+        'north',
+        'west',
+        'south',
+        'west',
+        'south',
+        'south',
     ]
 
-    # code up each set of instructions
-    coded_instructions = [code_ascii(instr) for instr in instructions]
-    # flatten the list into one list of ascii instructions
-    flat_instructions = [x for l in coded_instructions for x in l]
+    items = [
+        'antenna',
+        'weather machine',
+        'klein bottle',
+        'spool of cat6',
+        'mug',
+        'cake',
+        'tambourine',
+        'shell'
+    ]
 
-    # feed the flat list of instructions into the intcode computer
-    for x in flat_instructions:
-        int_comp.in_queue.append(x) 
-
-    """
 
     while(not int_comp.done):
         try:
             int_comp._run_intcode()
         except(InputInterrupt):
-            ascii_cmd = get_input()
+            # check if there are any instructions in the queue - if yes, pop the first and process
+            if instructions:
+                ascii_cmd = code_ascii(instructions.pop(0))
+            else:
+                cmd = get_input()
+                if cmd == 'exit':
+                    break
+                ascii_cmd = code_ascii(cmd)
+
             int_comp.in_queue.extend(ascii_cmd)
         except(OutputInterrupt):
             # collect all input, process later
