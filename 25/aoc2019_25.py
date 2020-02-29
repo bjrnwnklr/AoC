@@ -42,7 +42,43 @@ if __name__ == '__main__':
 
     
     # define / update instructions here!
-    instructions = [
+
+    # go to the giant electromagnet / chocolate fountain, pick up mug along the way
+    # pick up all items and go to the security sensor
+    instructions_all_photons = [
+        'east',
+        'take antenna',
+        'west',
+        'north',
+        'take weather machine',
+        'north',
+        'take klein bottle',
+        'east',
+        'take spool of cat6',
+        'east',
+        'south',
+        'take mug',
+        'north',
+        'north',
+        'west',
+        'north',
+        'take cake',
+        'south',
+        'east',
+        'east',
+        'north',
+        'north',
+        'take tambourine',
+        'south',
+        'south',
+        'south',
+        'take shell',
+        'east',
+        'south',
+    ]
+
+    # pick up all items and go to the security sensor
+    instructions_all_sensor = [
         'east',
         'take antenna',
         'west',
@@ -78,23 +114,7 @@ if __name__ == '__main__':
         'south',
     ]
 
-    # create set of all items we can pickup
-    items = {
-        'antenna',
-        'weather machine',
-        'klein bottle',
-        'spool of cat6',
-        'mug',
-        'cake',
-        'tambourine',
-        'shell'
-    }
-
-    # now create a generator with all combinations
-    
-    item_combs = get_item_combs(items)
-    logging.info(f'Number of item combinations: {len(list(item_combs))}')
-    logging.info(f'Item combs: {list(item_combs)}')
+    instructions = instructions_all_sensor[:]
 
     output_buffer = ''
 
@@ -116,16 +136,13 @@ if __name__ == '__main__':
         except(OutputInterrupt):
             # collect all input, process later
             c = int_comp.out_queue.popleft()
-            output_buffer += chr(c)
+            # output_buffer += chr(c)
+            print(chr(c), end='')
             # check if the last 9 digits are 'Command?\n', then flush buffer
-            if output_buffer[-9:] == 'Command?\n':
-                # check if we got ejected from the security barrier
-                if 'ejected' in output_buffer:
-                    print('You got ejected!')
-                    print(output_buffer)
-                # flush output_buffer
-                output_buffer = ''
-            # print(decode_ascii([c]), end='')
+            # if output_buffer[-9:] == 'Command?\n':
+            #     print(output_buffer)
+            #     # flush output_buffer
+            #     output_buffer = ''
 
     
     logging.info('PART 1: End!')

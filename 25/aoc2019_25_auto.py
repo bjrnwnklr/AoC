@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     
     # define / update instructions here!
-    instructions = [
+    base_instructions = [
         'east',
         'take antenna',
         'west',
@@ -89,14 +89,17 @@ if __name__ == '__main__':
     }
 
    
-    output_buffer = ''
+    
 
     # now create a generator with all combinations
     item_combs = get_item_combs(items)
 
-    for curr_items in item_combs:
+    for z, curr_items in enumerate(item_combs):
         # start up the intcode computer
+        print(f'{z} - Starting with items: {curr_items}')
         int_comp = Intcode(inp[:])
+        output_buffer = ''
+        instructions = base_instructions[:]
 
         while(not int_comp.done):
             try:
@@ -105,35 +108,35 @@ if __name__ == '__main__':
                 # check if there are any instructions in the queue - if yes, pop the first and process
                 if instructions:
                     ascii_cmd = code_ascii(instructions.pop(0))
-                    
+                    int_comp.in_queue.extend(ascii_cmd)
+
 
                 else:
                     ### Build code here where we try different iterations of the items
                     # determine all items we need to drop
                     items_to_drop = items - set(curr_items)
-                    ascii_cmd = []
+                    # print(f'dropping: {items_to_drop}')
                     for i in items_to_drop:
-                        ascii_cmd += code_ascii(f'drop {i}')
-                    ascii_cmd += code_ascii('east')
+                        instructions.append(f'drop {i}')
+                    instructions.append('east')
 
-                int_comp.in_queue.extend(ascii_cmd)
 
             except(OutputInterrupt):
                 # collect all input, process later
                 c = int_comp.out_queue.popleft()
                 output_buffer += chr(c)
-                # check if the last 9 digits are 'Command?\n', then flush buffer
                 if output_buffer[-9:] == 'Command?\n':
                     # check if we got ejected from the security barrier
                     if 'Analyzing' in output_buffer:
                         if 'ejected' in output_buffer:
-                            print(f'Ejected. Items: {curr_items}')
+                            weight = 'heavier' if 'heavier' in output_buffer else 'lighter'
+                            print(f'{z} - Ejected ({weight}). Items: {curr_items}')
+                            # print(output_buffer)
                         else:
                             print(f'List of current items: {curr_items}')
                             print(output_buffer)
                         break
                     # flush output_buffer
                     output_buffer = ''
-
     
     logging.info('PART 1: End!')

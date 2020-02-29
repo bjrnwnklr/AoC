@@ -64,6 +64,7 @@ Template:
 | 22 | [Day 22](2019_22.md) | Shuffling cards. Part 1 was very simple, just needed to figure out how to read in the input (simple search for keywords and then regex to find numbers). Then use some Python list slicing. Part 2 unsolved for me, it requires running part 1 a large number of times with a huge set of cards, which doesn't fit into memory. The right way to resolve involves a lot of maths of reversing the card shuffle and doing it many times (key words: modular inverse). Haven't done this - copy solution from reddit?  |
 | 23 | [Day 23](2019_23.md) | Simple Intcode challenge, using 50 intcode computer instances and passing messages back and forth between them. This required modification of my Intcode implementation to the `input` method. Modification was to check if the input queue is not empty and only then process the next input. If input queue is empty, raise an exception without moving the instruction pointer forward, then we can pass an input (e.g. -1) in and proceed. |
 | 24 | [Day 24](2019_24.md) | Game of life type puzzle. Part 1 was very easy as it only required applying 2 rules in a 5x5 grid. Part 2 introduced recursive levels in the middle tile, which required checking on outside and inside levels. Finding the right neighbors to check was a bit more tricky, but worked out. Runtime of my initial solution (200 iterations) can be improved though - took about 30 seconds. |
+| 25 | [Day 25](2019_25.md) | |
 
 
 

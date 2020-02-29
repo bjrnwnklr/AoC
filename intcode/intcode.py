@@ -146,12 +146,15 @@ class Intcode():
     # INPUT
     def _input_f(self, current_path, param_count):
         # get input - 
-        s = self.in_queue.popleft()
-        self.mem[current_path[0]] = s
-        
-        self.ip += param_count
+        if self.in_queue:
+            s = self.in_queue.popleft()
 
-        raise InputInterrupt
+            self.mem[current_path[0]] = s
+            
+            self.ip += param_count
+
+        else:
+            raise InputInterrupt
 
     ### OP CODE = 4
     # OUTPUT
