@@ -37,8 +37,6 @@ if __name__ == '__main__':
 
     logging.info('PART 1: Starting!')
 
-    # start up the intcode computer
-    int_comp = Intcode(inp)
 
     
     # define / update instructions here!
@@ -90,42 +88,52 @@ if __name__ == '__main__':
         'shell'
     }
 
-    # now create a generator with all combinations
-    
-    item_combs = get_item_combs(items)
-    logging.info(f'Number of item combinations: {len(list(item_combs))}')
-    logging.info(f'Item combs: {list(item_combs)}')
-
+   
     output_buffer = ''
 
-    while(not int_comp.done):
-        try:
-            int_comp._run_intcode()
-        except(InputInterrupt):
-            # check if there are any instructions in the queue - if yes, pop the first and process
-            if instructions:
-                ascii_cmd = code_ascii(instructions.pop(0))
-            else:
-                ### Build code here where we try different iterations of the items
-                cmd = get_input()
-                if cmd == 'exit':
-                    break
-                ascii_cmd = code_ascii(cmd)
+    # now create a generator with all combinations
+    item_combs = get_item_combs(items)
 
-            int_comp.in_queue.extend(ascii_cmd)
-        except(OutputInterrupt):
-            # collect all input, process later
-            c = int_comp.out_queue.popleft()
-            output_buffer += chr(c)
-            # check if the last 9 digits are 'Command?\n', then flush buffer
-            if output_buffer[-9:] == 'Command?\n':
-                # check if we got ejected from the security barrier
-                if 'ejected' in output_buffer:
-                    print('You got ejected!')
-                    print(output_buffer)
-                # flush output_buffer
-                output_buffer = ''
-            # print(decode_ascii([c]), end='')
+    for curr_items in item_combs:
+        # start up the intcode computer
+        int_comp = Intcode(inp[:])
+
+        while(not int_comp.done):
+            try:
+                int_comp._run_intcode()
+            except(InputInterrupt):
+                # check if there are any instructions in the queue - if yes, pop the first and process
+                if instructions:
+                    ascii_cmd = code_ascii(instructions.pop(0))
+                    
+
+                else:
+                    ### Build code here where we try different iterations of the items
+                    # determine all items we need to drop
+                    items_to_drop = items - set(curr_items)
+                    ascii_cmd = []
+                    for i in items_to_drop:
+                        ascii_cmd += code_ascii(f'drop {i}')
+                    ascii_cmd += code_ascii('east')
+
+                int_comp.in_queue.extend(ascii_cmd)
+
+            except(OutputInterrupt):
+                # collect all input, process later
+                c = int_comp.out_queue.popleft()
+                output_buffer += chr(c)
+                # check if the last 9 digits are 'Command?\n', then flush buffer
+                if output_buffer[-9:] == 'Command?\n':
+                    # check if we got ejected from the security barrier
+                    if 'Analyzing' in output_buffer:
+                        if 'ejected' in output_buffer:
+                            print(f'Ejected. Items: {curr_items}')
+                        else:
+                            print(f'List of current items: {curr_items}')
+                            print(output_buffer)
+                        break
+                    # flush output_buffer
+                    output_buffer = ''
 
     
     logging.info('PART 1: End!')
