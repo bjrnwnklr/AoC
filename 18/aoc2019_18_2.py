@@ -95,7 +95,7 @@ if __name__ == '__main__':
     # set logging level
     logging.basicConfig(level=logging.INFO)
 
-    f_name = 'ex2_1.txt'
+    f_name = 'input2.txt'
 
     # main grid, used for the first BFS to generate map of keys
     grid = dict()
@@ -226,3 +226,5 @@ if __name__ == '__main__':
     # logging.info('Endstate found at: {}'.format(endstates))
     # for e in endstates:
     #     print('Endstate: {}'.format(e[0]))
+
+    # part 2: 1692 steps
