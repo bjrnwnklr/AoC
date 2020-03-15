@@ -36,7 +36,7 @@ def reachable_keys(key_graph, current_pos):
             if test_bit(target_mask, key_mask):
                 valid_neighbors.append((k, i, key_mask))
                 logging.debug(f'({k}, {key}, {target_mask:0b}) is a valid neighbor')
-        logging.debug(f'Valid neighbors for key {key} are: {valid_neighbors}')
+    logging.debug(f'Valid neighbors are: {valid_neighbors}')
     return valid_neighbors
 
 def map_keys_BFS(grid, start, doors, keys):
@@ -93,9 +93,9 @@ start_key_mask = 1 << 26
 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
-    f_name = 'ex2_1.txt'
+    f_name = 'input2.txt'
 
     # main grid, used for the first BFS to generate map of keys
     grid = dict()
@@ -198,16 +198,17 @@ if __name__ == '__main__':
 
             # check if we reached the end
             if current_pos[1] == full_keys:
-                endstates.append((current_steps, current_path))
-                continue
+                # endstates.append((current_steps, current_path))
+                logging.info(f'Found endstate: Steps: {current_steps}')
+                break
 
             for next_step in reachable_keys(key_graph, current_pos):
                 # get number of steps to next_step step count
-                add_steps = [s for k, s, _ in key_graph[current_pos[0]] if k == next_step[0]][0]
+                add_steps = [s for k, s, _ in key_graph[current_pos[0][next_step[1]]] if k == next_step[0]][0]
 
                 # check if we found a key and modify the key_mask
                 if next_step[0] in key_positions:
-                    key_mask = set_bit(next_step[1], key_bits[next_step[0]])
+                    key_mask = set_bit(next_step[2], key_bits[next_step[0]])
                     logging.debug('Picked up key {} and updated bitmask to {}'.format(next_step[0], key_mask))
                 else:
                     key_mask = next_step[1]
@@ -223,5 +224,7 @@ if __name__ == '__main__':
     logging.debug('Graph traversal Dijkstra finished.')
 
     # logging.info('Endstate found at: {}'.format(endstates))
-    for e in endstates:
-        print('Endstate: {}'.format(e[0]))
+    # for e in endstates:
+    #     print('Endstate: {}'.format(e[0]))
+
+    # part 2: 1692 steps
