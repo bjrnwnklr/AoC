@@ -30,7 +30,7 @@ def read_bin(f_name):
     logging.info(f'Reading file {f_name} as binary.')
     with open(f_name, 'rb') as f:
         data = f.read()
-        int_data = list(np.frombuffer(data, dtype=np.uint16))
+        int_data = list(np.frombuffer(data, dtype=np.uint16).astype(int))
 
     if len(int_data) > 0:
         return int_data
@@ -73,10 +73,17 @@ class Synacor():
             7: (self._jt, 3),
             8: (self._jf, 3),
             9: (self._add, 4),
+            10: (self._mult, 4),
+            11: (self._mod, 4),
             12: (self._and, 4),
             13: (self._or, 4),
             14: (self._not, 3),
+            15: (self._rmem, 3),
+            16: (self._wmem, 3),
+            17: (self._call, 2),
+            18: (self._ret, 0),
             19: (self._out, 2),
+            20: (self._in, 2),
             21: (self._noop, 0)
         }
 
@@ -235,6 +242,28 @@ class Synacor():
 
         self.ip += param_count
 
+    # 10: mult
+    def _mult(self, params, param_count):
+        a = self.mem[params[0]]
+        b = self._get_val(self.mem[params[1]])
+        c = self._get_val(self.mem[params[2]])
+
+        logging.debug(f'IP: {self.ip}: mult. {a} = {b} * {c}')
+        self.mem[a] = (b * c) % self.MOD
+
+        self.ip += param_count
+
+    # 11: mod
+    def _mod(self, params, param_count):
+        a = self.mem[params[0]]
+        b = self._get_val(self.mem[params[1]])
+        c = self._get_val(self.mem[params[2]])
+
+        logging.debug(f'IP: {self.ip}: mod. {a} = {b} % {c}')
+        self.mem[a] = b % c
+
+        self.ip += param_count
+
     # 12: and
     def _and(self, params, param_count):
         a = self.mem[params[0]]
@@ -262,10 +291,54 @@ class Synacor():
         a = self.mem[params[0]]
         b = self._get_val(self.mem[params[1]])
 
-        logging.debug(f'IP: {self.ip}: not. {a} = ~{b}')
-        self.mem[a] = ~b
+        logging.debug(f'IP: {self.ip}: not. {a} = ~{b} ({0x7fff ^ b})')
+        self.mem[a] = 0x7fff ^ b
 
         self.ip += param_count
+
+    # 15: rmem
+    def _rmem(self, params, param_count):
+        a = self.mem[params[0]]
+        b = self._get_val(self.mem[params[1]])
+
+        logging.debug(f'IP: {self.ip}: rmem. {a} = {self.mem[b]} (b = {b})')
+        self.mem[a] = self.mem[b]
+
+        self.ip += param_count
+
+    # 16: wmem
+    def _wmem(self, params, param_count):
+        a = self.mem[params[0]]
+        b = self._get_val(self.mem[params[1]])
+
+        logging.debug(f'IP: {self.ip}: wmem. {self.mem[a]} = {b}')
+        self.mem[self.mem[a]] = b
+
+        self.ip += param_count
+
+    # 17: call
+    def _call(self, params, param_count):
+        a = self._get_val(self.mem[params[0]])
+        
+        # push next instruction onto stack
+        self.stack.append(self.ip + param_count)
+        logging.debug(f'IP: {self.ip}: call to {a}')
+        logging.debug(f'Stack: {self.stack}')
+
+        # jump to a
+        self.ip = a
+
+    # 18: ret
+    def _ret(self, params, param_count):
+        if self.stack:
+            a = self.stack.pop()
+            logging.debug(f'IP: {self.ip}: ret. jump to {a}')
+            logging.debug(f'Stack: {self.stack}')
+
+            self.ip = a
+        else:
+            self.done = True
+        
 
     # 19: out
     def _out(self, params, param_count):
@@ -273,6 +346,18 @@ class Synacor():
         # logging.debug(f'IP: {self.ip}: out {chr(a)}')
         print(chr(a), end='')
         
+        self.ip += param_count
+
+    # 20: in
+    def _in(self, params, param_count):
+        a = self._get_val(self.mem[params[0]])
+        b = input('Input required: ')
+        logging.debug(f'IP: {self.ip}: in. Writing to {a}. Read {b}')
+
+        # convert to ascii stream and save to a
+        # put read input into a queue. If queue is not empty, add next character to a
+        # if queue is empty, ask for input
+
         self.ip += param_count
 
     # 21: noop

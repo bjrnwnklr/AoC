@@ -48,3 +48,8 @@ import numpy as np
 int_data = np.frombuffer(data, dtype=np.uint16)
 ```
 
+## Bitwise invert (NOT)
+
+Bitwise NOT is done with `~x`, however this only works with signed integers and creates a negative integer.
+
+For unsigned integers, it is easiest to XOR with the max value for the number of bits. E.g. for 15 bit wise inversion, use `0x7fff ^ i`, as `0x7fff` = (2 ** 15) - 1, the max value for 15 bits.
