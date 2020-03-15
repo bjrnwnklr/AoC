@@ -173,14 +173,17 @@ class Synacor():
 
     # 3: pop
     def _pop(self, params, param_count):
-        b = self.stack.pop()
-        a = self.mem[params[0]]
+        if self.stack:
+            b = self.stack.pop()
+            a = self.mem[params[0]]
 
-        logging.debug(f'IP: {self.ip}: pop. {b} into {a}')
-        logging.debug(f'Stack: {self.stack}')
-        self.mem[a] = b
+            logging.debug(f'IP: {self.ip}: pop. {b} into {a}')
+            logging.debug(f'Stack: {self.stack}')
+            self.mem[a] = b
 
-        self.ip += param_count
+            self.ip += param_count
+        else:
+            raise ValueError(f'Stack is empty: IP {self.ip}')
 
     # 4: eq
     def _eq(self, params, param_count):
@@ -311,7 +314,7 @@ class Synacor():
         a = self.mem[params[0]]
         b = self._get_val(self.mem[params[1]])
 
-        logging.debug(f'IP: {self.ip}: wmem. {self.mem[a]} = {b}')
+        logging.debug(f'IP: {self.ip}: wmem. {self.mem[a]} = {b} (a = {a})')
         self.mem[self.mem[a]] = b
 
         self.ip += param_count
