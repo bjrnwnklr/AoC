@@ -3,6 +3,9 @@
 # System architecture
 
 - Byte order on my system is little endian, so we can convert each pair of bytes directly into integers using the `np.frombuffer` with `dtype=np.uint16' 
+- Registers are just normal memory values with addresses from 32768-32775, we don't treat them differently than any other memory values, at least from an assignment point of view (if they are on the left side of an equation). This way, we don't need to distinguish between memory we are writing to and registers we are writing to.
+- For reading values, we need to distinguish between literals and registers though. "100" means the literal value of 100, 32768 means the value in register 0.
+- We use `Synacor._get_val()` to determine whether something is a literal or a register. This can be used in any function expecting either a literal or a reference to a register. For `set`, where the number of a register is passed in, we can't use this and need to calculate the number of the register directly.
 
 
 # Learnings

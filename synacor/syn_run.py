@@ -14,16 +14,17 @@ import syn_arch
 # 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     logging.info('Starting up.')
 
-    # try reading the bin file
+    # read the bin file and convert it to a list of integers
     f_name = 'challenge.bin'
-
     int_data = syn_arch.read_bin(f_name)
 
+    # create a VM
     vm = syn_arch.Synacor(int_data)
 
+    # run the VM until we are done
     while(not vm.done):
         vm._run()
