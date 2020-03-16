@@ -54,6 +54,7 @@ class Synacor():
         # defaultdict of the program
         self.mem = defaultdict(int, enumerate(mem))
 
+        self.registers = [0 for i in range(8)]
 
         # stack
         self.stack = deque([])
@@ -87,6 +88,9 @@ class Synacor():
             21: (self._noop, 0)
         }
 
+    def _get_reg(self, i):
+        return i - self.MOD
+
     def _get_val(self, i):
         """
         Get a value from memory. If value provided is < 32768, return literal value,
@@ -101,7 +105,7 @@ class Synacor():
             or the value that is stored in the respective register.
         """
         if 0 <= i <= 32775:
-            r = i if 0 <= i <= 32767 else self.mem[i]
+            r = i if 0 <= i <= 32767 else self.registers[self._get_reg(i)]
             logging.debug(f'Checking val {i}, returning {r}.')
             return r
         else:
@@ -152,12 +156,13 @@ class Synacor():
             params {list} -- list of parameter references (i.e. an instruction pointer)
             param_count {int} -- number of parameters
         """
-        a, b = self.mem[params[0]] - self.MOD, self._get_val(self.mem[params[1]])
+        a = self._get_reg(self.mem[params[0]])
+        b = self._get_val(self.mem[params[1]])
         logging.debug(f'IP: {self.ip}: set reg {a} to {b}')
-        logging.debug(f'Registers: {list(self.mem[x] for x in range(self.MOD, self.MOD + 8))}')
+        logging.debug(f'Registers: {self.registers}')
 
-        self.mem[a + self.MOD] = b
-        logging.debug(f'Registers: {list(self.mem[x] for x in range(self.MOD, self.MOD + 8))}')
+        self.registers[a] = b
+        logging.debug(f'Registers: {self.registers}')
 
         self.ip += param_count
 
@@ -174,12 +179,12 @@ class Synacor():
     # 3: pop
     def _pop(self, params, param_count):
         if self.stack:
+            a = self._get_reg(self.mem[params[0]])
             b = self.stack.pop()
-            a = self.mem[params[0]]
 
             logging.debug(f'IP: {self.ip}: pop. {b} into {a}')
             logging.debug(f'Stack: {self.stack}')
-            self.mem[a] = b
+            self.registers[a] = b
 
             self.ip += param_count
         else:
@@ -187,23 +192,23 @@ class Synacor():
 
     # 4: eq
     def _eq(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
         c = self._get_val(self.mem[params[2]])
 
         logging.debug(f'IP: {self.ip}: eq. {a}; {b} == {c}')
-        self.mem[a] = 1 if b == c else 0
+        self.registers[a] = 1 if b == c else 0
 
         self.ip += param_count
 
     # 5: gt
     def _gt(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
         c = self._get_val(self.mem[params[2]])
 
         logging.debug(f'IP: {self.ip}: gt. {a}; {b} > {c}')
-        self.mem[a] = 1 if b > c else 0
+        self.registers[a] = 1 if b > c else 0
 
         self.ip += param_count
 
@@ -216,7 +221,8 @@ class Synacor():
 
     # 7: jt
     def _jt(self, params, param_count):
-        a, b = self._get_val(self.mem[params[0]]), self._get_val(self.mem[params[1]])
+        a = self._get_val(self.mem[params[0]])
+        b = self._get_val(self.mem[params[1]])
         logging.debug(f'IP: {self.ip}: jt {a} to {b}')
 
         if a != 0:
@@ -226,7 +232,8 @@ class Synacor():
 
     # 8: jf
     def _jf(self, params, param_count):
-        a, b = self._get_val(self.mem[params[0]]), self._get_val(self.mem[params[1]])
+        a = self._get_val(self.mem[params[0]])
+        b = self._get_val(self.mem[params[1]])
         logging.debug(f'IP: {self.ip}: jf {a} to {b}')
 
         if a == 0:
@@ -236,86 +243,86 @@ class Synacor():
 
     # 9: add
     def _add(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
         c = self._get_val(self.mem[params[2]])
 
         logging.debug(f'IP: {self.ip}: add. {a} = {b} + {c}')
-        self.mem[a] = (b + c) % self.MOD
+        self.registers[a] = (b + c) % self.MOD
 
         self.ip += param_count
 
     # 10: mult
     def _mult(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
         c = self._get_val(self.mem[params[2]])
 
         logging.debug(f'IP: {self.ip}: mult. {a} = {b} * {c}')
-        self.mem[a] = (b * c) % self.MOD
+        self.registers[a] = (b * c) % self.MOD
 
         self.ip += param_count
 
     # 11: mod
     def _mod(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
         c = self._get_val(self.mem[params[2]])
 
         logging.debug(f'IP: {self.ip}: mod. {a} = {b} % {c}')
-        self.mem[a] = b % c
+        self.registers[a] = b % c
 
         self.ip += param_count
 
     # 12: and
     def _and(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
         c = self._get_val(self.mem[params[2]])
 
         logging.debug(f'IP: {self.ip}: and. {a} = {b} & {c}')
-        self.mem[a] = b & c
+        self.registers[a] = b & c
 
         self.ip += param_count
 
     # 13: or
     def _or(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
         c = self._get_val(self.mem[params[2]])
 
         logging.debug(f'IP: {self.ip}: or. {a} = {b} | {c}')
-        self.mem[a] = b | c
+        self.registers[a] = b | c
 
         self.ip += param_count
 
     # 14: not
     def _not(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
 
         logging.debug(f'IP: {self.ip}: not. {a} = ~{b} ({0x7fff ^ b})')
-        self.mem[a] = 0x7fff ^ b
+        self.registers[a] = 0x7fff ^ b
 
         self.ip += param_count
 
     # 15: rmem
     def _rmem(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_reg(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
 
         logging.debug(f'IP: {self.ip}: rmem. {a} = {self.mem[b]} (b = {b})')
-        self.mem[a] = self.mem[b]
+        self.registers[a] = self.mem[b]
 
         self.ip += param_count
 
     # 16: wmem
     def _wmem(self, params, param_count):
-        a = self.mem[params[0]]
+        a = self._get_val(self.mem[params[0]])
         b = self._get_val(self.mem[params[1]])
 
         logging.debug(f'IP: {self.ip}: wmem. {self.mem[a]} = {b} (a = {a})')
-        self.mem[self.mem[a]] = b
+        self.mem[a] = b
 
         self.ip += param_count
 

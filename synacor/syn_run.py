@@ -14,7 +14,8 @@ import syn_arch
 # 
 if __name__ == '__main__':
     # set logging level
-    logging.basicConfig(level=logging.DEBUG, filename='sys_debug.log')
+    # logging.basicConfig(level=logging.DEBUG, filename='sys_debug.log')
+    logging.basicConfig(level=logging.CRITICAL)
 
     logging.info('Starting up.')
 
