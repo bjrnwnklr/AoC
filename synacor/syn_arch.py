@@ -5,6 +5,8 @@
 from collections import defaultdict, deque
 import logging
 import numpy as np
+import pickle
+from datetime import datetime
 
 def read_bin(f_name):
     logging.info(f'Reading file {f_name} as binary.')
@@ -77,7 +79,8 @@ class Synacor():
             'save',
             'exit',
             'debug',
-            'info'
+            'info',
+            'nolog'
         ]
 
     def _get_reg(self, i):
@@ -151,6 +154,24 @@ class Synacor():
                 if inp in self.godmode_commands:
                     if inp == 'exit':
                         godmode_flag = False
+                    elif inp == 'info':
+                        print('---INFO---')
+                        print(f'IP:\t\t{self.ip}')
+                        print(f'Registers:\t{self.registers}')
+                    elif inp == 'debug':
+                        print('Turning on DEBUG logging.')
+                        logging.getLogger().setLevel(logging.DEBUG)
+                    elif inp == 'nolog':
+                        print('Turning off DEBUG logging.')
+                        logging.getLogger().setLevel(logging.CRITICAL)
+                    elif inp == 'save':
+                        # save the class instance to a pickle file
+                        # get current time
+                        curr_time = datetime.strftime(datetime.now(), '%Y%m%d_%H%M')
+                        f_name = f'{curr_time}_synacor.pickle'
+                        print(f'Saving current state to "{f_name}".')
+                        with open(f_name, 'wb') as f:
+                            pickle.dump(self, f)
                 else:
                     print(f'Unknown godmode command "{inp}". Try again or type "help" for a list of commands.')                
             elif inp == 'g':
