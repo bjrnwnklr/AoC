@@ -136,7 +136,7 @@ class Synacor():
     # input processing, including godmode switch
     def _input_parser(self):
 
-        # prompt function
+        # prompt function - show a (g) if we are in godmode
         def _prompt():      
             return f"{'(g) ' if godmode_flag else ''}Input > "
 
@@ -175,14 +175,15 @@ class Synacor():
                 else:
                     print(f'Unknown godmode command "{inp}". Try again or type "help" for a list of commands.')                
             elif inp == 'g':
+                # activate godmode when the 'g' command is given at the standard prompt
                 print('Activating godmode. Type "exit" to leave godmode.')
                 godmode_flag = True
             else:
+                # godmode not activated, so assume input was a standard input. 
+                # Don't ask for additional input, just pass through what we got.
                 break            
                
         return inp
-
-
 
 
     # opcode functions
