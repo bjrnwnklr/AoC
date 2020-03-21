@@ -6,26 +6,6 @@ from collections import defaultdict, deque
 import logging
 import numpy as np
 
-# utility functions
-
-def is_valid(i):
-    return 0 <= i <= 32775
-
-def is_literal(i):
-    return 0 <= i <= 32767
-
-def is_register(i):
-    return 32768 <= i <= 32775
-
-def reg_num(i):
-    if is_register(i):
-        return i - 32768
-    else:
-        return -1
-
-
-
-
 def read_bin(f_name):
     logging.info(f'Reading file {f_name} as binary.')
     with open(f_name, 'rb') as f:
@@ -54,6 +34,7 @@ class Synacor():
         # defaultdict of the program
         self.mem = defaultdict(int, enumerate(mem))
 
+        # registers (0 - 7)
         self.registers = [0 for i in range(8)]
 
         # stack
@@ -90,6 +71,14 @@ class Synacor():
             20: (self._in, 2),
             21: (self._noop, 0)
         }
+
+        # godmode commands
+        self.godmode_commands = [
+            'save',
+            'exit',
+            'debug',
+            'info'
+        ]
 
     def _get_reg(self, i):
         return i - self.MOD
@@ -139,6 +128,40 @@ class Synacor():
 
         else:
             raise ValueError(f'Wrong opcode, or not yet implemented: {opcode}')
+
+
+    # input processing, including godmode switch
+    def _input_parser(self):
+
+        # prompt function
+        def _prompt():      
+            return f"{'(g) ' if godmode_flag else ''}Input > "
+
+        godmode_flag = False
+
+        # get input until we have a non-godmode input
+        while True:
+
+            inp = input(_prompt())
+            
+            # process godmode commands if we are in godmode, 
+            # switch to godmode if keyword 'g' given as input,
+            # otherwise return input
+            if godmode_flag:
+                if inp in self.godmode_commands:
+                    if inp == 'exit':
+                        godmode_flag = False
+                else:
+                    print(f'Unknown godmode command "{inp}". Try again or type "help" for a list of commands.')                
+            elif inp == 'g':
+                print('Activating godmode. Type "exit" to leave godmode.')
+                godmode_flag = True
+            else:
+                break            
+               
+        return inp
+
+
 
 
     # opcode functions
@@ -372,7 +395,7 @@ class Synacor():
 
         # check if input buffer is empty, request input then
         if not self.inp_buffer:
-            b = input('Input > ')
+            b = self._input_parser()
             logging.info(f'IP: {self.ip}: in. inp_buffer empty, read {b}')
 
             self.inp_buffer.extend(b + '\n')
