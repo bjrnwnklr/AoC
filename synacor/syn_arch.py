@@ -59,6 +59,9 @@ class Synacor():
         # stack
         self.stack = deque([])
 
+        # input buffer
+        self.inp_buffer = deque([])
+
         # list of opcodes
         # format: 
         # - function to execute
@@ -360,13 +363,25 @@ class Synacor():
 
     # 20: in
     def _in(self, params, param_count):
-        a = self._get_val(self.mem[params[0]])
-        b = input('Input required: ')
-        logging.debug(f'IP: {self.ip}: in. Writing to {a}. Read {b}')
-
+        a = self._get_reg(self.mem[params[0]])
+        logging.info(f'IP: {self.ip}: in. Looking for input to {a}')
+        
         # convert to ascii stream and save to a
         # put read input into a queue. If queue is not empty, add next character to a
         # if queue is empty, ask for input
+
+        # check if input buffer is empty, request input then
+        if not self.inp_buffer:
+            b = input('Input > ')
+            logging.info(f'IP: {self.ip}: in. inp_buffer empty, read {b}')
+
+            self.inp_buffer.extend(b + '\n')
+
+        # if there is something in the input buffer, pop the first element and write it to <a>
+        if self.inp_buffer:
+            c = self.inp_buffer.popleft()
+            logging.info(f'IP: {self.ip}: in. Taking {c} from inp_buffer and writing to {a}.')
+            self.registers[a] = ord(c)
 
         self.ip += param_count
 
