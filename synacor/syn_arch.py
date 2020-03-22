@@ -5,7 +5,7 @@
 from collections import defaultdict, deque
 import logging
 import numpy as np
-import pickle
+# import pickle
 from datetime import datetime
 import json
 
@@ -24,31 +24,30 @@ def read_bin(f_name):
 
 
 def load_json(vm_state):
+    print('Loading VM state. Current state is:')
     # we now have a json dictionary and need to unpack it
     ip = vm_state['ip']
-    print(f'ip: {ip}, type: {type(ip)}')
+    print(f'ip: {ip}')
 
     done = vm_state['done']
-    print(f'done: {done}, type: {type(done)}')
+    print(f'done: {done}')
 
     registers = vm_state['registers']
-    print(f'registers: {registers}, type: {type(registers)}')
+    print(f'registers: {registers}')
 
     stack = vm_state['stack']
-    print(f'stack: {stack}, type: {type(stack)}')
+    print(f'stack: {stack}')
     
     inp_buffer = vm_state['inp_buffer']
-    print(f'inp_buffer: {inp_buffer}, type: {type(inp_buffer)}')
+    print(f'inp_buffer: {inp_buffer}')
 
     mem_tmp = vm_state['mem']
     mem = {int(k): v for k, v in mem_tmp.items()}
-    fk = list(mem.keys())[0]
-    print(f'mem: length: {len(mem)}, first k/v: {fk}/{mem[fk]}, type: {type(fk)}/{type(mem[fk])}')
+    print(f'mem: length: {len(mem)}')
 
     mem_copy_tmp = vm_state['mem_copy']
     mem_copy = {int(k): v for k, v in mem_copy_tmp.items()}
-    fk = list(mem_copy.keys())[0]
-    print(f'mem: length: {len(mem_copy)}, first k/v: {fk}/{mem_copy[fk]}, type: {type(fk)}/{type(mem_copy[fk])}')
+    print(f'mem_copy: length: {len(mem_copy)}')
 
     return ip, done, mem, mem_copy, registers, stack, inp_buffer   
 

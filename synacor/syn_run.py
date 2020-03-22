@@ -5,7 +5,7 @@ import logging
 import numpy as np
 import sys
 import argparse
-import pickle
+# import pickle
 import json
 
 import syn_arch
