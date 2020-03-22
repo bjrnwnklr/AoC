@@ -73,14 +73,14 @@ Moving through twisty passages:
 | Position | Location |
 |--|--|
 | 2317 | Foothills |
-| 2322 | ??? |
+| 2322 | Foothills (pulled north) |
 | 2327 | Dark cave / doorway |
 | 2332 | Dark cave 2 |
 | 2337 | Dark cave 3 (to bridge) |
 | 2342 | Rope bridge |
 | 2347 | Falling through the air! |
 | 2352 | Moss cavern |
-| | |
+| 2357 | Moss cavern **(empty lantern)** |
 | 2362 | Moss cavern (to passage) |
 | 2367 | Passage |
 | 2372 | Passage (pitch black) |
@@ -91,6 +91,7 @@ Moving through twisty passages:
 | 2397 | Twisty passages (west) |
 | 2402 | Twisty passages (west, south) likely death in east |
 | 2407 | Twisty passages |
+| 2412 | Twisty passages (exit to west) |
 | 2417 | Twisty passages (5th code, can) |
 | 2648 | Fumbling around in the darkness (DEATH) |
 | 2653 | Fumbling darkness, growling (DEATH) |

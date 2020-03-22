@@ -114,7 +114,9 @@ class Synacor():
             'debug',
             'info',
             'nolog',
-            'mem'
+            'mem',
+            'peek',
+            'poke'
         ]
 
     
@@ -207,6 +209,17 @@ class Synacor():
                         print('Memory compare.')
                         # compare memory
                         self._mem_compare()
+                elif inp[:4] == 'peek':
+                    # get numeric part of input command
+                    _, address = inp.split(' ')
+                    address = int(address)
+                    # look at memory at address
+                    self._peek(address)
+                elif inp[:4] == 'poke':
+                    _, address, value = inp.split(' ')
+                    address = int(address)
+                    value = int(value)
+                    self._poke(address, value)
                 else:
                     print(f'Unknown godmode command "{inp}". Try again or type "help" for a list of commands.')                
             elif inp == 'g':
@@ -223,6 +236,10 @@ class Synacor():
 
         return inp
 
+
+    ###########
+    #
+    # GODMODE utility functions
 
     # save state of VM into a JSON file
     def _save_json(self):
@@ -264,6 +281,29 @@ class Synacor():
         for n in diff_list:
             print(f'[{n}]\t{self.mem_copy[n]}\t{self.mem[n]}')
 
+    # peek at a memory address
+    def _peek(self, address):
+        peek_window = 10
+        if 0 <= address <= self.MOD:
+            print('Addr\tValue')
+            for i in range(max(0, address - peek_window), address):
+                print(f'[{i}]\t{self.mem[i]}')
+            print(f'[{address}]\t{self.mem[address]}\t<---')
+            for i in range(address + 1, min(self.MOD, address + peek_window + 1)):
+                print(f'[{i}]\t{self.mem[i]}')
+        else:
+            print(f'Incorrect address: {address}')
+            
+    # write value to a memory address
+    def _poke(self, address, value):
+        if 0 <= address <= self.MOD:
+            print(f'[{address}]\t{self.mem[address]}\t{value}')
+            self.mem[address] = value
+        else:
+            print(f'Incorrect address: {address}')
+
+    ################
+    #
     # opcode functions
 
     # 0: halt
