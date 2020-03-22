@@ -35,6 +35,7 @@ class Synacor():
 
         # defaultdict of the program
         self.mem = defaultdict(int, enumerate(mem))
+        self.mem_copy = defaultdict(int)
 
         # registers (0 - 7)
         self.registers = [0 for i in range(8)]
@@ -80,7 +81,8 @@ class Synacor():
             'exit',
             'debug',
             'info',
-            'nolog'
+            'nolog',
+            'mem'
         ]
 
     def _get_reg(self, i):
@@ -172,6 +174,10 @@ class Synacor():
                         print(f'Saving current state to "{f_name}".')
                         with open(f_name, 'wb') as f:
                             pickle.dump(self, f)
+                    elif inp == 'mem':
+                        print('Memory compare.')
+                        # compare memory
+                        self._mem_compare()
                 else:
                     print(f'Unknown godmode command "{inp}". Try again or type "help" for a list of commands.')                
             elif inp == 'g':
@@ -183,8 +189,31 @@ class Synacor():
                 # Don't ask for additional input, just pass through what we got.
                 break            
                
+        # create a copy of the current memory
+        self.mem_copy = self.mem.copy()
+
         return inp
 
+
+    # compare current memory with memory dump and show differences
+    def _mem_compare(self):
+        # convert current memory and memory copy into numpy arrays for quick comparison
+        mem_array = np.array(list(self.mem.values()))
+        mem_c_array = np.array(list(self.mem_copy.values()))
+
+        # create an indexing array with differences
+        diffs = mem_array != mem_c_array
+        diff_index = np.flatnonzero(diffs)
+
+        print(f'Found {len(diff_index)} differences.')
+
+        # get list of indices with differences
+        diff_list = list(diff_index)
+
+        # print out differences
+        print('Index\tPrevMem\tCurrMem')
+        for n in diff_list:
+            print(f'[{n}]\t{self.mem[n]}\t{self.mem_copy[n]}')
 
     # opcode functions
 
