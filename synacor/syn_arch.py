@@ -262,7 +262,7 @@ class Synacor():
         # print out differences
         print('Index\tPrevMem\tCurrMem')
         for n in diff_list:
-            print(f'[{n}]\t{self.mem[n]}\t{self.mem_copy[n]}')
+            print(f'[{n}]\t{self.mem_copy[n]}\t{self.mem[n]}')
 
     # opcode functions
 
