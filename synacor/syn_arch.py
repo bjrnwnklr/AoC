@@ -7,17 +7,50 @@ import logging
 import numpy as np
 import pickle
 from datetime import datetime
+import json
 
 def read_bin(f_name):
     logging.info(f'Reading file {f_name} as binary.')
     with open(f_name, 'rb') as f:
         data = f.read()
         int_data = list(np.frombuffer(data, dtype=np.uint16).astype(int))
+        # convert to int
+        int_data = [int(x) for x in int_data]
 
     if len(int_data) > 0:
         return int_data
     else:
         raise ValueError(f'While reading from {f_name}, no data was found.')
+
+
+def load_json(vm_state):
+    # we now have a json dictionary and need to unpack it
+    ip = vm_state['ip']
+    print(f'ip: {ip}, type: {type(ip)}')
+
+    done = vm_state['done']
+    print(f'done: {done}, type: {type(done)}')
+
+    registers = vm_state['registers']
+    print(f'registers: {registers}, type: {type(registers)}')
+
+    stack = vm_state['stack']
+    print(f'stack: {stack}, type: {type(stack)}')
+    
+    inp_buffer = vm_state['inp_buffer']
+    print(f'inp_buffer: {inp_buffer}, type: {type(inp_buffer)}')
+
+    mem_tmp = vm_state['mem']
+    mem = {int(k): v for k, v in mem_tmp.items()}
+    fk = list(mem.keys())[0]
+    print(f'mem: length: {len(mem)}, first k/v: {fk}/{mem[fk]}, type: {type(fk)}/{type(mem[fk])}')
+
+    mem_copy_tmp = vm_state['mem_copy']
+    mem_copy = {int(k): v for k, v in mem_copy_tmp.items()}
+    fk = list(mem_copy.keys())[0]
+    print(f'mem: length: {len(mem_copy)}, first k/v: {fk}/{mem_copy[fk]}, type: {type(fk)}/{type(mem_copy[fk])}')
+
+    return ip, done, mem, mem_copy, registers, stack, inp_buffer   
 
 class Synacor():
 
@@ -25,26 +58,26 @@ class Synacor():
     # modulo - 16 bit
     MOD = 32768
 
-    def __init__(self, mem=[], ip=0):
+    def __init__(self, mem=dict(), mem_copy=dict(), ip=0, done=False, registers=[0, 0, 0, 0, 0, 0, 0, 0], stack=[], inp_buffer=[]):
 
         # instruction pointer
-        self.ip = 0
+        self.ip = ip
 
         # halt parameter
-        self.done = False
+        self.done = done
 
         # defaultdict of the program
-        self.mem = defaultdict(int, enumerate(mem))
-        self.mem_copy = defaultdict(int)
+        self.mem = defaultdict(int, mem)
+        self.mem_copy = defaultdict(int, mem_copy)
 
         # registers (0 - 7)
-        self.registers = [0 for i in range(8)]
+        self.registers = registers
 
         # stack
-        self.stack = deque([])
+        self.stack = deque(stack)
 
         # input buffer
-        self.inp_buffer = deque([])
+        self.inp_buffer = deque(inp_buffer)
 
         # list of opcodes
         # format: 
@@ -84,6 +117,8 @@ class Synacor():
             'nolog',
             'mem'
         ]
+
+    
 
     def _get_reg(self, i):
         return i - self.MOD
@@ -168,12 +203,7 @@ class Synacor():
                         logging.getLogger().setLevel(logging.CRITICAL)
                     elif inp == 'save':
                         # save the class instance to a pickle file
-                        # get current time
-                        curr_time = datetime.strftime(datetime.now(), '%Y%m%d_%H%M')
-                        f_name = f'{curr_time}_synacor.pickle'
-                        print(f'Saving current state to "{f_name}".')
-                        with open(f_name, 'wb') as f:
-                            pickle.dump(self, f)
+                        self._save_json()
                     elif inp == 'mem':
                         print('Memory compare.')
                         # compare memory
@@ -194,6 +224,26 @@ class Synacor():
 
         return inp
 
+
+    # save state of VM into a JSON file
+    def _save_json(self):
+        # create new object: dict of all the various state objects we want to save
+        state = {
+            'ip': int(self.ip),
+            'done': self.done,
+            'mem': self.mem,
+            'mem_copy': self.mem_copy,
+            'registers': self.registers,
+            'stack': list(self.stack),
+            'inp_buffer': list(self.inp_buffer)
+        }
+
+        # get current time
+        curr_time = datetime.strftime(datetime.now(), '%Y%m%d_%H%M')
+        f_name = f'{curr_time}_synacor.json'
+        print(f'Saving current state to "{f_name}".')
+        with open(f_name, 'w') as f:
+            json.dump(state, f)
 
     # compare current memory with memory dump and show differences
     def _mem_compare(self):
