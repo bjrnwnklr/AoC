@@ -45,6 +45,10 @@ Index   PrevMem CurrMem
 [6127]  0       20155
 [6128]  0       10617
 
+## Items
+
+can: You'll have to find something to put the oil into first.
+
 ## Positions
 
 Changing position (moving 'doorway/north' from 'Foothills'):
@@ -83,9 +87,10 @@ Moving through twisty passages:
 | 2377 | Twisty passages (ladder back up) |
 | 2387 | Twisty passages (south) |
 | 2382 | Twisty passages (south) |
-|
+| 2392 | Twisty passages - grue to the east |
 | 2397 | Twisty passages (west) |
 | 2402 | Twisty passages (west, south) likely death in east |
+| 2407 | Twisty passages |
 | 2417 | Twisty passages (5th code, can) |
 | 2648 | Fumbling around in the darkness (DEATH) |
 | 2653 | Fumbling darkness, growling (DEATH) |
