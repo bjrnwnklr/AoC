@@ -175,8 +175,10 @@ class Synacor():
     def _input_parser(self):
 
         # prompt function - show a (g) if we are in godmode
-        def _prompt():      
-            return f"{'(g) ' if godmode_flag else ''}Input > "
+        def _prompt():    
+            # get current location
+            loc = self.mem[2732]  
+            return f"{'(g) ' if godmode_flag else ''}[{loc}] Input > "
 
         godmode_flag = False
 

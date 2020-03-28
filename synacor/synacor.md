@@ -32,9 +32,9 @@ Index   PrevMem CurrMem
 
 Use tablet:
 Index   PrevMem CurrMem
-[6126]  28183   0
-[6127]  30641   0
-[6128]  20917   0
+[6126]  0       28183
+[6127]  0       30641
+[6128]  0       20917
 
 Find can: 
 Index   PrevMem CurrMem
