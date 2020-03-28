@@ -18,6 +18,62 @@ No 5:
 - North ()
 
 
+# Central hall of ruins (2457)
+
+Monument with circular slots and unusual symbols.
+
+_ + _ * _^2 + _^3 - _ = 399
+
+red = 50
+blue = 57
+shiny = 53
+concave = 55
+corroded = 51
+
+(0, 4, 4, 7, 8) 399
+(1, 4, 4, 7, 9) 399
+
+Putting coins in in wrong order (released to floor):
+Index   PrevMem CurrMem
+[2462]  4       0
+[2690]  32767   2457
+[2694]  0       2457
+[2698]  32767   2457
+[2702]  32767   2457
+[2706]  32767   2457
+[10376] 50      95
+[10380] 51      95
+[10384] 53      95
+[10390] 55      95
+[27106] 0       3   // [27106] 3       9
+
+Putting red coin in:
+Index   PrevMem CurrMem
+[2462]  0       1
+[2690]  0       32767
+[10376] 95      50
+
+Putting corroded coin in:
+Index   PrevMem CurrMem
+[2462]  1       2
+[2694]  0       32767
+[10380] 95      51
+
+Putting shiny coin in:
+Index   PrevMem CurrMem
+[2462]  2       3
+[2698]  0       32767
+[10384] 95      53
+
+Putting concave coin in:
+Index   PrevMem CurrMem
+[2462]  3       4
+[2702]  0       32767
+[10390] 95      55
+
+Blue coin: 57
+
+
 # Memory hacks
 
 ## Inventory
@@ -29,6 +85,10 @@ Index   PrevMem CurrMem
 Take can:
 Index   PrevMem CurrMem
 [2686]  2417    0
+
+Take empty lantern:
+Index   PrevMem CurrMem
+[2674]  2357    0
 
 Use tablet:
 Index   PrevMem CurrMem
@@ -45,9 +105,59 @@ Index   PrevMem CurrMem
 [6127]  0       20155
 [6128]  0       10617
 
+Use can with lantern:
+Index   PrevMem CurrMem
+[2674]  0       32767   (address of empty lantern set to 23767)
+[2678]  32767   0       (assume this is dark "yes" or "no"?)
+[2686]  0       32767   (address of can set to 23767)
+
+- this also makes the can disappear
+- lantern changes from "empty lantern" to "lantern"
+
+Dropping / taking lantern
+Index   PrevMem CurrMem
+[2678]  0       2367
+
+Use lantern (light):
+Index   PrevMem CurrMem
+[2678]  0       32767
+[2682]  32767   0
+
+Take red coin:
+Index   PrevMem CurrMem
+[2690]  2452    0
+
+Take concave coin:
+Index   PrevMem CurrMem
+[2702]  2468    0
+
+Take blue coin:
+Index   PrevMem CurrMem
+[2706]  2478    0
+
+Take shiny coin:
+Index   PrevMem CurrMem
+[2698]  2483    0
+
+Take corroded coin:
+Index   PrevMem CurrMem
+[2694]  2473    0
+
 ## Items
 
 can: You'll have to find something to put the oil into first.
+
+tablet:             2670
+empty lantern:      2674
+lantern:            2678
+lit lantern:        2682 
+can:                2686
+red coin:           2690 (found at 2452)
+corroded coin:      2694 (found at 2473)
+shiny coin:         2698 (found at 2483)
+concave coin:       2702 (found at 2468)
+blue coin:          2706 (found at 2478)
+
 
 ## Positions
 
@@ -92,7 +202,20 @@ Moving through twisty passages:
 | 2402 | Twisty passages (west, south) likely death in east |
 | 2407 | Twisty passages |
 | 2412 | Twisty passages (exit to west) |
-| 2417 | Twisty passages (5th code, can) |
+| 2417 | Twisty passages **(5th code, can)** |
+| 2427 | Dark passage (need light) |
+| 2432 | Dark passage (need light) |
+| 2437 | Dark passage (need light) |
+| 2442 | Dark passage (need light) |
+| 2447 | Ruins |
+| 2452 | Ruins **(red coin)** |
+| 2457 | Ruins (central hall, riddle) |
+| 2462 | 
+| 2468 | Ruins (dining hall, staircase down) **concave coin** |
+| 2473 | Ruins (kitchen, down from 2457) **corroded coin** |
+| 2478 | Ruins (living quarters, staircase up) **blue coin** |
+| 2483 | Ruins (lavish throne room, up from 2478) **shiny coin** |
+
 | 2648 | Fumbling around in the darkness (DEATH) |
 | 2653 | Fumbling darkness, growling (DEATH) |
 | 2658 | Panicked and lost (DEATH) |
