@@ -170,18 +170,29 @@ Pseudo code:
     6035: Jump to 6048 if reg 1 > 0 (yes, it is 1)
     6048: Push reg 0 (3)
     6050: Get reg 1 (1, our energy level)
-    6050: Add int reg 1: reg 1 (1) + 32767 = 0
+    6050: Add into reg 1: reg 1 (1) + 32767 = 0   --- this really means "subtract 1 from reg 1"
     6054: Call to 6027 (push 6056)
     6027: Get reg 0 (3)
     6027: Jump to 6035 if reg 0 > 0 (yes it is 3)
     6035: Get reg 1 (0)
     6035: Jump to 6048 if reg 1 > 0 (no as it is 0)
     6038: Get reg 0 (3)
-    6038: Add into reg 0: reg 0 (3) + 32767 = 2
+    6038: Add into reg 0: reg 0 (3) + 32767 = 2  --- subtract 1 from reg 0
     6042: Get reg 7 (1)
     6042: Set reg 1 to 1
     6045: Call to 6027 (push 6047)
 
+
+    6042: reg[1] = reg[7]
+    6027: while reg[0] > 0
+    6035:   if reg[1] > 0:
+    6048:       push reg[0]
+    6050:       reg[1] -= 1
+    6027:       if reg[0] > 0:
+    6035:           if reg[1] > 0:
+
+    6038:           else:
+                        reg[0] -= 1
 
 # Vault door (starting in 2623)
 
