@@ -18,7 +18,7 @@ import syn_arch
 if __name__ == '__main__':
     # set logging level
     # logging.basicConfig(level=logging.DEBUG, filename='sys_debug.log')
-    logging.basicConfig(level=logging.CRITICAL)
+    logging.basicConfig(level=logging.CRITICAL, filename='syn_log.log')
 
     # parse command line arguments. 
     # -l / --load argument: load a VM state from a pickle file

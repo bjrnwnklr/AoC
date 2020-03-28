@@ -222,6 +222,11 @@ class Synacor():
                     address = int(address)
                     value = int(value)
                     self._poke(address, value)
+                elif inp[:4] == 'setr':
+                    _, reg, value = inp.split(' ')
+                    reg = int(reg)
+                    value = int(value)
+                    self.registers[reg] = value
                 else:
                     print(f'Unknown godmode command "{inp}". Try again or type "help" for a list of commands.')                
             elif inp == 'g':
