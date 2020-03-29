@@ -40,6 +40,14 @@ shiny = 5
 concave = 7
 blue = 9
 
+Descriptions:
+- red coin: This coin is made of a red metal.  It has two dots on one side.
+- corroded coin: This coin is somewhat corroded.  It has a triangle on one side.
+- shiny coin: This coin is somehow still quite shiny.  It has a pentagon on one side.
+- concave coin: 
+This coin is slightly rounded, almost like a tiny bowl.  It has seven dots on one side.
+- blue coin: This coin is made of a blue metal.  It has nine dots on one side.
+
 These values can be seen in the memory positions 27102-27106 (which represent the parameters of the formula).
 
 When the north door gets unlocked, the following memory value gets set:
