@@ -162,6 +162,64 @@ So what has to be done:
 - Code is from memory 0 to 6068 (ending with ASCII code 4, end of transmission)
 - text seems to start from 6069 to the end. It uses all available ASCII codes [http://www.asciitable.com/](http://www.asciitable.com/)
 
+## General code analysis
+
+- Self test seems to run until 1457 (up to there, the various error messages)
+- At 1458, we have code starting again 
+
+### 1458 - what does it do?
+
+prints out characters from addresses
+
+- save r0, r3, r4, r5, r6
+    r6 = r0
+    r5 = r1
+    r4 = mem[r0]
+    r1 = 0
+    r3 = 1 + r1
+    if r3 > r4:             --- return once r3 > r4
+        return
+    else:
+        r3 += r6 (1+r1 + r0)
+        r0 = mem[r3]
+        call r5 (jump to r5, write next ip to stack)
+        r1 = r1 + 1
+        if r1 > 0:
+            jump to 1480
+
+
+### non standard teleport
+
+r0 = 28844 = 169
+r1 = 1531 (call print function)
+r2 = 1320 + 1867 = 3187
+
+call 1458 (print)
+r6 = 28844
+r5 = 1531
+r4 = 169
+r1 = 0
+r3 = 1
+r3 += r6 (28845)
+r0 = mem[28845] 3122
+call 1531
+r1 += 1 (2)
+
+r3 = 1 + r1
+
+1531:
+r1 = r2 (3187)
+call 2125
+print r0
+
+2125:
+r2 = r0 & r1 (3122 & 3187 = 3122)
+r2 = ~r2 (not r2) (flip bits)
+r0 = r0 | r1
+r0 = r0 & r2
+
+r0 = (r0 | r1) & ~(r0 & r1)
+
 ## Log analysis:
 
 - Register 7 (32775) is only checked once, at IP 5451. If it is 0 (teleport energy at minimum level), we jump to 5605.
@@ -398,7 +456,7 @@ Moving through twisty passages:
 
 | 2488 | Synacor Headquarters **business card, strange book** |
 | 2493 | Synacor HQ (outside) |
-
+| 2498 | ??? |
 | 2563 | Vault lock *** sign** |
 | 2568 | Vault lock **8** |
 | 2573 | Vault lock **-** |

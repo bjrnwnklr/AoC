@@ -160,6 +160,8 @@
 [   316]	out 10
 [   318]	out 10
 [   320]	jmp 347
+
+
 [   322]	out 106 ( j )
 [   324]	out 109 ( m )
 [   326]	out 112 ( p )
@@ -181,11 +183,23 @@
 [   350]	noop 
 [   351]	noop 
 [   352]	jmp 358
+
+
 [   354]	jmp 368
+
+
 [   356]	jmp 397
+
+
 [   358]	jmp 484
+
+
 [   360]	jmp 424
+
+
 [   362]	jmp 453
+
+
 [   364]	noop 
 [   365]	noop 
 [   366]	noop 
@@ -204,6 +218,8 @@
 [   390]	out  50 ( 2 )
 [   392]	out 10
 [   394]	halt 
+
+
 [   395]	noop 
 [   396]	noop 
 [   397]	out 106 ( j )
@@ -340,6 +356,8 @@
 [   701]	jf r1 1208
 [   704]	call 1285
 [   706]	jmp 1289
+
+
 [   708]	pop r0
 [   710]	eq r1 r0 708
 [   714]	jt r1 1289
@@ -348,6 +366,8 @@
 [   724]	set r0 1287
 [   727]	call r0
 [   729]	jmp 1289
+
+
 [   731]	pop r0
 [   733]	eq r1 r0 731
 [   737]	jt r1 1289
@@ -380,6 +400,8 @@
 [   834]	eq r1 r0 32738
 [   838]	jf r1 1312
 [   841]	jmp 845
+
+
 [   843]	30000
 [   844]	10000
 [   845]	rmem r0 843
@@ -444,6 +466,8 @@
 [  1013]	add r0 r0 1
 [  1017]	add r1 r1 1
 [  1021]	jmp 1000
+
+
 [  1023]	rmem r0 6080
 [  1026]	rmem r1 6099
 [  1029]	add r0 r0 r1
@@ -463,6 +487,8 @@
 [  1068]	pop r1
 [  1070]	pop r0
 [  1072]	jmp 2734
+
+
 [  1074]	out 110 ( n )
 [  1076]	out 111 ( o )
 [  1078]	out  32 (   )
@@ -574,7 +600,11 @@
 [  1282]	out 10
 [  1284]	halt 
 [  1285]	jmp 708
+
+
 [  1287]	jmp 731
+
+
 [  1289]	out 110 ( n )
 [  1291]	out 111 ( o )
 [  1293]	out  32 (   )
@@ -662,42 +692,52 @@
 [  1453]	out 112 ( p )
 [  1455]	out 10
 [  1457]	halt 
-[  1458]	push r0
+
+
+[  1458]	push r0                 --- this gets called often - i think it print
 [  1460]	push r3
 [  1462]	push r4
 [  1464]	push r5
 [  1466]	push r6
 [  1468]	set r6 r0
 [  1471]	set r5 r1
-[  1474]	rmem r4 r0
+[  1474]	rmem r4 r0              --- read the number of chars?
 [  1477]	set r1 0
 [  1480]	add r3 1 r1
 [  1484]	gt r0 r3 r4
-[  1488]	jt r0 1507
-[  1491]	add r3 r3 r6
-[  1495]	rmem r0 r3
-[  1498]	call r5
-[  1500]	add r1 r1 1
+[  1488]	jt r0 1507              --- if r3 > r4, go to 1507 (if we have printed all characters, return)
+[  1491]	add r3 r3 r6            ---     else increment r3 by r6 (which is the original r0)
+[  1495]	rmem r0 r3              ---     get next value from mem[r3]
+[  1498]	call r5                 ---     call whatever is at r5 (print function?)
+[  1500]	add r1 r1 1             ---     r1 += 1, jump back to 1480
 [  1504]	jt r1 1480
-[  1507]	pop r6
+[  1507]	pop r6                  ---- return
 [  1509]	pop r5
 [  1511]	pop r4
 [  1513]	pop r3
 [  1515]	pop r0
 [  1517]	ret 
+
+
 [  1518]	push r1
 [  1520]	set r1 1528
 [  1523]	call 1458
 [  1525]	pop r1
 [  1527]	ret 
-[  1528]	out r0
+
+
+[  1528]	out r0                  ---- print(r0)
 [  1530]	ret 
-[  1531]	push r1
-[  1533]	set r1 r2
+
+
+[  1531]	push r1                 ---- print(r0)
+[  1533]	set r1 r2               
 [  1536]	call 2125
 [  1538]	out r0
 [  1540]	pop r1
 [  1542]	ret 
+
+
 [  1543]	push r1
 [  1545]	push r3
 [  1547]	rmem r3 r0
@@ -899,6 +939,8 @@
 [  2084]	add r5 r5 1
 [  2088]	push r4
 [  2090]	jmp 2019
+
+
 [  2092]	jt r5 2099
 [  2095]	out  48 ( 0 )
 [  2097]	jmp 2112
@@ -914,15 +956,19 @@
 [  2120]	pop r1
 [  2122]	pop r0
 [  2124]	ret 
-[  2125]	push r1
+
+
+[  2125]	push r1             --- some decode function, decodes text to print
 [  2127]	push r2
-[  2129]	and r2 r0 r1
+[  2129]	and r2 r0 r1        --- 
 [  2133]	not r2 r2
 [  2136]	or r0 r0 r1
 [  2140]	and r0 r0 r2
 [  2144]	pop r2
 [  2146]	pop r1
 [  2148]	ret 
+
+
 [  2149]	add r0 r0 r1
 [  2153]	gt r1 r1 r0
 [  2157]	ret 
@@ -982,7 +1028,11 @@
 [  2309]	set r0 32767
 [  2312]	pop r1
 [  2314]	ret 
+
+
 [  2315]	jmp 2734
+
+
 [  2317]	6142
 [  2318]	6152
 [  2319]	26900
@@ -1506,6 +1556,8 @@
 [  3026]	pop r1
 [  3028]	pop r0
 [  3030]	jmp 3238
+
+
 [  3032]	rmem r0 2732
 [  3035]	push r0
 [  3037]	out  61 ( = )
@@ -1613,6 +1665,8 @@
 [  3294]	wmem 2732 r2
 [  3297]	wmem 2733 0
 [  3300]	jmp 3326
+
+
 [  3302]	push r0
 [  3304]	push r1
 [  3306]	push r2
@@ -1679,6 +1733,8 @@
 [  3451]	pop r1
 [  3453]	pop r0
 [  3455]	jmp 3481
+
+
 [  3457]	push r0
 [  3459]	push r1
 [  3461]	push r2
@@ -1693,6 +1749,8 @@
 [  3483]	pop r1
 [  3485]	pop r0
 [  3487]	ret 
+
+
 [  3488]	push r0
 [  3490]	push r1
 [  3492]	call 5921
@@ -1713,6 +1771,8 @@
 [  3533]	pop r1
 [  3535]	pop r0
 [  3537]	jmp 3563
+
+
 [  3539]	push r0
 [  3541]	push r1
 [  3543]	push r2
@@ -1726,6 +1786,8 @@
 [  3563]	pop r1
 [  3565]	pop r0
 [  3567]	ret 
+
+
 [  3568]	push r0
 [  3570]	push r1
 [  3572]	call 5921
@@ -1749,6 +1811,8 @@
 [  3621]	pop r1
 [  3623]	pop r0
 [  3625]	jmp 3651
+
+
 [  3627]	push r0
 [  3629]	push r1
 [  3631]	push r2
@@ -2090,6 +2154,8 @@
 [  4385]	out 10
 [  4387]	out 10
 [  4389]	jmp 4398
+
+
 [  4391]	call 4660
 [  4393]	set r0 26299
 [  4396]	call 1518
@@ -2270,6 +2336,8 @@
 [  4852]	pop r1
 [  4854]	pop r0
 [  4856]	jmp 4882
+
+
 [  4858]	push r0
 [  4860]	push r1
 [  4862]	push r2
@@ -2334,6 +2402,8 @@
 [  5011]	pop r1
 [  5013]	pop r0
 [  5015]	jmp 5336
+
+
 [  5017]	add r2 r0 2
 [  5021]	wmem r2 32767
 [  5024]	rmem r2 2462
@@ -2431,6 +2501,8 @@
 [  5306]	pop r1
 [  5308]	pop r0
 [  5310]	jmp 5336
+
+
 [  5312]	push r0
 [  5314]	push r1
 [  5316]	push r2
@@ -2494,14 +2566,17 @@
 [  5445]	push r0
 [  5447]	push r1
 [  5449]	push r2
-[  5451]	jf r7 5605
-[  5454]	push r0
+
+
+[  5451]	jf r7 5605              --- jump to 5605 if r7 is zero (i.e. normal energy)
+
+[  5454]	push r0                 --- run this if we have non-normal teleport
 [  5456]	push r1
 [  5458]	push r2
-[  5460]	set r0 28844
-[  5463]	set r1 1531
-[  5466]	add r2 1320 1867
-[  5470]	call 1458
+[  5460]	set r0 28844            --- r0 - this should be num of chars to print
+[  5463]	set r1 1531             --- r1 - print function? check 1531
+[  5466]	add r2 1320 1867        --- r2 = 1320 + 1867 = 3187
+[  5470]	call 1458               --- print out text
 [  5472]	pop r2
 [  5474]	pop r1
 [  5476]	pop r0
@@ -2510,7 +2585,7 @@
 [  5480]	noop 
 [  5481]	noop 
 [  5482]	noop 
-[  5483]	set r0 4
+[  5483]	set r0 4                ---- what is this doing?
 [  5486]	set r1 1
 [  5489]	call 6027
 [  5491]	eq r1 r0 6
@@ -2547,6 +2622,8 @@
 [  5570]	add r1 2708 2
 [  5574]	wmem r1 32767
 [  5577]	jmp 5714
+
+
 [  5579]	push r0
 [  5581]	push r1
 [  5583]	push r2
@@ -2558,7 +2635,8 @@
 [  5599]	pop r1
 [  5601]	pop r0
 [  5603]	jmp 5714
-[  5605]	push r0
+
+[  5605]	push r0                 --- jump to here if normal teleport
 [  5607]	push r1
 [  5609]	push r2
 [  5611]	set r0 29545
@@ -2598,7 +2676,10 @@
 [  5706]	wmem 2732 2488
 [  5709]	wmem 2733 0
 [  5712]	jmp 5714
-[  5714]	pop r2
+
+
+
+[  5714]	pop r2              ---- jump point after teleporting (after both normal and greater energy level)
 [  5716]	pop r1
 [  5718]	pop r0
 [  5720]	ret 
@@ -2642,11 +2723,15 @@
 [  5809]	pop r1
 [  5811]	pop r0
 [  5813]	ret 
+
+
 [  5814]	out  45 ( - )
 [  5816]	out  32 (   )
 [  5818]	call 1518
 [  5820]	out 10
 [  5822]	ret 
+
+
 [  5823]	push r1
 [  5825]	push r2
 [  5827]	set r0 27381
@@ -2657,6 +2742,8 @@
 [  5841]	pop r2
 [  5843]	pop r1
 [  5845]	ret 
+
+
 [  5846]	push r3
 [  5848]	push r4
 [  5850]	rmem r3 2732
@@ -2702,6 +2789,8 @@
 [  5959]	pop r2
 [  5961]	pop r1
 [  5963]	ret 
+
+
 [  5964]	push r1
 [  5966]	set r1 r2
 [  5969]	add r0 r0 0
@@ -2726,6 +2815,8 @@
 [  6022]	pop r2
 [  6024]	pop r1
 [  6026]	ret 
+
+
 [  6027]	jt r0 6035
 [  6030]	add r0 r1 1
 [  6034]	ret 
