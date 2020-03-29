@@ -8,6 +8,9 @@
 1. After taking tablet: oWiFbDGYUTNN
 1. In twisty passages: xSoSzxDgGMtz 
 1. After using teleporter in ruins: FwGIPVHecGNX
+1. After using teleporter with energy level 6 (not sure if correct): pofGpsbyRMTy (not correct!)
+
+
 
 
 # How to get the codes:
@@ -188,12 +191,12 @@ prints out characters from addresses
             jump to 1480
 
 
-### non standard teleport
+Parameters that are required to call
+r0 = 28844 = 169                (start address (will have length of text))
+r1 = 1531                       (decoder / print function to call)
+r2 = 1320 + 1867 = 3187         (key to decode)
 
-r0 = 28844 = 169
-r1 = 1531 (call print function)
-r2 = 1320 + 1867 = 3187
-
+Print function at 1458:
 call 1458 (print)
 r6 = 28844
 r5 = 1531
@@ -207,18 +210,93 @@ r1 += 1 (2)
 
 r3 = 1 + r1
 
-1531:
+1531: (print decoder)
 r1 = r2 (3187)
 call 2125
 print r0
 
-2125:
+2125: (unscramble character)
 r2 = r0 & r1 (3122 & 3187 = 3122)
 r2 = ~r2 (not r2) (flip bits)
 r0 = r0 | r1
 r0 = r0 & r2
 
+in short:
 r0 = (r0 | r1) & ~(r0 & r1)
+
+## Text that gets printed at teleport
+
+### Non standard teleport
+
+addr: 28844
+p_func: 1531
+key: 3187
+
+A strange, electronic voice is projected into your mind:
+
+"Unusual setting detected!  Starting confirmation process!  Estimated time to completion: 1 billion years."
+
+addr: 29400
+p_func: 1531
+key: 22759
+
+A strange, electronic voice is projected into your mind:
+
+"Miscalibration detected!  Aborting teleportation!"
+
+Nothing else seems to happen.
+
+addr: 29014
+p_func: 1531
+key: 28385 (24388 + 3997)
+
+You wake up on a sandy beach with a slight headache.  The last thing you remember is activating that teleporter... but now you can't find it anywhere in your pack.  Someone seems to have drawn a message in the sand here:
+
+(message is missing!!!)
+
+addr: 29245
+p_func: 1531 
+key: 10851
+
+It begins to rain.  The message washes away.  You take a deep breath and feel firmly grounded in reality as the effects of the teleportation wear off.
+
+### Normal teleport
+
+addr: 29545
+p_func: 1531
+key: 13417
+
+You activate the teleporter!  As you spiral through time and space, you think you see a pattern in the stars...
+
+
+addr: 29667
+p_func: 1531
+key: 29545
+
+After a few moments, you find yourself back on solid ground and a little disoriented.
+
+
+## Try jumping over the calculation at 5483
+- Write code into 5478-5482
+    - jmp 5491
+    5478: 6 (jmp)
+    5479: 5498
+
+- set r7 to a value > 0
+- set r0 to 6 
+5478: 1 (set)
+5479: 32768
+5480: 6
+5481: 6
+5482: 5491
+
+setr 7 6
+poke 5478 1
+poke 5479 32768
+poke 5480 6
+poke 5481 6
+poke 5482 5491
+
 
 ## Log analysis:
 

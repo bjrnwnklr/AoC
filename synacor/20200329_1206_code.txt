@@ -2576,7 +2576,7 @@
 [  5460]	set r0 28844            --- r0 - this should be num of chars to print
 [  5463]	set r1 1531             --- r1 - print function? check 1531
 [  5466]	add r2 1320 1867        --- r2 = 1320 + 1867 = 3187
-[  5470]	call 1458               --- print out text
+[  5470]	call 1458               --- print out text (1 billion years)
 [  5472]	pop r2
 [  5474]	pop r1
 [  5476]	pop r0
@@ -2585,52 +2585,52 @@
 [  5480]	noop 
 [  5481]	noop 
 [  5482]	noop 
-[  5483]	set r0 4                ---- what is this doing?
+[  5483]	set r0 4                ---- this is the really long calculation
 [  5486]	set r1 1
 [  5489]	call 6027
-[  5491]	eq r1 r0 6
-[  5495]	jf r1 5579
+[  5491]	eq r1 r0 6              --- compare result of calc in r0 to 6
+[  5495]	jf r1 5579              --- jump if calculation is wrong, print error message
 [  5498]	push r0
 [  5500]	push r1
 [  5502]	push r2
-[  5504]	set r0 29014
+[  5504]	set r0 29014            --- more printing
 [  5507]	set r1 1531
 [  5510]	add r2 24388 3997
-[  5514]	call 1458
+[  5514]	call 1458               --- "you wake up on a sandy beach"
 [  5516]	pop r2
 [  5518]	pop r1
 [  5520]	pop r0
-[  5522]	set r0 r7
+[  5522]	set r0 r7               --- calculate the energy level
 [  5525]	set r1 25866
 [  5528]	set r2 32767
 [  5531]	push r3
 [  5533]	set r3 29241
 [  5536]	call 1841
 [  5538]	pop r3
-[  5540]	push r0
+[  5540]	push r0                 --- more printing
 [  5542]	push r1
 [  5544]	push r2
 [  5546]	set r0 29245
 [  5549]	set r1 1531
 [  5552]	add r2 1319 9532
-[  5556]	call 1458
+[  5556]	call 1458               --- "it begins to rain"
 [  5558]	pop r2
 [  5560]	pop r1
 [  5562]	pop r0
 [  5564]	wmem 2732 2498      --- teleport to beach (2498)
 [  5567]	wmem 2733 0
 [  5570]	add r1 2708 2
-[  5574]	wmem r1 32767
+[  5574]	wmem r1 32767       --- activate teleporter (at 2710)
 [  5577]	jmp 5714
 
 
-[  5579]	push r0
+[  5579]	push r0                 --- called after long calc if r1 != 0
 [  5581]	push r1
 [  5583]	push r2
 [  5585]	set r0 29400
 [  5588]	set r1 1531
 [  5591]	add r2 18838 3921
-[  5595]	call 1458
+[  5595]	call 1458               ---
 [  5597]	pop r2
 [  5599]	pop r1
 [  5601]	pop r0
@@ -2642,11 +2642,11 @@
 [  5611]	set r0 29545
 [  5614]	set r1 1531
 [  5617]	add r2 947 12470
-[  5621]	call 1458
+[  5621]	call 1458               --- printing
 [  5623]	pop r2
 [  5625]	pop r1
 [  5627]	pop r0
-[  5629]	set r0 0
+[  5629]	set r0 0                --- calculate code here!
 [  5632]	add r2 1 27101
 [  5636]	rmem r1 r2
 [  5639]	add r0 r0 r1
@@ -2661,7 +2661,7 @@
 [  5670]	set r2 32767
 [  5673]	push r3
 [  5675]	set r3 29663
-[  5678]	call 1841
+[  5678]	call 1841               --- assume this is printing the code
 [  5680]	pop r3
 [  5682]	push r0
 [  5684]	push r1
@@ -2669,11 +2669,11 @@
 [  5688]	set r0 29667
 [  5691]	set r1 1531
 [  5694]	add r2 15535 14010
-[  5698]	call 1458
+[  5698]	call 1458               --- printing
 [  5700]	pop r2
 [  5702]	pop r1
 [  5704]	pop r0
-[  5706]	wmem 2732 2488
+[  5706]	wmem 2732 2488      --- go to Synacor Headquarters (at 2488)
 [  5709]	wmem 2733 0
 [  5712]	jmp 5714
 
@@ -2683,6 +2683,8 @@
 [  5716]	pop r1
 [  5718]	pop r0
 [  5720]	ret 
+
+
 [  5721]	push r0
 [  5723]	push r1
 [  5725]	push r2

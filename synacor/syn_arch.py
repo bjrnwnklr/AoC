@@ -142,7 +142,8 @@ class Synacor():
             'mem',
             'peek',
             'poke',
-            'code'
+            'code',
+            'patch_teleport'
         ]
 
     
@@ -239,6 +240,8 @@ class Synacor():
                         self._mem_compare()
                     elif inp == 'code':
                         self._dump_code()
+                    elif inp == 'patch_teleport':
+                        self._patch_teleport()
                 elif inp[:4] == 'peek':
                     # get numeric part of input command
                     _, address = inp.split(' ')
@@ -255,6 +258,12 @@ class Synacor():
                     reg = int(reg)
                     value = int(value)
                     self.registers[reg] = value
+                elif inp[:5] == 'print':
+                    _, addr, print_func_code, key = inp.split(' ')
+                    addr = int(addr)
+                    print_func_code = int(print_func_code)
+                    key = int(key)
+                    self._decode_print(addr, print_func_code, key)
                 else:
                     print(f'Unknown godmode command "{inp}". Try again or type "help" for a list of commands.')                
             elif inp == 'g':
@@ -326,6 +335,40 @@ class Synacor():
                 ip += 1
 
 
+    
+    # print decoder
+    def _decode_print(self, length_addr, print_func_code, key):
+        
+        def _decode_1531(char, key):
+            return (char | key) & (0x7fff ^ (char & key))
+        
+        p_funcs = {
+            1531: _decode_1531
+        }
+        
+        # get number of characters to print
+        num_chars = self.mem[length_addr]
+        # get all characters
+        chars = [self.mem[length_addr + i] for i in range(1, num_chars + 1)]
+
+        if print_func_code in p_funcs:
+            # get print function
+            p_func = p_funcs[print_func_code]
+            # print text
+            print(''.join(chr(p_func(char, key)) for char in chars))
+
+    # patch memory for teleporting
+    def _patch_teleport(self):
+        # set r7 to teleport energy level (still need to find right level)
+        self.registers[7] = 6
+        # write instructions into memory at 5478-5482 to jump over the confirmation code
+        # 'set' register 0 to 6
+        self.mem[5478] = 1
+        self.mem[5479] = 32768
+        self.mem[5480] = 6
+        # 'jmp' to 5491 (the address after the calculation. r0 has to be 6 for this)
+        self.mem[5481] = 6
+        self.mem[5482] = 5491
 
     # save state of VM into a JSON file
     def _save_json(self):
