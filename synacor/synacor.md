@@ -8,7 +8,7 @@
 1. After taking tablet: oWiFbDGYUTNN
 1. In twisty passages: xSoSzxDgGMtz 
 1. After using teleporter in ruins: FwGIPVHecGNX
-1. After using teleporter with energy level 6 (not sure if correct): pofGpsbyRMTy (not correct!)
+1. After using teleporter with energy level 25734: JELOdAveZwDG
 
 
 
@@ -277,18 +277,8 @@ After a few moments, you find yourself back on solid ground and a little disorie
 
 
 ## Try jumping over the calculation at 5483
-- Write code into 5478-5482
-    - jmp 5491
-    5478: 6 (jmp)
-    5479: 5498
-
 - set r7 to a value > 0
 - set r0 to 6 
-5478: 1 (set)
-5479: 32768
-5480: 6
-5481: 6
-5482: 5491
 
 setr 7 6
 poke 5478 1
@@ -297,6 +287,58 @@ poke 5480 6
 poke 5481 6
 poke 5482 5491
 
+
+this works to jump over the calculation, however produces a wrong code. We still need to find the right energy level.
+
+## Energy level calulaction at 6027
+
+prep - starting values in r0, r1:
+r0 = 4
+r1 = 1
+call to 6027
+check if r0 == 6 - if yes continue, else give error message
+
+
+### Code at 6027
+
+
+```python
+def f_6027():
+    global r0
+    global r1
+    if not r0:
+        r0 = r1 + 1
+        return # return what?
+    if not r1:
+        r0 -= 1
+        r1 = r7
+        f_6027()
+        return # return what?
+    r0_tmp = r0 # push r0
+    r1 -= 1
+    f_6027()
+    r1 = r0
+    r0 = r0_tmp
+    r0 -= 1
+    f_6027()
+    return
+
+```
+
+Ackermann function with
+A(m, n) =
+    n + 1               if m == 0
+    A(m-1, k)           if m > 0 and n == 0
+    A(m-1, A(m, n-1))   if m > 0 and n > 0
+
+with k a constant.
+
+Correct answer: 25734 (as shown in [https://github.com/jpcornwell/synacor-challenge/blob/master/useful/notes.txt](https://github.com/jpcornwell/synacor-challenge/blob/master/useful/notes.txt))
+
+Good writeup here:
+[https://github.com/kanegaegabriel/synacor-challenge/blob/master/writeup.md](https://github.com/kanegaegabriel/synacor-challenge/blob/master/writeup.md)
+
+Try writing up the Ackermann function with memoization and run that? See when it returns 6.
 
 ## Log analysis:
 

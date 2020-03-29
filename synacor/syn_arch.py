@@ -360,7 +360,7 @@ class Synacor():
     # patch memory for teleporting
     def _patch_teleport(self):
         # set r7 to teleport energy level (still need to find right level)
-        self.registers[7] = 6
+        self.registers[7] = 25734
         # write instructions into memory at 5478-5482 to jump over the confirmation code
         # 'set' register 0 to 6
         self.mem[5478] = 1
