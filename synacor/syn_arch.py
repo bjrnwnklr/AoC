@@ -107,6 +107,31 @@ class Synacor():
             21: (self._noop, 0)
         }
 
+        self._op_names = {
+            0: ('halt', 0),
+            1: ('set', 3),
+            2: ('push', 2),
+            3: ('pop', 2),
+            4: ('eq', 4),
+            5: ('gt', 4),
+            6: ('jmp', 2),
+            7: ('jt', 3),
+            8: ('jf', 3),
+            9: ('add', 4),
+            10: ('mult', 4),
+            11: ('mod', 4),
+            12: ('and', 4),
+            13: ('or', 4),
+            14: ('not', 3),
+            15: ('rmem', 3),
+            16: ('wmem', 3),
+            17: ('call', 2),
+            18: ('ret', 0),
+            19: ('out', 2),
+            20: ('in', 2),
+            21: ('noop', 0)
+        }
+
         # godmode commands
         self.godmode_commands = [
             'save',
@@ -116,7 +141,8 @@ class Synacor():
             'nolog',
             'mem',
             'peek',
-            'poke'
+            'poke',
+            'code'
         ]
 
     
@@ -211,6 +237,8 @@ class Synacor():
                         print('Memory compare.')
                         # compare memory
                         self._mem_compare()
+                    elif inp == 'code':
+                        self._dump_code()
                 elif inp[:4] == 'peek':
                     # get numeric part of input command
                     _, address = inp.split(' ')
@@ -247,6 +275,57 @@ class Synacor():
     ###########
     #
     # GODMODE utility functions
+
+    # dump memory into a new file and generate pseudocode from it
+    def _dump_code(self):
+
+        # some utility functions to extract Ascii values and registers
+        def _decode_mem(val):
+            # check if register
+            if 32768 <= val <= 32775:
+                decoded_val = f'r{val - 32768}'
+            elif 32 <= val <= 126:
+                decoded_val = f'{val:>3} ( {chr(val)} )'
+            else:
+                decoded_val = val
+            return decoded_val
+
+        curr_time = datetime.strftime(datetime.now(), '%Y%m%d_%H%M')
+        f_name_code = f'{curr_time}_code.txt'
+        f_name_text = f'{curr_time}_text.txt'
+        print(f'Saving code to "{f_name_code}".')
+
+        ip = 0
+        code_end = 6067
+        ip_max = max(self.mem.keys())
+    
+        with open(f_name_code, 'w') as f:
+            # iterate through memory from 0 to highest memorey value
+            while ip <= code_end:
+                # retrieve the value at the mem position
+                cmd = self.mem[ip]
+                # if it is a known opcode, get the number of paramaters and write out the command with paramaters
+                if cmd in self._op_names:
+                    ip_name, param_count = self._op_names[cmd]
+                    op_param_text = ' '.join(f'{_decode_mem(self.mem[ip + i])}' for i in range(1, param_count))
+                    f.write(f'[{ip:>6}]\t{ip_name} {op_param_text}\n')
+                    # take care of 'halt' (0), 'ret' (18) and 'noop' (21) opcodes, who have no parameters - move by 1 if encountered
+                    if cmd in [0, 18, 21]:
+                        param_count = 1
+                else:
+                    f.write(f'[{ip:>6}]\t{_decode_mem(self.mem[ip])}\n')
+                    param_count = 1
+                ip += param_count
+        # we are now above the code end, only text follows from here. Print it to a different file.
+        print(f'Saving text to "{f_name_text}".')
+        with open(f_name_text, 'w') as f:
+            while ip <= ip_max:
+                c = self.mem[ip]
+                if 0 <= c <= 126:
+                    f.write(chr(self.mem[ip]))
+                ip += 1
+
+
 
     # save state of VM into a JSON file
     def _save_json(self):

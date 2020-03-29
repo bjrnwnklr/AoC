@@ -158,6 +158,10 @@ So what has to be done:
 - bypass the confirmation mechanism
 
 
+## Dumping code into a file
+- Code is from memory 0 to 6068 (ending with ASCII code 4, end of transmission)
+- text seems to start from 6069 to the end. It uses all available ASCII codes [http://www.asciitable.com/](http://www.asciitable.com/)
+
 ## Log analysis:
 
 - Register 7 (32775) is only checked once, at IP 5451. If it is 0 (teleport energy at minimum level), we jump to 5605.
