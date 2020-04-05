@@ -9,6 +9,7 @@
 1. In twisty passages: xSoSzxDgGMtz 
 1. After using teleporter in ruins: FwGIPVHecGNX
 1. After using teleporter with energy level 25734: JELOdAveZwDG
+1. After using the mirror found in the vault: XpUUIidOOldp --> it's in the mirror, so the valid code is qblOObiIUUqX
 
 
 
@@ -438,6 +439,25 @@ Moving from one room to the next, the following memory addresses get changed, ag
 [3956]  1541    0
 [3957]  1345    0
 
+## Vault solution
+
+north
+east
+east
+north
+west
+south
+east
+east
+west
+north
+north
+east
+
+Found using a BFS. We have to discard any solutions that go to 3,3 (vault door room) before being finished as the orb will evaporate. So we take the first solution that does not include (3, 3) more than once.
+
+
+
 # Memory hacks
 
 ## Inventory
@@ -560,6 +580,7 @@ blue coin:          2706 (found at 2478)
 teleporter:         2710 (found at 2463)
 business card:      2714 (found at 2488)
 orb:                2718 (found at 2623)
+mirror:             2722 (found at 2643)
 strange book:       2726 (found at 2488)
 journal:            2730 (found at 2553)
 
@@ -646,6 +667,8 @@ Moving through twisty passages:
 | 2583 | Vault lock **4** |
 | 2603 | Vault lock **+ sign** |
 | 2623 | Vault antechamber **orb** **22** |
+
+| 2643 | Vault **mirror** |
 
 | 2648 | Fumbling around in the darkness (DEATH) |
 | 2653 | Fumbling darkness, growling (DEATH) |
