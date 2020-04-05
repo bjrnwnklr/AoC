@@ -340,6 +340,18 @@ Good writeup here:
 
 Try writing up the Ackermann function with memoization and run that? See when it returns 6.
 
+**Finally able to solve it using C program**
+I was finally able to solve this by using C on my WLS session.
+
+I used the 3 C programs from [here](https://github.com/jpcornwell/synacor-challenge). The two optimized programs solve it in 10 (teleporter_small_opt.c) and 3 seconds (teleporter_opt.c)
+
+How to compile C on WSL:
+
+1. Launch WLS by typing `wsl` into command prompt
+1. cd to the directory with the source code (in this case the mounted synacor dir on d:)
+1. compile the C program with `gcc -o teleporter_opt teleporter_opt.c`
+1. run the program with `./teleporter_opt`
+
 ## Log analysis:
 
 - Register 7 (32775) is only checked once, at IP 5451. If it is 0 (teleport energy at minimum level), we jump to 5605.

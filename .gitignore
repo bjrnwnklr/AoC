@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# teleporter compiled files
+teleporter_naive
+teleporter_opt
+teleporter_small_opt
+
 # C extensions
 *.so
 
