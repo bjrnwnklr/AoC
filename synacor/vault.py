@@ -8,25 +8,28 @@
 #
 #
 
-from collections import namedtuple
+from collections import namedtuple, deque
 
 GC = namedtuple('GC', ['num', 'op'])
-CP = namedtuple('CP', ['r', 'c', 'w', 'op'])
+CP = namedtuple('CP', ['r', 'c', 'w'])
 
 def get_neighbors(x):
     neighbors = [(0, 1), (1, 0), (0, -1), (-1, 0)]
     r, c = x
 
     for n in neighbors:
-        if (0 <= r + n[0] <= 3) and (0 <= c + n[1] <= 3):
-            yield n
+        next_r = r + n[0]
+        next_c = c + n[1]
+        if (0 <= next_r <= 3) and (0 <= next_c <= 3):
+            # avoid going back to the 0, 0 start
+            if (next_r, next_c) != (0, 0):
+                yield (next_r, next_c)
 
-def move(cp, n):
+def move(cp, op, n):
     # update position
     r = n[0]
     c = n[1]
     w = cp.w
-    op = cp.op
     # calculate new weight
     gc = grid[n]
     if gc.num != 0:
@@ -41,7 +44,7 @@ def move(cp, n):
         # update operator
         op = gc.op
 
-    return CP(r, c, w, op)
+    return CP(r, c, w), op
 
     
 
@@ -68,11 +71,37 @@ grid = {
 
 
 
-start = CP(0, 0, 22, '_')
-for n in get_neighbors((0, 0)):
-    cp_next = move(start, n)
-    for n2 in get_neighbors((cp_next.r, cp_next.c)):
-        print(move(cp_next, n2))
+start = CP(0, 0, 22)
+# for n in get_neighbors((0, 0)):
+#     cp_next, op = move(start, '_', n)
+#     print(cp_next, op)
+#     for n2 in get_neighbors((cp_next.r, cp_next.c)):
+#         print(move(cp_next, op, n2))
 
+
+# do a BFS from start point to (3, 3, 30)
+goal = CP(3, 3, 30)
+
+# BFS queue contains 
+# - start position
+# - current operator
+# - list of steps (empty)
+q = deque([(start, '_', [])])
+
+seen = set()
+
+while(q):
+    current_pos, op, current_path = q.pop()
+
+    if current_pos not in seen:
+        seen.add(current_pos)
+
+    if current_pos == goal:
+        print(f'Found solution: {current_pos}, {current_path}')
+        
+
+    for n in get_neighbors((current_pos.r, current_pos.c)):
+        next_pos, next_op = move(current_pos, op, n)
+        q.appendleft((next_pos, next_op, current_path + [n]))
 
 
