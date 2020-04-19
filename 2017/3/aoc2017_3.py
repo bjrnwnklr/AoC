@@ -37,3 +37,4 @@ print('corner_offset: ', corner_offset)
 print('max_dist: ', max_dist)
 print('target_dist: ', target_dist)
 
+# solution part 2: 369601 (lookup at https://oeis.org/A141481/b141481.txt)
