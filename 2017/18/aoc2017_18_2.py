@@ -41,7 +41,7 @@ class Duet():
         self.pg_id = pg_id
         self.regs['p'] = pg_id
 
-        logging.debug(f'[P{self.pg_id}] starting.')
+        logging.info(f'[P{self.pg_id}] starting. Length: {self.pg_length}.')
 
     def get_val(self, y):
         # determine if y is a value or a register
@@ -52,7 +52,7 @@ class Duet():
 
     def run_pg(self):
         # run program as long as IP is within program boundaries
-        while 0 <= self.ip <= self.pg_length:
+        while 0 <= self.ip < self.pg_length:
             line = self.prgrm[self.ip].split(' ')
             instr = line[0]
 
@@ -103,6 +103,7 @@ class Duet():
                     # if something in our queue, get the first msg
                     val = msg_queues[self.pg_id].pop(0)
                     logging.debug(f'[P{self.pg_id}][{self.ip}]: Received {val}')
+                    self.regs[x] = val
                     self.ip += 1
                 else:
                     self.wait = True
@@ -110,16 +111,17 @@ class Duet():
                     raise InputInterrupt
                 
             elif instr == 'jgz':
-                x = line[1]
+                x = self.get_val(line[1])
                 y = self.get_val(line[2])
-                logging.debug(f'[P{self.pg_id}][{self.ip}]: Jgz: regs[{x}] = {self.regs[x]}')
-                if self.regs[line[1]] > 0:
-                    self.ip += self.get_val(line[2])
+                logging.debug(f'[P{self.pg_id}][{self.ip}]: Jgz: {x} > 0')
+                if x > 0:
+                    self.ip += y
                     logging.debug(f'[P{self.pg_id}][{self.ip}]: jumping by {y} to {self.ip}.')
                 else:
                     self.ip += 1
 
         self.alive = False
+        logging.info(f'[P{self.pg_id}][{self.ip}]: Terminated. Sent {self.snd_count} msgs.')
 
 
 if __name__ == '__main__':
@@ -142,15 +144,22 @@ if __name__ == '__main__':
             try:
                 duets[i].run_pg()
             except InputInterrupt:
-                logging.debug(f'Main. P{i} waiting for input. Switching')
+                logging.debug(f'Main. P{i} waiting for input.')
                 i = (i + 1) % 2
                 # check if the other program queue has some values in it
-                if msg_queues[i]:
+                if msg_queues[i] and duets[i].alive:
                     # set the pgrms Wait flag to False
                     duets[i].wait = False
+                    logging.debug(f'Main. P{i} has {len(msg_queues[i])} msgs waiting. Switching.')
+                else:
+                    logging.info(f'Main. Both programs waiting or dead - stopping.')
+                    break
+                    
         else:
+            logging.info(f'Main. P{i} has stopped.')
             i = (i + 1) % 2
             if not duets[i].alive:
+                logging.info(f'Main. P{i} also stopped - terminating.')
                 break
 
     # print out the send counters
