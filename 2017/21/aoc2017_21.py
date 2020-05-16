@@ -13,15 +13,16 @@ rules = dict()
 with open(f_name, 'r') as f:
     for line in f.readlines():
         # convert left and right side of rules to np.array
-        left, right = map(to_np_array, line.strip('\n').split(' => '))
+        left, right = map(to_np_array, line.strip('\n').strip().split(' => '))
         # now calculate all combinations of flip and rotating
         for pat in [left, np.fliplr(left)]:
             for i in range(4):
                 rules[np.rot90(pat, i).tobytes()] = right
 
+print(f'Rules: {len(rules)}')
 
 # rules now contains all possible patterns and their enhancement output
-cycles = 3
+cycles = 18
 
 for cycle in range(cycles):
     # check if divisible by 2
@@ -30,7 +31,7 @@ for cycle in range(cycles):
     else:
         square_size = 3
 
-    print(grid.shape)
+
 
     # break into square_size grids
     num_squares = grid.shape[0] // square_size
@@ -43,10 +44,13 @@ for cycle in range(cycles):
             # do the transformation
             # get the transformation value and append it to the temporary row
             temp_row.append(rules[temp_cell.tobytes()])
-        new_grid.append(np.concatenate(temp_row, axis=0))
+        new_grid.append(np.concatenate(temp_row, axis=1))
 
     grid = np.concatenate(new_grid, axis=0)
+    print(grid.shape)
 
     # count number of pixels in grid
     print(f'Cycle: {cycle}. Number of pixels: {np.sum(grid)}')
-    print(grid)
+    
+    # Part 1: 155
+    # Part 2: 2449665
