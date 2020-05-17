@@ -1,0 +1,51 @@
+[000]	set b 99
+[001]	set c b
+
+[002]	jnz a 2         # if a > 0, jump to 4 - this is part 2
+[003]	jnz 1 5         # if a == 0, jump to 8 (part 1)
+
+                        # jump to here for part 2
+[004]	mul b 100       # b = 9_900
+[005]	sub b -100000   # b = 109_900
+[006]	set c b         # c = 109_900
+[007]	sub c -17000    # c = 126_900
+
+                        # jump to here for part 1, but also part 2, but with b and c set differently
+[008]	set f 1
+[009]	set d 2
+[010]	set e 2
+
+                        # while g != 0
+    [011]	set g d         
+    [012]	mul g e
+    [013]	sub g b
+
+    [014]	jnz g 2         # if g != 0, jump to [016]
+
+    [015]	set f 0         # else f = 0
+
+    [016]	sub e -1        # increase e by 1 (e -= -1)
+    [017]	set g e
+    [018]	sub g b
+
+    [019]	jnz g -8        # if g != 0, jump to [011]
+
+[020]	sub d -1        # else ...
+[021]	set g d
+[022]	sub g b
+
+[023]	jnz g -13      # if g != 0, jump to [010]
+
+[024]	jnz f 2        # if f == 0:
+
+[025]	sub h -1            # h is set here!
+[026]	set g b         
+[027]	sub g c
+
+[028]	jnz g 2         # if g != 0, jump to [030]
+
+[029]	jnz 1 3         # else: end program (if g == 0)
+
+[030]	sub b -17       # increase b by 17
+
+[031]	jnz 1 -23       # jump back to 8 and start again
