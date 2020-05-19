@@ -13,28 +13,30 @@
                         # jump to here for part 1, but also part 2, but with b and c set differently
 [008]	set f 1
 [009]	set d 2
-[010]	set e 2
 
                         # while g != 0
-    [011]	set g d         
-    [012]	mul g e
-    [013]	sub g b
+    [010]	set e 2
 
-    [014]	jnz g 2         # if g != 0, jump to [016]
+                            # while g != 0
+        [011]	set g d         
+        [012]	mul g e
+        [013]	sub g b
 
-    [015]	set f 0         # else f = 0
+        [014]	jnz g 2         # if g != 0, jump to [016]
 
-    [016]	sub e -1        # increase e by 1 (e -= -1)
-    [017]	set g e
-    [018]	sub g b
+        [015]	set f 0         # else f = 0
 
-    [019]	jnz g -8        # if g != 0, jump to [011]
+        [016]	sub e -1        # increase e by 1 (e -= -1)
+        [017]	set g e
+        [018]	sub g b
 
-[020]	sub d -1        # else ...
-[021]	set g d
-[022]	sub g b
+        [019]	jnz g -8        # if g != 0, jump to [011]
 
-[023]	jnz g -13      # if g != 0, jump to [010]
+    [020]	sub d -1        # else ...
+    [021]	set g d
+    [022]	sub g b
+
+    [023]	jnz g -13      # if g != 0, jump to [010]
 
 [024]	jnz f 2        # if f == 0:
 
