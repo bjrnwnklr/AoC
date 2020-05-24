@@ -25,7 +25,11 @@ print(bots)
 
 # find bot with two chips
 while True:
-    curr_bot = [x for x in bots if len(bots[x]) == 2][0]
+    curr_bot = [x for x in bots if len(bots[x]) == 2]
+    if curr_bot:
+        curr_bot = curr_bot[0]
+    else:
+        break
 
     low_type, low_recip, high_type, high_recip = instructions[curr_bot]
     low = min(bots[curr_bot])
@@ -33,7 +37,7 @@ while True:
     # find our end condition
     if low == 17 and high == 61:
         print(f'Found bot: {curr_bot}')
-        break
+        # break
     # pass on the chips
     if low_type == 'bot':
         bots[low_recip].append(low)
@@ -47,3 +51,13 @@ while True:
     bots[curr_bot] = []
 
 # part 1: 93
+
+# part 2
+
+part2_result = 1
+for i in (0, 1, 2):
+    part2_result *= output_bins[i][0]
+
+print(part2_result)
+
+# part 2: 47101
