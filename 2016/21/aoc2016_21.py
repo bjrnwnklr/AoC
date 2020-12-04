@@ -1,11 +1,11 @@
 import re
 
-# password = 'abcdefgh'
-password = 'abcde'
+password = 'abcdefgh'
+# password = 'abcde'
 temp_pw = list(password)
 
-# f_name = 'input.txt'
-f_name = 'ex1.txt'
+f_name = 'input.txt'
+# f_name = 'ex1.txt'
 
 with open(f_name, 'r') as f:
     for line in f.readlines():
@@ -91,8 +91,9 @@ with open(f_name, 'r') as f:
     # - reverse positions: works the same
     # - move pos: needs to be reversed
 
-    # password_pt2 = 'fbgdceah'
-    password_pt2 = 'decab'
+    password_pt2 = 'fbgdceah'
+    # password_pt2 = 'decab'
+    # password_pt2 = 'dgfaehcb'
     temp_pw = list(password_pt2)
     with open(f_name, 'r') as f:
         for line in f.readlines()[::-1]:
@@ -140,17 +141,20 @@ with open(f_name, 'r') as f:
                 # 5     7       4
                 # 6     8       6
                 # 7     9       0
-
+                # calculate a dictionary with lookup for each index
+                rot_dict = dict()
+                pw_length = len(password)
+                for i in range(8):
+                    shift = i + 1 if i < 4 else i + 2
+                    new_pos = (i + shift) % pw_length
+                    rot_dict[new_pos] = shift % pw_length
 
                 x = line.strip('\n')[-1]
-
                 x_index = temp_pw.index(x)
-                rots = 1 + x_index
-                if x_index >= 4:
-                    rots += 1
-                # account for the case where the number of rotations is longer than the length of the password
-                rots %= len(password)
-                temp_pw = temp_pw[-rots:] + temp_pw[:-rots]
+
+                # get the number of reverse rotations required to reverse the rotation
+                rev_rots = -rot_dict[x_index]
+                temp_pw = temp_pw[-rev_rots:] + temp_pw[:-rev_rots]
 
                 print(f'rotate based on pos of {x}')
 
@@ -176,4 +180,6 @@ with open(f_name, 'r') as f:
             print(''.join(temp_pw))
 
         password = ''.join(temp_pw)
-        print(f'Part 1: Password is {password}')
+        print(f'Part 2: Password is {password}')
+
+        # Part 2: fdhgacbe
