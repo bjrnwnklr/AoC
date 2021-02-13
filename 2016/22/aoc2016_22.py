@@ -32,11 +32,15 @@ class Cluster:
         self.grid[(node.x, node.y)] = node
 
     def calc_viable_pairs(self):
-        for node_a in self.grid.values():
-            if not node_a.is_empty():
-                for node_b in self.grid.values():
-                    if node_a.fits_on(node_b):
-                        self.viable_pairs.add((node_a.coords, node_b.coords))
+        """
+        Calculate a set of viable pairs.
+        """
+        for node_a in [a for a in self.grid.values() if not a.is_empty()]:
+            # set.update() used here as we use a generator expression to calculate a set of
+            # viable pairs. if we use set.add(), we would add a generator object to the
+            # set.
+            self.viable_pairs.update((node_a.coords, node_b.coords)
+                                     for node_b in self.grid.values() if node_a.fits_on(node_b))
 
     def viable_pairs_count(self):
         return len(self.viable_pairs)
