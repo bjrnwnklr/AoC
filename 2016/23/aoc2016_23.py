@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     # change c to 0 for part 1 and to 1 for part 2
     regs = {
-        'a': 7,
+        'a': 12,
         'b': 0,
         'c': 0,
         'd': 0
@@ -66,4 +66,5 @@ if __name__ == '__main__':
     print(f'Done, reg a value = {regs["a"]}')
 
     # Part 1: 10365
-    
+    # Part 2: 479006925 (12! + 71 * 75) - manually derived from annotated code version!
+

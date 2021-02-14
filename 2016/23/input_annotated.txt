@@ -1,0 +1,58 @@
+                    [12  0  0  0]
+[00]: cpy a b       [12 12  0  0]
+[01]: dec b         [12 11  0  0]
+[02]: cpy a d       [12 11  0 12]               [132 10  0 132]
+[03]: cpy 0 a       [ 0 11  0 12]               [0   10  0 132]
+
+
+[04]: cpy b c       [ 0 11 11 12]               [0   10 10 132]
+
+
+                    copy value of c into a
+[05]: inc a         [ 1 11 11 12]
+[06]: dec c         [ 1 11 10 12]
+[07]: jnz c -2
+                    [11 11  0 12]               [10 10  0 132]
+
+[08]: dec d         [11 11  0 11]
+[09]: jnz d -5
+
+                    04 - 09: 12 * 11 (a * b)[02] [1320 10 0 0]
+                    [132 11  0  0]
+[10]: dec b         [132 10  0  0]              [1320  9  0  0]
+[11]: cpy b c       [132 10 10  0]              [1320  9  9 0]
+[12]: cpy c d       [132 10 10 10]              [1320  9  9 9]
+
+                    add value of d to c
+[13]: dec d         [132 10 10  9]
+[14]: inc c         [132 10 11  9]
+[15]: jnz d -2
+                    [132 10 20  0]              [1320  9  18 0]
+[16]: tgl c         does nothing, would be at 36  34
+
+[17]: cpy -16 c     [132 10 -16  0]
+[18]: jnz 1 c       jump back to 2              cpy 1 c
+
+                                                2 - 18 does:
+                                                12*11*10*9*8*7*6*5, then the
+                                                tgl c = 24, toggles 24 to "dec c"
+                                                ...*4
+                                                tgl c = 22, toggles 22 to "dec c"
+                                                ...*3
+                                                tgl c = 20, toggles 20 to "cpy 75 d"
+                                                ...*2
+                                                tgl c = 18, toggles 18 to "cpy 1 c"
+                                                [479_001_600  1  1  0]
+
+[19]: cpy 71 c      [x  x  71  x]               [479_001_600  1  71 0]
+                    assume this gets changed to "cpy 75 d"
+[20]: jnz 75 d      [x  x  71  75]              cpy 75 d  [479_001_600 1  71 75]
+
+[21]: inc a                                                [479_001_601 1  71 75]
+[22]: inc d                                     dec c      [479_001_601 1  71 74]
+[23]: jnz d -2
+                                                21-23: add 75 to a
+
+                                                add 71 * 75 to a
+[24]: inc c                                     dec c
+[25]: jnz c -5
