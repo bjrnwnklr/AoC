@@ -13,9 +13,9 @@ if __name__ == '__main__':
     with open(f_name, 'r') as f:
         program = [line.strip('\n').split(' ') for line in f.readlines()]
 
-    # change c to 0 for part 1 and to 1 for part 2
+    # change a to 7 for part 1 and to 12 for part 2
     regs = {
-        'a': 12,
+        'a': 7,
         'b': 0,
         'c': 0,
         'd': 0

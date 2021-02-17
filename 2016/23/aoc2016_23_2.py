@@ -13,7 +13,7 @@ if __name__ == '__main__':
     with open(f_name, 'r') as f:
         program = [line.strip('\n').split(' ') for line in f.readlines()]
 
-    # change c to 0 for part 1 and to 1 for part 2
+    # change a to 7 for part 1 and to 12 for part 2
     regs = {
         'a': 12,
         'b': 0,
@@ -63,7 +63,10 @@ if __name__ == '__main__':
                         target_ins[0] = 'jnz'
             ip += 1
         elif cmd == 'mul':
-            regs['a'] = get_reg(line[1]) * get_reg(line[2])
+            # mul a b
+            # multiply the value of a (or value in reg[a]) with b (reg[b]) and store
+            # in reg[b]
+            regs[line[2]] = get_reg(line[1]) * get_reg(line[2])
             ip += 1
 
     print(f'Done, reg a value = {regs["a"]}')
