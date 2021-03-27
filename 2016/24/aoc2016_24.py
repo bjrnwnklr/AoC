@@ -5,28 +5,6 @@ def set_bit(bitmask, bit_to_set):
     return bitmask | 1 << bit_to_set
 
 
-def generic_bfs(grid, start, end):
-    q = deque([(start, 0)])
-    seen = set()
-
-    while q:
-        current_pos, current_steps = q.pop()
-
-        if current_pos in seen:
-            continue
-
-        seen.add(current_pos)
-
-        if current_pos == end:
-            # found the end point, return number of steps required
-            return current_steps
-
-        for neighbor_pos in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
-            next_pos = (current_pos[0] + neighbor_pos[0], current_pos[1] + neighbor_pos[1])
-            if next_pos in grid:
-                q.appendleft((next_pos, current_steps + 1))
-
-
 # f_name = 'ex1.txt'
 f_name = 'input.txt'
 
@@ -41,6 +19,7 @@ with open(f_name, 'r') as f:
                     wires[(r, c)] = int(x)
                 if x == '0':
                     start = (r, c)
+
 
 # Idea: use a BFS with a combination of position and wires visited. Repeat until
 # the end state (= all wires visited) has been reached.
@@ -66,6 +45,9 @@ def bfs(grid, wires, start, part):
         seen.add(current_pos)
 
         if current_pos[1] == endstate:
+            # For part 1, it is sufficient to just reach visit each wire (i.e. endstate bitmask is all 1s)
+            # For part 2, we need to have visited all wires (i.e. endstate bitmask is all 1s) and we need to be
+            # on the start position. This can be a completely different path than the one taken for part 1.
             if (part == 1) or (part == 2 and current_pos[0] == start):
                 # we found the endstate, break and finish
                 print(f'BFS finished, number of steps: {current_steps}')
@@ -83,6 +65,7 @@ def bfs(grid, wires, start, part):
                 else:
                     next_state = current_pos[1]
                 q.appendleft(((next_pos, next_state), current_steps + 1))
+
 
 # BFS finished and should have found the shortest path
 part1_steps = bfs(grid, wires, start, 1)
