@@ -1,60 +1,52 @@
-from collections import deque
+class Component:
+    def __init__(self, comp_type, comp_element, floor):
+        self.comp_type = comp_type
+        self.comp_element = comp_element
+        self.floor = floor
+        self.abbr = f'{self.comp_element[0].upper()}{self.comp_type}'
+
+    def __repr__(self):
+        return f'{self.comp_element}-{self.comp_type}: f{self.floor}'
 
 
-elements = [
-    'H', 'L'
-]
+class FloorConfig:
+    def __init__(self):
+        self.elevator = 1
+        self.floors = {
+            i: set()
+            for i in range(1, 5)
+        }
+        self.components = dict()
+        self.endstate = '4'
 
-devices = [
-    'M', 'G'
-]
+    def add_component(self, component):
+        self.floors[component.floor].add(component)
+        self.components[component.abbr] = component.floor
+        # update endstate
+        self.endstate += '4'
 
-def get_moves(current_state):
-    # iterate through all possible moves (go up/down a floor and take one or two elements)
-    # and then check if it is a possible move
+    def current_state(self):
+        cs = f'{str(self.elevator)}'
+        for c, f in sorted(self.components.items()):
+            cs += f'{str(f)}'
+        return cs
 
-    # what is on the current floor?
-    elevator, microchips, generators = current_state
-    for el in (microchips, generators):
-        for i, d in enumerate(el):
-            if d == elevator:
-
-
-
-# state is 
-# - elevator floor
-# - HM
-# - LM
-# - HG
-# - LG
-state = (1, 11, 23)
-# everything on 4th floor
-end = (4, 44, 44)
+    def __repr__(self):
+        representation = ''
+        for floor in range(4, 0, -1):
+            representation += f'F{floor}\t'
+            representation += 'E\t' if self.elevator == floor else '\t'
+            representation += '\t'.join(c.abbr for c in self.floors[floor]) + '\n'
+        representation += self.current_state() + '\n'
+        return representation
 
 
-# run a BFS to find the end state
-# q contains:
-# - state (where is everything)
-# - number of moves
-q = deque([state, 0])
-seen = set()
+if __name__ == '__main__':
+    fc = FloorConfig()
+    fc.add_component(Component('M', 'hydrogen', 1))
+    fc.add_component(Component('M', 'lithium', 1))
+    fc.add_component(Component('G', 'hydrogen', 2))
+    fc.add_component(Component('G', 'lithium', 3))
 
-while q:
-    current_state, current_moves = q.pop()
-
-    if current_state in seen:
-        continue
-
-    if current_state == end:
-        # we found the end state
-        print(f'End state found, number of moves: {current_moves}')
-        break
-
-    # add to seen
-    seen.add(current_state)
-
-    # select next moves
-    for next_move in get_moves(current_state):
-        q.appendleft((next_move, current_moves + 1))
-
-print('Done.')
+    print(fc)
+    print(fc.endstate)
