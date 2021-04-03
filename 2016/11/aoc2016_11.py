@@ -118,13 +118,15 @@ class FloorConfig:
         # get combinations of components on the current floor
         comps_on_floor = [c for c in self.components if self.components[c].floor == self.elevator]
         # logging.debug(f'Components on current floor: {comps_on_floor}')
-        available_combinations = list(combinations(comps_on_floor, 1)) + list(combinations(comps_on_floor, 2))
+        single_combinations = combinations(comps_on_floor, 1)
+        dual_combinations = combinations(comps_on_floor, 2)
         # logging.debug(f'1-2 combinations of available components: {available_combinations}')
 
         # create a copy of the current state, move all combinations of elements to available floors
         # and evaluate if it is a valid state. If yes, add it to a list
         valid_states = []
         for floor in next_floors:
+            available_combinations = single_combinations if floor < self.elevator else list(single_combinations) + list(dual_combinations)
             for comb in available_combinations:
                 next_state = deepcopy(self)
                 # move the elevator
