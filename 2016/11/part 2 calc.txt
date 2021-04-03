@@ -1,0 +1,11 @@
+37 to move part 1 components up
+
+8 = 4 to move G/M pair from F1 to F2 * 2
+16 = 8 to move G/M pair from F2 to F4 * 2
+
+Total:
+37 + 8 + 16 = 65
+
+Correct result: 61
+
+This is correct. For 1 additional G/M pair on F1, the answer is 49 = 37 + 4 + 8

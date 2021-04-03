@@ -23,6 +23,23 @@ input_puz = [
     ('M', 'thulium', 3)
 ]
 
+input_pt2 = [
+    ('G', 'strontium', 1),
+    ('M', 'strontium', 1),
+    ('G', 'plutonium', 1),
+    ('M', 'plutonium', 1),
+    ('G', 'elerium', 1),
+    ('M', 'elerium', 1),
+    # ('G', 'dilithium', 1),
+    # ('M', 'dilithium', 1),
+    ('G', 'thulium', 2),
+    ('G', 'ruthenium', 2),
+    ('M', 'ruthenium', 2),
+    ('G', 'curium', 2),
+    ('M', 'curium', 2),
+    ('M', 'thulium', 3)
+]
+
 class Component:
     def __init__(self, comp_type, comp_element, floor):
         self.comp_type = comp_type
@@ -150,7 +167,8 @@ if __name__ == '__main__':
     fc = FloorConfig()
 
     # inp = input_ex1
-    inp = input_puz
+    # inp = input_puz
+    inp = input_pt2
 
     for c, e, f in inp:
         fc.add_component(Component(c, e, f))
@@ -185,3 +203,4 @@ if __name__ == '__main__':
     print('END!')
 
     # Part 1: 37 steps (takes 5-10 minutes without optimization)
+    # Part 2: 61 steps (takes 20-25 minutes) We can probably count steps to get to the right result?

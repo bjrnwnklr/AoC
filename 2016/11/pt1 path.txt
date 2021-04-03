@@ -1,0 +1,260 @@
+Path:
+F4
+F3              TM
+F2              TG      RG      RM      CG      CM
+F1      E       SG      SM      PG      PM
+12211221123
+
+F4
+F3              TM
+F2      E       SG      SM      TG      RG      RM      CG      CM
+F1              PG      PM
+22211222223
+
+----------------
+
+F4
+F3              TM
+F2              SG      SM      RG      RM      CG      CM
+F1      E       PG      PM      TG
+12211222213
+
+F4
+F3              TM
+F2      E       SG      SM      PG      PM      RG      RM      CG      CM
+F1              TG
+22222222213
+
+F4
+F3      E       SM      PM      TM
+F2              SG      PG      RG      RM      CG      CM
+F1              TG
+32223222313
+
+F4
+F3              PM      TM
+F2      E       SG      SM      PG      RG      RM      CG      CM
+F1              TG
+22223222213
+
+F4
+F3              PM      TM
+F2              SG      SM      RG      RM      CG      CM
+F1      E       PG      TG
+12213222213
+
+F4
+F3              PM      TM
+F2      E       SG      SM      PG      TG      RG      RM      CG      CM
+F1
+22223222223
+
+F4
+F3      E       PG      PM      TG      TM
+F2              SG      SM      RG      RM      CG      CM
+F1
+32233222233
+
+-----------------------------------------
+
+F4      E       PG      PM
+F3              TG      TM
+F2              SG      SM      RG      RM      CG      CM
+F1
+42244222233
+
+F4              PM
+F3      E       PG      TG      TM
+F2              SG      SM      RG      RM      CG      CM
+F1
+32234222233
+
+F4      E       PG      PM      TG
+F3              TM
+F2              SG      SM      RG      RM      CG      CM
+F1
+42244222243
+
+------------------------------------------
+
+
+F4              PG      PM
+F3      E       TG      TM
+F2              SG      SM      RG      RM      CG      CM
+F1
+32244222233
+
+
+4 moves to bring G/M pair up one floor and elevator down again
+------------------------------------------
+
+F4              PG      PM
+F3              TM
+F2      E       SG      SM      TG      RG      RM      CG      CM
+F1
+22244222223
+
+F4              PG      PM
+F3      E       SM      RM      TM
+F2              SG      TG      RG      CG      CM
+F1
+32244232323
+
+F4              PG      PM
+F3              RM      TM
+F2      E       SG      SM      TG      RG      CG      CM
+F1
+22244232223
+
+F4              PG      PM
+F3      E       TG      RG      RM      TM
+F2              SG      SM      CG      CM
+F1
+32244332233
+
+F4      E       PG      PM      TG      RG
+F3              RM      TM
+F2              SG      SM      CG      CM
+F1
+42244432243
+
+F4              PG      TG      RG
+F3      E       PM      RM      TM
+F2              SG      SM      CG      CM
+F1
+32243432243
+
+F4      E       PG      PM      TG      RG      RM
+F3              TM
+F2              SG      SM      CG      CM
+F1
+42244442243
+
+----------------------------------------------------------
+
+
+F4              PG      PM      RG      RM
+F3      E       TG      TM
+F2              SG      SM      CG      CM
+F1
+32244442233
+
+
+8 moves to move a G/M pair from F2 to F4 and get elevator to F3
+----------------------------------------------------------
+
+
+F4              PG      PM      RG      RM
+F3              TM
+F2      E       SG      SM      TG      CG      CM
+F1
+22244442223
+
+F4              PG      PM      RG      RM
+F3      E       SM      CM      TM
+F2              SG      TG      CG
+F1
+32344442323
+
+F4              PG      PM      RG      RM
+F3              CM      TM
+F2      E       SG      SM      TG      CG
+F1
+22344442223
+
+F4              PG      PM      RG      RM
+F3      E       TG      CG      CM      TM
+F2              SG      SM
+F1
+33344442233
+
+F4      E       PG      PM      TG      RG      RM      CG
+F3              CM      TM
+F2              SG      SM
+F1
+44344442243
+
+F4              PG      TG      RG      RM      CG
+F3      E       PM      CM      TM
+F2              SG      SM
+F1
+34343442243
+
+F4      E       PG      PM      TG      RG      RM      CG      CM
+F3              TM
+F2              SG      SM
+F1
+44444442243
+
+----------------------------------
+
+F4              PG      PM      RG      RM      CG      CM
+F3      E       TG      TM
+F2              SG      SM
+F1
+34444442233
+
+
+8 moves again
+-----------------------------------
+
+F4              PG      PM      RG      RM      CG      CM
+F3              TM
+F2      E       SG      SM      TG
+F1
+24444442223
+
+F4              PG      PM      RG      RM      CG      CM
+F3      E       SG      TG      TM
+F2              SM
+F1
+34444443233
+
+F4              PG      PM      RG      RM      CG      CM
+F3              TG      TM
+F2      E       SG      SM
+F1
+24444442233
+
+F4              PG      PM      RG      RM      CG      CM
+F3      E       SG      SM      TG      TM
+F2
+F1
+34444443333
+
+F4      E       SG      PG      PM      TG      RG      RM      CG      CM
+F3              SM      TM
+F2
+F1
+44444444343
+
+F4              SG      PG      TG      RG      RM      CG      CM
+F3      E       SM      PM      TM
+F2
+F1
+34443444343
+
+F4      E       SG      SM      PG      PM      TG      RG      RM      CG      CM
+F3              TM
+F2
+F1
+44444444443
+
+---------------------------------
+
+F4              SG      PG      PM      TG      RG      RM      CG      CM
+F3      E       SM      TM
+F2
+F1
+34444444343
+
+8 moves again
+--------------------------------
+
+F4      E       SG      SM      PG      PM      TG      RG      RM      CG      CM      TM
+F3
+F2
+F1
+44444444444
+
+End state reached after 37 steps.
