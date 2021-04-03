@@ -67,24 +67,26 @@ class FloorConfig:
         fried = False
         floor = 1
         while not fried and floor <= 4:
-            # get all components on the floor that are single type (i.e. their counterpart is on a different floor)
-            single_comps_on_floor = {c for c in self.components if
-                                        self.components[c].floor == floor and
-                                        self.components[self.components[c].counterpart].floor != floor}
-            logging.debug(f'Single elements on floor {floor}: {single_comps_on_floor}')
+            # get all components on the floor - we will need this to cover the case where a single
+            # microchip is on the floor together with a microchip/generator combination
+            all_comps_on_floor = {c for c in self.components if
+                                    self.components[c].floor == floor}
+            # If there is only one component on the floor, or the components are all of the same type,
+            # we have a valid state so only investigate further if not
+            if len(all_comps_on_floor) > 1 and len({c[1] for c in all_comps_on_floor}) > 1:
+                # get all components on the floor that are single type (i.e. their counterpart is on a different floor)
+                single_comps_on_floor = {c for c in all_comps_on_floor if
+                                            self.components[self.components[c].counterpart].floor != floor}
+                # logging.debug(f'Single elements on floor {floor}: {single_comps_on_floor}')
 
-            # if the more than one component is on the floor, check if there are any
-            # (M)icrochips and (G)enerators together
-            if len(single_comps_on_floor) > 1:
-                types_on_floor = {c[1] for c in single_comps_on_floor}
-                # if there is more than on component type on the floor (i.e. microchip and generator together),
-                # chips will get fried and the state is invalid
-                if len(types_on_floor) > 1:
-                    logging.debug(f'FRIED!!! Floor {floor}: {single_comps_on_floor}')
+                # if there is at least one component on the floor, check if there is a (M)icrochip
+                # - as we already know there must be a generator with corresponding microchip,
+                # which would fry any single chips
+                if len(single_comps_on_floor) >= 1 and 'M' in {c[1] for c in single_comps_on_floor}:
                     fried = True
 
             floor += 1
-        logging.debug(f'State is valid: {not fried}')
+        # logging.debug(f'State is valid: {not fried}')
         return not fried
 
     def __repr__(self):
@@ -109,15 +111,15 @@ class FloorConfig:
         :return: A list of FloorConfig objects, representing a possible next move.
         """
         # get list of possible floors
-        logging.debug('POSSIBLE MOVES')
+        # logging.debug('POSSIBLE MOVES')
         next_floors = [self.elevator + i for i in [-1, 1] if 1 <= self.elevator + i <= 4]
-        logging.debug(f'Next floors: {next_floors}')
+        # logging.debug(f'Next floors: {next_floors}')
 
         # get combinations of components on the current floor
         comps_on_floor = [c for c in self.components if self.components[c].floor == self.elevator]
-        logging.debug(f'Components on current floor: {comps_on_floor}')
+        # logging.debug(f'Components on current floor: {comps_on_floor}')
         available_combinations = list(combinations(comps_on_floor, 1)) + list(combinations(comps_on_floor, 2))
-        logging.debug(f'1-2 combinations of available components: {available_combinations}')
+        # logging.debug(f'1-2 combinations of available components: {available_combinations}')
 
         # create a copy of the current state, move all combinations of elements to available floors
         # and evaluate if it is a valid state. If yes, add it to a list
@@ -130,11 +132,11 @@ class FloorConfig:
                 # move the components
                 for c in comb:
                     next_state.move_component(c, floor)
-                logging.debug(f'Created copy for move to floor {floor} with components {comb}:\n{next_state}')
+                # logging.debug(f'Created copy for move to floor {floor} with components {comb}:\n{next_state}')
                 if next_state.is_valid():
                     valid_states.append(next_state)
 
-        logging.debug(f'Found {len(valid_states)} valid states.')
+        # logging.debug(f'Found {len(valid_states)} valid states.')
         return valid_states
 
 
@@ -145,8 +147,8 @@ if __name__ == '__main__':
 
     fc = FloorConfig()
 
-    inp = input_ex1
-    # inp = input_puz
+    # inp = input_ex1
+    inp = input_puz
 
     for c, e, f in inp:
         fc.add_component(Component(c, e, f))
@@ -155,12 +157,12 @@ if __name__ == '__main__':
     logging.debug(f'Endstate: {fc.endstate}')
 
     # run a BFS until we reach the endstate
-    q = deque([(fc, 0)])
+    q = deque([(fc, 0, [str(fc)])])
     endstate = fc.endstate
     seen = set()
 
     while q:
-        current_config, current_steps = q.pop()
+        current_config, current_steps, path = q.pop()
 
         if current_config.current_state() in seen:
             continue
@@ -168,11 +170,16 @@ if __name__ == '__main__':
         seen.add(current_config.current_state())
 
         if current_config.current_state() == endstate:
+            print(f'Path:')
+            for p in path:
+                print(p)
             print(f'End state reached after {current_steps} steps.')
             break
 
         for next_state in current_config.possible_moves():
-            q.appendleft((next_state, current_steps + 1))
+            q.appendleft((next_state, current_steps + 1, path + [str(next_state)]))
 
     # we're done
     print('END!')
+
+    # Part 1: 37 steps (takes 5-10 minutes without optimization)
