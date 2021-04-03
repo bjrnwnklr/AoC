@@ -1,6 +1,7 @@
 from copy import deepcopy
 import logging
 from itertools import combinations
+from collections import deque
 
 input_ex1 = [
     ('M', 'hydrogen', 1),
@@ -108,6 +109,7 @@ class FloorConfig:
         :return: A list of FloorConfig objects, representing a possible next move.
         """
         # get list of possible floors
+        logging.debug('POSSIBLE MOVES')
         next_floors = [self.elevator + i for i in [-1, 1] if 1 <= self.elevator + i <= 4]
         logging.debug(f'Next floors: {next_floors}')
 
@@ -151,16 +153,26 @@ if __name__ == '__main__':
 
     logging.debug(f'Starting, initial configuration:\n{fc}')
     logging.debug(f'Endstate: {fc.endstate}')
-    #
-    # # test deepcopy and changing an element in the copy
-    # fc_copy = deepcopy(fc)
-    #
-    # print(fc_copy)
-    #
-    # # fc_copy.components['HM'].floor = 2
-    # fc_copy.move_component('HM', 2)
-    # print(fc)
-    # print(fc_copy)
 
-    next_moves = fc.possible_moves()
-    
+    # run a BFS until we reach the endstate
+    q = deque([(fc, 0)])
+    endstate = fc.endstate
+    seen = set()
+
+    while q:
+        current_config, current_steps = q.pop()
+
+        if current_config.current_state() in seen:
+            continue
+
+        seen.add(current_config.current_state())
+
+        if current_config.current_state() == endstate:
+            print(f'End state reached after {current_steps} steps.')
+            break
+
+        for next_state in current_config.possible_moves():
+            q.appendleft((next_state, current_steps + 1))
+
+    # we're done
+    print('END!')
