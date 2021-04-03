@@ -30,8 +30,8 @@ input_pt2 = [
     ('M', 'plutonium', 1),
     ('G', 'elerium', 1),
     ('M', 'elerium', 1),
-    # ('G', 'dilithium', 1),
-    # ('M', 'dilithium', 1),
+    ('G', 'dilithium', 1),
+    ('M', 'dilithium', 1),
     ('G', 'thulium', 2),
     ('G', 'ruthenium', 2),
     ('M', 'ruthenium', 2),
@@ -64,10 +64,33 @@ class FloorConfig:
         # update endstate
         self.endstate += '4'
 
-    def current_state(self):
+    def current_state_slow(self):
+        """
+        Slow / initial representation. This treats each state as completely unique, including the case
+        where a M/G pair is moved to another floor vs another M/G pair being moved to the same spot. This
+        greatly increases the search space.
+        :return:
+        """
         cs = f'{str(self.elevator)}'
         for c in sorted(self.components):
             cs += f'{str(self.components[c].floor)}'
+        return cs
+
+    def current_state(self):
+        """
+        Optimized representation of the current status, which treats all pairs of M/G the same.
+        This greatly reduces the search space by considering scenarios where just different pairs of
+        M/G are in the same space are considered the same.
+        :return:
+        """
+        cs = f'{str(self.elevator)}'
+        just_comps = ''
+        for c in sorted(self.components):
+            just_comps += f'{str(self.components[c].floor)}'
+
+        # turn all but the elevator part into a string and split into two digit segments
+        comp_pairs = [int(just_comps[i] + just_comps[i + 1]) for i in range(0, len(just_comps), 2)]
+        cs += ''.join(str(n) for n in sorted(comp_pairs))
         return cs
 
     def move_component(self, abbr, floor):
@@ -167,8 +190,8 @@ if __name__ == '__main__':
     fc = FloorConfig()
 
     # inp = input_ex1
-    # inp = input_puz
-    inp = input_pt2
+    inp = input_puz
+    # inp = input_pt2
 
     for c, e, f in inp:
         fc.add_component(Component(c, e, f))
@@ -204,3 +227,4 @@ if __name__ == '__main__':
 
     # Part 1: 37 steps (takes 5-10 minutes without optimization)
     # Part 2: 61 steps (takes 20-25 minutes) We can probably count steps to get to the right result?
+    # Part 2 with optimized current_state function runs in a few seconds.
