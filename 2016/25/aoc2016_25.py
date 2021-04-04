@@ -67,8 +67,7 @@ class Assembunny:
                 val = self.get_reg(line[1])
                 self.outq.append(val)
                 self.ip += 1
-                if len(self.outq) == 100:
-                    break
+                break
 
 
 if __name__ == '__main__':
@@ -81,9 +80,20 @@ if __name__ == '__main__':
         program = [line.strip('\n').split(' ') for line in f.readlines()]
 
     # find the lowest value for reg a to produce a repeating 0, 1, 0, 1, ... output stream
-    for n in range(158, 159):
+    # This aborts as soon as the output pattern diverts from 0, 1, 0, 1 and prints out
+    # WRONG
+    # Program will run infinitely as soon as the right number has been found.
+    for n in range(200):
         asm = Assembunny(program[:], n)
-        asm.run()
-        print(f'{n:04}: {list(asm.outq)}')
+        print(f'{n:03}')
+        wrong = False
+        out_count = 0
+        while not wrong:
+            asm.run()
+            out_val = asm.outq.popleft()
+            if out_count % 2 != out_val:
+                wrong = True
+            out_count += 1
+        print('WRONG!')
 
 # Part 1: 158 produces a signal of 0, 1, 0, 1, 0, 1 etc
