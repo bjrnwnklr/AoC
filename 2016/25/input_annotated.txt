@@ -1,0 +1,48 @@
+[00]: cpy a d
+[01]: cpy 4 c
+[02]: cpy 643 b
+[03]: inc d
+[04]: dec b
+[05]: jnz b -2
+[06]: dec c
+[07]: jnz c -5
+
+                    Loop 2572 times
+
+[08]: cpy d a
+                    Add 2572 to original a
+
+[09]: jnz 0 0
+[10]: cpy a b
+[11]: cpy 0 a
+[12]: cpy 2 c
+                    Regs: [0, a+2572, 2, a+2572]
+
+[13]: jnz b 2
+                    We need to get b to 0 to get to 14
+
+[14]: jnz 1 6
+                    This will jump to 20 if b == 0
+
+[15]: dec b
+[16]: dec c
+[17]: jnz c -4
+                    Loop that decreases b and c until c == 0
+                    c = 2 so this repeats twice and decreases
+                    b by 2
+                    So this takes (a+2572)*2 rounds
+
+[18]: inc a         increases a to b/2
+[19]: jnz 1 -7
+
+
+[20]: cpy 2 b
+[21]: jnz c 2
+[22]: jnz 1 4
+[23]: dec b
+[24]: dec c
+[25]: jnz 1 -4
+[26]: jnz 0 0
+[27]: out b
+[28]: jnz a -19
+[29]: jnz 1 -21

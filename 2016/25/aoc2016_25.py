@@ -20,11 +20,14 @@ class Assembunny:
         else:
             return int(a)
 
+    def _repr_regs(self):
+        return f'[{", ".join(map(str, self.regs.values()))}]'
+
     def run(self):
         while self.ip < self.end:
             line = program[self.ip]
             cmd = line[0]
-            logging.debug(f'[{self.ip:03}]: {line}')
+            logging.debug(f'[{self.ip:03}]{self._repr_regs()}: {line}')
             if cmd == 'cpy':
                 val = self.get_reg(line[1])
                 self.regs[line[2]] = val
@@ -69,7 +72,7 @@ class Assembunny:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO, filename='asm.log', filemode='w')
 
     f_name = 'input.txt'
     # f_name = 'ex1.txt'
@@ -78,6 +81,9 @@ if __name__ == '__main__':
         program = [line.strip('\n').split(' ') for line in f.readlines()]
 
     # find the lowest value for reg a to produce a repeating 0, 1, 0, 1, ... output stream
-    asm = Assembunny(program[:], 0)
-    asm.run()
-    print(asm.outq)
+    for n in range(158, 159):
+        asm = Assembunny(program[:], n)
+        asm.run()
+        print(f'{n:04}: {list(asm.outq)}')
+
+# Part 1: 158 produces a signal of 0, 1, 0, 1, 0, 1 etc
