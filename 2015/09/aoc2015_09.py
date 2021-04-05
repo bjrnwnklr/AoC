@@ -35,4 +35,7 @@ if __name__ == '__main__':
 
     # part 1: ('Tambi', 'Arbre', 'Snowdin', 'AlphaCentauri', 'Tristram', 'Straylight', 'Faerun', 'Norrath') 251
 
-    
+    part2 = max(paths, key=lambda x: paths[x])
+    print(part2, paths[part2])
+
+    # part 2: ('Tristram', 'Faerun', 'Arbre', 'Straylight', 'AlphaCentauri', 'Norrath', 'Tambi', 'Snowdin') 898
