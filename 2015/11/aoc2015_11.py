@@ -78,7 +78,11 @@ if __name__ == '__main__':
         lines = f.readlines()
         for line in lines:
             pw = line.strip()
-            print(f'{pw}: {pw_generator(pw)}')
+            next_pw = pw_generator(pw)
+            print(f'{pw}: {next_pw}')
+            next_next_pw = pw_generator(next_pw)
+            print(f'{next_pw}: {next_next_pw}')
 
     # part 1: hepxxyzz
-    
+    # part 2: heqaabcc
+
