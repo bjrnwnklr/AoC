@@ -48,6 +48,7 @@ if __name__ == '__main__':
         for rd in reindeers:
             round_traveled.append((rd, travel_km(rd, t)))
 
+        # figure out what happens if multiple reindeer in the lead - they each get one point!
         leading[max(round_traveled, key=lambda x: x[1])[0]] += 1
         print(t, leading)
 
