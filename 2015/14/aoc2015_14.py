@@ -15,8 +15,8 @@ def travel_km(rd, t):
 
 if __name__ == '__main__':
 
-    f_name = 'ex1.txt'
-    # f_name = 'input.txt'
+    # f_name = 'ex1.txt'
+    f_name = 'input.txt'
 
     regex = re.compile(r'(\w+).+\s(\d+).+\s(\d+).+\s(\d+)')
     reindeers = dict()
@@ -30,8 +30,8 @@ if __name__ == '__main__':
                 rest = int(m.group(4))
                 reindeers[name] = (speed, duration, rest)
 
-    n = 1001
-    # n = 2503
+    # n = 1000
+    n = 2503
 
     travelled = []
     for rd in reindeers:
@@ -44,14 +44,19 @@ if __name__ == '__main__':
 
     leading = defaultdict(int)
     for t in range(1, n+1):
-        round_traveled = []
+        round_traveled = defaultdict(list)
         for rd in reindeers:
-            round_traveled.append((rd, travel_km(rd, t)))
+            round_traveled[travel_km(rd, t)].append(rd)
 
         # figure out what happens if multiple reindeer in the lead - they each get one point!
-        leading[max(round_traveled, key=lambda x: x[1])[0]] += 1
-        print(t, leading)
+        max_km = max(round_traveled)
+        for rd in round_traveled[max_km]:
+            leading[rd] += 1
+        # print(t, leading)
 
     print(leading)
+    leading_rd = max(leading, key=lambda x: leading[x])
+    part2 = leading[leading_rd]
+    print(part2)
 
-
+    # part 2: 1084 (Rudolph)
