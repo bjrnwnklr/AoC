@@ -1,5 +1,10 @@
 import re
 from collections import defaultdict, deque
+from heapq import heappop, heappush
+
+
+def heuristic(target, v_next):
+    return len(v_next) - len(target)
 
 
 def sub_iter(pattern, repl, text):
@@ -19,10 +24,12 @@ if __name__ == '__main__':
 
     distinct_molecules = set()
     recipes = defaultdict(list)
+    reverse_recipes = dict()
 
     for line in lines:
         left, right = line.split(' => ')
         recipes[left].append(right)
+        reverse_recipes[right[::-1]] = left[::-1]
         for new_text in sub_iter(left, right, cal_molecule):
             distinct_molecules.add(new_text)
 
@@ -30,30 +37,27 @@ if __name__ == '__main__':
 
     # part 1: 576
 
-    # Part 2 starts here
-    start = 'e'
-    end = cal_molecule
-    seen = set()
-    q = deque([('e', 0)])
+    # # Part 2 starts here
 
-    # do a BFS to find the end molecule
-    while q:
-        curr_mol, curr_steps = q.pop()
+    # Greedy from the right
+    curr_mol = cal_molecule[::-1]
+    steps = 0
 
-        if curr_mol in seen:
-            continue
+    while curr_mol != 'e':
+        min_start = 10000
+        min_end = 10000
+        min_pattern = ''
+        for pattern in reverse_recipes:
+            m = re.search(pattern, curr_mol)
+            if m:
+                if m.start() < min_start:
+                    min_pattern = pattern
+                    min_start = m.start()
+                    min_end = m.end()
 
-        seen.add(curr_mol)
+        curr_mol = curr_mol[:min_start] + reverse_recipes[min_pattern] + curr_mol[min_end:]
+        steps += 1
 
-        if curr_mol == end:
-            # we found the end result
-            print(f'Molecule reached after {curr_steps} steps.')
-            break
+    print(steps)
 
-        # get all valid neighbors - all possible substitutions
-        possible_subs = {k for k in recipes.keys() if k in curr_mol}
-        for pattern in possible_subs:
-            for repl in recipes[pattern]:
-                for new_text in sub_iter(pattern, repl, curr_mol):
-                    if len(new_text) <= len(end):
-                        q.appendleft((new_text, curr_steps + 1))
+    # Part 2: 207 (for some reason, greedy replacement from the right seems to work...)
