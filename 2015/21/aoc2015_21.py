@@ -115,10 +115,10 @@ if __name__ == '__main__':
     # part1 = min(rs[0] for rs in results if rs[1])
     print(part1)
 
-    # Part 1: 78
-    # player = Player('Player', 100, 6, 3)
-    # enemy = Player('Enemy', 104, 8, 1)
-    # winner = fight(player, enemy)
-    # print(winner)
+    part2 = max(rs[0] for rs in results if rs[1] == 'Enemy')
+    print(part2)
 
+    # Part 1: 78
+    # Part 2: 148
+    
 
