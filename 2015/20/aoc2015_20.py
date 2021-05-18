@@ -20,6 +20,14 @@ def calc_all_visits(n):
     return houses
 
 
+def calc_all_visits_pt2(n):
+    houses = defaultdict(int)
+    for elf in range(1, n // 10):
+        for house in range(elf, elf * 51, elf):
+            houses[house] += elf * 11
+
+    return houses
+
 if __name__ == '__main__':
 
     # f_name = 'ex1.txt'
@@ -34,4 +42,9 @@ if __name__ == '__main__':
     print(h_min, houses[h_min])
 
     # Part 1: 665280
-    
+
+    houses = calc_all_visits_pt2(n)
+    h_min = min([h for h in houses if houses[h] >= n])
+    print(h_min, houses[h_min])
+
+    # Part 2: 705600
