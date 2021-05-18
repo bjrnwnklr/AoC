@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 
 def calc_presents(n):
     result = n * 10
@@ -9,6 +11,15 @@ def calc_presents(n):
     return result
 
 
+def calc_all_visits(n):
+    houses = defaultdict(int)
+    for elf in range(1, n // 10):
+        for house in range(elf, n // 10, elf):
+            houses[house] += elf * 10
+
+    return houses
+
+
 if __name__ == '__main__':
 
     # f_name = 'ex1.txt'
@@ -17,23 +28,10 @@ if __name__ == '__main__':
     with open(f_name, 'r') as f:
         req_presents = int(f.readline().strip())
 
-    presents = dict()
+    n = 29_000_000
+    houses = calc_all_visits(n)
+    h_min = min([h for h in houses if houses[h] >= n])
+    print(h_min, houses[h_min])
 
-    n = 20_000_000
-    j = 370_000
-    result = 0
-    while result < n:
-        j += 1
-        result = calc_presents(j)
-
-    print(j, result)
-
-    # print(calc_presents(815_500))
-
-    # for j in range(1, 100):
-    #     presents[j] = calc_presents(j)
-
-    # for k in sorted(presents, key=lambda x: presents[x], reverse=True):
-    #     print(k, presents[k])
-
-
+    # Part 1: 665280
+    
