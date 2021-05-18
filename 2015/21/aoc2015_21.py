@@ -1,5 +1,6 @@
 import re
 from itertools import combinations
+from math import ceil
 
 text_weapons = """Dagger        8     4       0
 Shortsword   10     5       0
@@ -69,9 +70,10 @@ def fight(player, enemy):
 
 
 def player_wins(d, a):
-    # calculate how many turns each combatant survives
-    player_turns = 100 / max(1, 8 - a)
-    enemy_turns = 104 / (d - 1)
+    # calculate how many turns each combatant survives - need to use the ceil() function to round up as we need
+    # to finish any started (fraction) rounds and see who is left standing!
+    player_turns = ceil(100 / max(1, 8 - a))
+    enemy_turns = ceil(104 / (d - 1))
     print(f'Player wins: {player_turns >= enemy_turns} P: {player_turns}, E: {enemy_turns}')
 
     return player_turns >= enemy_turns
@@ -101,24 +103,25 @@ if __name__ == '__main__':
                 print(f'C: {cost}, W: {w}, Ar: {ar}, R: {r}')
                 print(f'D: {damage}, A: {defense}')
 
-                player = Player('Player', 100, damage, defense)
-                enemy = Player('Enemy', 104, 8, 1)
-                winner = fight(player, enemy)
-                print(f'Winner: {winner}')
-                results.append((cost, winner))
-                # uncomment below for calculated solution, which is somehow wrong!
-                # results.append((cost, player_wins(damage, defense)))
+                # player = Player('Player', 100, damage, defense)
+                # enemy = Player('Enemy', 104, 8, 1)
+                # winner = fight(player, enemy)
+                # print(f'Winner: {winner}')
+                # results.append((cost, winner))
+                # uncomment below for calculated solution
+                results.append((cost, player_wins(damage, defense)))
 
     # get the minimal cost
-    part1 = min(rs[0] for rs in results if rs[1] == 'Player')
-    # uncomment below for calculated solution, which is somehow wrong!
-    # part1 = min(rs[0] for rs in results if rs[1])
+    # part1 = min(rs[0] for rs in results if rs[1] == 'Player')
+    # uncomment below for calculated solution
+    part1 = min(rs[0] for rs in results if rs[1])
     print(part1)
 
-    part2 = max(rs[0] for rs in results if rs[1] == 'Enemy')
+    # part2 = max(rs[0] for rs in results if rs[1] == 'Enemy')
+    part2 = max(rs[0] for rs in results if not rs[1])
     print(part2)
 
     # Part 1: 78
     # Part 2: 148
-    
+
 
