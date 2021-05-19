@@ -1,6 +1,3 @@
-import re
-from itertools import combinations
-from math import ceil
 
 
 spells = {
@@ -22,8 +19,7 @@ class Player:
         self.magic_armor = 0
 
     def take_hit(self, damage):
-        d_taken = max(1, damage - self.a - self.magic_armor)
-        self.hp -= d_taken
+
         # print(f'{self.name} taking hit: {d_taken}. Remaining HP: {self.hp}')
 
     def is_alive(self):
@@ -33,48 +29,57 @@ class Player:
 
 
 class Fight:
-    def __init__(self, player, enemy):
+    def __init__(self):
+        self.player_hp = 50
+        self.player_mana = 500
+        self.player_armor = 0
+        self.player_mana_consumption = 0
+        self.player_magic_armor = 0
+        self.enemy_hp = 51
+        self.enemy_d = 9
         self.effects = {
             'sh': 0, # shield
             'po': 0, # poison
             're': 0  # recharge
         }
-        self.player = player
-        self.enemy = enemy
 
-    def fight(self):
-        turn = 0
-        while self.player.is_alive() and self.enemy.is_alive():
-            # apply impacts of effects
-            self.update_effects()
+    def hashcode(self):
+        return hash(self)
 
-            # Player's turn
-            # pick a spell
+    def __repr__(self):
+        return ','.join(str(x) for x in [
+            self.player_hp,
+            self.player_mana,
+            self.player_armor,
+            self.player_mana_consumption,
+            self.player_magic_armor,
+            self.enemy_hp,
+            self.enemy_d,
+            self.effects['sh'],
+            self.effects['po'],
+            self.effects['re']
+        ])
 
+    def hit_enemy(self, d):
+        self.enemy_hp -= d
 
-            # print(f'Turn {turn}.')
-            attacked.take_hit(attacker.d)
-
-        # someone has hp == 0, find out who
-        if self.player.is_alive():
-            return 'Player'
-        else:
-            return 'Enemy'
+    def hit_player(self, d):
+        self.player_hp -= max(1, d - self.player_armor - self.player_magic_armor)
 
     def update_effects(self):
         # shield effect
         if self.effects['sh'] > 0:
-            self.player.magic_armor = 7
+            self.player_magic_armor = 7
             self.effects['sh'] -= 1
         else:
-            self.player.magic_armor = 0
+            self.player_magic_armor = 0
         # poison effect
         if self.effects['po'] > 0:
-            self.enemy.take_hit(3)
+            # self.enemy.take_hit(3)
             self.effects['po'] -= 1
         # recharge effect
         if self.effects['re'] > 0:
-            self.player.mana += 101
+            self.player_mana += 101
             self.effects['re'] -= 1
 
 
@@ -86,30 +91,9 @@ class Fight:
 
 if __name__ == '__main__':
 
-    player = Player()
-
-    results = []
-    for w in weapons:
-        for ar in armor:
-            for r in all_rings:
-                # calculate the value of the combined equipment
-                cost = w[0] + ar[0] + sum(ring[0] for ring in r)
-                # calculate player attributes
-                damage = w[1] + sum(ring[1] for ring in r)
-                defense = ar[2] + sum(ring[2] for ring in r)
-                print(f'C: {cost}, W: {w}, Ar: {ar}, R: {r}')
-                print(f'D: {damage}, A: {defense}')
-
-                player = Player('Player', 100, damage, defense)
-                enemy = Player('Enemy', 104, 8, 1)
-                winner = fight(player, enemy)
-                print(f'Winner: {winner}')
-                results.append((cost, winner))
-
-    # get the minimal cost
-    part1 = min(rs[0] for rs in results if rs[1] == 'Player')
-    print(part1)
-
+    new_round = Fight()
+    print(f'{new_round}')
+    print(f'{new_round.hashcode()}')
 
 
 
