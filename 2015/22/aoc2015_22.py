@@ -80,17 +80,25 @@ class Fight:
         # return a list of possible spells
         poss_spells = []
         for sp in spells:
-            if self.player_mana >= spells[sp] and (sp not in self.effects or self.effects[sp] == 0):
+            if self.player_mana >= spells[sp] and (sp not in self.effects or self.effects[sp] <= 1):
                 poss_spells.append(sp)
         return poss_spells
 
     def fight_round(self, spell):
+        # for part 2, reduce mana by 1 with each turn
+        if part == 2:
+            self.player_hp -= 1
+            if self.enemy_wins():
+                self.winner = 'Enemy'
+                return True
+
         # --- Player's turn ---
         # apply effects
         self.update_effects()
         # check if player has won (if enemy was killed by an effect like poison)
         if self.player_wins():
             self.winner = 'Player'
+            return True
 
         # run player attack: cast a spell
         if spell == 'mm':
@@ -111,19 +119,24 @@ class Fight:
         # check if player has won
         if self.player_wins():
             self.winner = 'Player'
+            return True
 
         # --- Enemy's turn ---
         # apply effects and check if player has won
         self.update_effects()
         if self.player_wins():
             self.winner = 'Player'
+            return True
         # run enemy attack
         self.hit_player(self.enemy_d)
         if self.enemy_wins():
             self.winner = 'Enemy'
+            return True
+
 
 
 if __name__ == '__main__':
+    part = 2
     new_round = Fight()
 
     # Dijkstra
@@ -161,3 +174,7 @@ if __name__ == '__main__':
                 q.append(next_round)
 
     # Part 1: 900 (logged all results to a file and filtered for winner=='Player' and lowest Mana consumed was 900
+    # Part 2: 1216 (same- runs for a long time!)
+
+    # Implement pruning: prune any paths that have higher mana consumption than the lowest Player winning path.
+    
