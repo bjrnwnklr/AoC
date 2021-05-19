@@ -136,7 +136,7 @@ class Fight:
 
 
 if __name__ == '__main__':
-    part = 2
+    part = 1
     new_round = Fight()
 
     # Dijkstra
@@ -161,6 +161,7 @@ if __name__ == '__main__':
     # no Dijkstra, just run through every scenario and record who wins with how much mana consumed
     q = [new_round]
     results = []
+    min_mana = 100_000
     while q:
         curr_round = q.pop()
         for spell in curr_round.get_possible_spells():
@@ -170,11 +171,13 @@ if __name__ == '__main__':
             if next_round.winner is not None:
                 results.append((next_round.winner, next_round.player_mana_consumed))
                 print(f'Winner: {next_round.winner}, {next_round.player_mana_consumed}, {next_round}')
+                if next_round.winner == 'Player' and next_round.player_mana_consumed < min_mana:
+                    min_mana = next_round.player_mana_consumed
             else:
-                q.append(next_round)
+                if next_round.player_mana_consumed < min_mana:
+                    q.append(next_round)
 
     # Part 1: 900 (logged all results to a file and filtered for winner=='Player' and lowest Mana consumed was 900
     # Part 2: 1216 (same- runs for a long time!)
 
     # Implement pruning: prune any paths that have higher mana consumption than the lowest Player winning path.
-    
