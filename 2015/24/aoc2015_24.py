@@ -74,23 +74,34 @@ if __name__ == '__main__':
     while True:
         # get the next combination of packages that weigh one third. The generator will yield combinations with
         # least number of packages first, ascending to more packages
-        pass_comp = next(pass_gen)
+        try:
+            pass_comp = next(pass_gen)
+        except StopIteration:
+            break
 
         # which packages are left over - again find the second group that weighs the same
         remaining_packages = weights - set(pass_comp)
         sec_gen = get_one_third(one_quarter, remaining_packages)
         while True:
-            second_comp = next(sec_gen)
+            found = False
+            try:
+                second_comp = next(sec_gen)
+            except StopIteration:
+                break
             third_remaining_packages = remaining_packages - set(second_comp)
             third_gen = get_one_third(one_quarter, third_remaining_packages)
             while True:
-                third_comp = next(third_gen)
+                try:
+                    third_comp = next(third_gen)
+                except StopIteration:
+                    break
                 # get the last group of leftover packages. We now need to only check if we can find one
                 # combination that weighs the same (one third) and we know it satisfies all criteria. No
                 # need to search further for this group of packages
                 last_group = third_remaining_packages - set(third_comp)
                 if sum(last_group) == one_quarter:
                     valid_combinations.append(pass_comp)
+                    print(quantum_entanglement(pass_comp), pass_comp)
                     break
 
             # check if the last valid combination had more packages than the current minimum
@@ -98,14 +109,15 @@ if __name__ == '__main__':
             if len(valid_combinations[-1]) > min_number_of_packages:
                 # if the last valid result has more packages, remove it and stop as we don't need to go
                 # through combinations with more packages
+                valid_combinations.pop()
+                found = True
                 break
             else:
                 min_number_of_packages = len(valid_combinations[-1])
 
-        if len(valid_combinations[-1]) > min_number_of_packages:
-            # if the last valid result has more packages, remove it and stop as we don't need to go
-            # through combinations with more packages
-            valid_combinations.pop()
+        if found:
             break
 
     print(min(quantum_entanglement(x) for x in valid_combinations))
+
+    # Part 2: 77387711 (although this doesnt properly terminate... should stop altogether.
