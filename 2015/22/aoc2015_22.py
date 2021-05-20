@@ -136,7 +136,7 @@ class Fight:
 
 
 if __name__ == '__main__':
-    part = 1
+    part = 2
     new_round = Fight()
 
     # Dijkstra
@@ -170,14 +170,14 @@ if __name__ == '__main__':
             # print(spell, next_round)
             if next_round.winner is not None:
                 results.append((next_round.winner, next_round.player_mana_consumed))
-                print(f'Winner: {next_round.winner}, {next_round.player_mana_consumed}, {next_round}')
                 if next_round.winner == 'Player' and next_round.player_mana_consumed < min_mana:
                     min_mana = next_round.player_mana_consumed
             else:
                 if next_round.player_mana_consumed < min_mana:
                     q.append(next_round)
 
-    # Part 1: 900 (logged all results to a file and filtered for winner=='Player' and lowest Mana consumed was 900
-    # Part 2: 1216 (same- runs for a long time!)
+    print(min([x[1] for x in results if x[0] == 'Player']))
 
-    # Implement pruning: prune any paths that have higher mana consumption than the lowest Player winning path.
+    # Part 1: 900
+    # Part 2: 1216
+
