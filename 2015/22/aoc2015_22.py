@@ -151,7 +151,7 @@ if __name__ == '__main__':
     #             break
     #
     #         for spell in curr_round.get_possible_spells():
-    #             next_round = deepcopy(curr_round)e
+    #             next_round = deepcopy(curr_round)
     #             next_round.fight_round(spell)
     #             if next_round.winner != 'Enemy':
     #                 heappush(q, (next_round.player_mana_consumed, next_round))
