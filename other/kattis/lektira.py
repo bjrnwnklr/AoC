@@ -24,18 +24,15 @@ def next_words(w, n):
         for p in pos_list
     ]
 
-    print(f'{w=}, {elig_word=}, {min_letter=}, {pos_list=}, {list_of_results=}')
-
-    next_n = n - 1
-    if next_n >= 0:
-        # COntinue here - get list of results and concat with w1, return list of words
-        for w1, w2 in list_of_results:
-            print(f'{w1=}')
-            next_words(w2, next_n)
+    # get list of results and concat with w1, sort concatenated words and return the first word
+    return sorted([
+        w1 + next_words(w2, n - 1)
+        for w1, w2 in list_of_results
+    ])[0]
 
 
 if __name__ == '__main__':
     for line in sys.stdin:
         word = line.strip()
 
-        next_words(word, 2)
+        print(next_words(word, 2))
