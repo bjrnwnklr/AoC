@@ -27,4 +27,3 @@ if __name__ == '__main__':
     print(sol_diagonal, to_skip, solution)
 
     # Part 1: 2650453
-    
