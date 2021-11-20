@@ -26,6 +26,20 @@ options:
                         session cookie for the AoC website
 ```
 
+Alternatively, just use `curl` to download:
+
+```shell
+$ curl https://adventofcode.com/2021/<day>/DAY/input --cookie "session=SESSION"
+```
+
+Session cookie can be found by:
+- Chrome> Inspect
+- tab over to network
+- click refresh
+- click input
+- click cookies
+- grab the value for session.
+
 # Testing with `pytest`
 
 Tests are located in the `test` subdirectory and should be used to test the examples given in the puzzle description. Run a test from within the day's directory with `pytest`:
