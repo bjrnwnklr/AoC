@@ -9,9 +9,9 @@ import requests
 
 
 # Constant declarations
-VERSION = '1.0'
+VERSION = '1.1'
 YEAR_FROM = 2015
-YEAR_TO = 2020
+YEAR_TO = 2021
 URL_STUB = 'https://adventofcode.com'
 
 # Update this with a valid session cookie before running
@@ -22,10 +22,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('year', type=int, help='year to download')
     parser.add_argument('day', type=int, help='day to download')
-    parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
+    parser.add_argument('-v', '--verbose',
+                        help='increase output verbosity', action='store_true')
     parser.add_argument('-o', '--offline', help='prepare for offline use by downloading AoC HTML page for the day',
                         action='store_true')
-    parser.add_argument('-s', '--sessioncookie', help='session cookie for the AoC website')
+    parser.add_argument('-s', '--sessioncookie',
+                        help='session cookie for the AoC website')
     args = parser.parse_args()
 
     # check if --verbose was set
@@ -36,20 +38,21 @@ if __name__ == '__main__':
         # standard is ERRORS only
         logging.basicConfig(level=logging.ERROR)
 
-
     # handle year and day arguments
     year = args.year
     day = args.day
 
     # do some sense checking on the year and day
     if year < YEAR_FROM or year > YEAR_TO:
-        raise ValueError(f'Year {year} is not valid. Year must be {YEAR_FROM} <= year <= {YEAR_TO}.')
+        raise ValueError(
+            f'Year {year} is not valid. Year must be {YEAR_FROM} <= year <= {YEAR_TO}.')
     if day < 1 or day > 25:
-        raise ValueError(f'Day {day} is not valid. Day must be 01 <= day <= 25.')
+        raise ValueError(
+            f'Day {day} is not valid. Day must be 01 <= day <= 25.')
 
     # print a little message saying what we are going to do
     print(f'Advent of Code downloader, v{VERSION}.')
-    print(f'(c) 2020, Bjoern Winkler')
+    print(f'(c) 2021, Bjoern Winkler')
     print(f'-- Downloading AoC {year}, day {day} --')
 
     # check if session cookie is set either via cmd line argument or in code, otherwise abort
@@ -67,9 +70,9 @@ if __name__ == '__main__':
 
     # create a number of stub files
     files = {
-        'stub': f'aoc{year}_{day:02}.py',
-        'md': f'{day:02}.md',
-        'ex': 'ex1.txt'
+        # 'stub': f'aoc{year}_{day:02}.py',
+        # 'md': f'{day:02}.md',
+        # 'ex': 'ex1.txt'
     }
 
     for file in files:
@@ -93,15 +96,18 @@ if __name__ == '__main__':
         with open(offline_file, 'wb') as f:
             f.write(website)
 
-        logging.info(f'Saving part 1 of {year}/{day} for offline use as {offline_file}.')
+        logging.info(
+            f'Saving part 1 of {year}/{day} for offline use as {offline_file}.')
 
-    # Get the input file
-    url_input = f'{URL_STUB}/{year}/day/{day}/input'
-    response = requests.get(url_input, cookies=cookies)
-    input_content = response.content
-
+    # Get the input file - only if it doesn't yet exist in the directory
     input_file = p / 'input.txt'
-    with open(input_file, 'wb') as f:
-        f.write(input_content)
 
-    logging.info(f'Saving input for {year}/{day} as {input_file}.')
+    if not input_file.exists():
+        url_input = f'{URL_STUB}/{year}/day/{day}/input'
+        response = requests.get(url_input, cookies=cookies)
+        input_content = response.content
+
+        with open(input_file, 'wb') as f:
+            f.write(input_content)
+
+        logging.info(f'Saving input for {year}/{day} as {input_file}.')
