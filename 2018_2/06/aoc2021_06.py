@@ -65,6 +65,10 @@ def nearest_planet(c, planets):
     return result
 
 
+def total_distance(c, planets):
+    return sum([distance(c, p) for p in planets])
+
+
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
 
@@ -109,7 +113,7 @@ def part1(puzzle_input):
     return max(all_grid_points.count(p) for p in candidate_planets)
 
 
-def part2(puzzle_input):
+def part2(puzzle_input, max_dist=10000):
     """Solve part 2. Return the required output value.
 
     Args:
@@ -119,9 +123,21 @@ def part2(puzzle_input):
         Depends...: Typically an Integer value, but often also a String - this can be used on adventofcode 
         as the answer to the puzzle.
     """
-    # Add code here
+    # determine outer boundaries of the grid - min / max coordinates of the grid
+    # extend the grid by one point to each side
+    min_x = min(x for x, _ in puzzle_input) - 1
+    min_y = min(y for _, y in puzzle_input) - 1
+    max_x = max(x for x, _ in puzzle_input) + 1
+    max_y = max(y for _, y in puzzle_input) + 1
 
-    return 1
+    # calculate the sum of distances for each point in the grid and mark the ones that are < max_dist
+    size_of_area = sum(
+        1 for y in range(min_y, max_y + 1)
+        for x in range(min_x, max_x + 1)
+        if total_distance((x, y), puzzle_input) < max_dist
+    )
+
+    return size_of_area
 
 
 if __name__ == '__main__':
