@@ -1,0 +1,9 @@
+..................#
+#....##....##....###
+.#..#..#..#..#..#
+
+[.#]{18}#           18 blank, 1 #
+#(?:[.#]{4}##){3}#    1 #, 4 blank, 2 #, 4 blank, 2 #, 4 blank, 3 #
+[.#](?:#[.#]{2}){5}#  1 blank, 1 #, 2 blank, 1 #, 2 blank, 1 #, 2 blank, 1 #, 2 blank, 1 #, 2 blank, 1 #
+
+1 monster has 15 # signs. Remove these from the count of #s in the image.
