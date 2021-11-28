@@ -72,7 +72,7 @@ while getopts ":hVy:d:" option; do
             DAY=$OPTARG;;
         \?) # Invalid option
             echo "Error: Invalid option"
-            exit;;
+            exit 1;;
     esac
 done
 
@@ -80,13 +80,13 @@ done
 if [[ -z ${YEAR} ]];
 then
     echo "Year not specified, exiting."
-    exit;
+    exit 1;
 fi
 
 if [[ -z ${DAY} ]];
 then
     echo "Day not specified, exiting."
-    exit;
+    exit 1;
 fi
 
 ############################################################
@@ -95,7 +95,7 @@ fi
 if [[ -d ${DAY} ]];
 then
     echo "Folder ${DAY} already exists, exiting."
-    exit;
+    exit 1;
 else
     mkdir ${DAY}
 fi
@@ -113,11 +113,13 @@ then
     cp -r "${SCRIPT_DIR}"/template/* "${DAY}"
 else
     echo "Template directory not found in ${SCRIPT_DIR}, exiting."
-    exit;
+    exit 1;
 fi
 
 ############################################################
 # Rename the files with YEAR and DAY
 ############################################################
+
+
 
 echo "Called from ${SCRIPT_DIR}"

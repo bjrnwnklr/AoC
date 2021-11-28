@@ -3,10 +3,10 @@
 
 # load the required functions from the actual solution
 # CHANGE: aoc2021_nn to aoc2021_<day>
-from aoc2021_nn import load_input, part1, part2
+from aocyyyy_dd import load_input, part1, part2
 
 
-class Test_AOC2021:
+class Test_AOCYYYY_DD:
     """Specifies the tests for parts 1 and 2.
 
     Create test_n_n functions for each example given in the puzzle definition, put the example in a 
