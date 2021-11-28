@@ -1,10 +1,10 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from aocyyyy_dd import load_input, part1, part2
+from aoc2018_07 import load_input, part1, part2
 
 
-class Test_AOCyyyy_dd:
+class Test_AOC2018_07:
     """Specifies the tests for parts 1 and 2.
 
     Create test_n_n functions for each example given in the puzzle definition, put the example in a 

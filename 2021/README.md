@@ -2,10 +2,19 @@
 
 # How to set up a new day
 
+## Manually 
 - copy the `template` directory and rename to the day's number (with leading zero, e.g. `01`).
 - Rename the `aoc2021_nn.py` and `test/test_aoc2021_nn.py` files with the day's number
 - Change the highlighted references in both files to the day's number
 - Download the input file using the `aoc_downloader.py` file (note this will create a new directory if it doesn't yet exist)
+
+## Using the `aocsetup.sh` script
+
+- Go in the year's directory (e.g. `2021`)
+- Run `../aocsetup.sh 2021 01` to create a directory for day `01`
+- The script then copies the template files into the directory and renames the files according to year and day.
+
+Then use the Python `aoc_downloader.py` to download the input file and (optionally) the offline description for part 1.
 
 ```shell
 [aoc/2021] > python ../aoc_downloader.py 2021 01 -s <sessioncookie> --offline --verbose
@@ -26,18 +35,17 @@ options:
                         session cookie for the AoC website
 ```
 
-Alternatively, just use `curl` to download:
+Alternatively, just use `curl` to download the `input.txt` file.
 
 ```shell
-$ curl https://adventofcode.com/2021/<day>/DAY/input --cookie "session=SESSION"
+$ curl https://adventofcode.com/2021/day/<DAY - no leading zeros!>/input --cookie "session=SESSION" > input.txt
 ```
 
 Session cookie can be found by:
 - Chrome> Inspect
-- tab over to network
-- click refresh
-- click input
-- click cookies
+- tab over to `Application`
+- Under `Storage`, expand `Cookies`
+- click on the `https://adventofcode.com` cookie
 - grab the value for session.
 
 # Testing with `pytest`
