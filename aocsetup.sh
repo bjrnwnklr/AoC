@@ -119,7 +119,14 @@ fi
 ############################################################
 # Rename the files with YEAR and DAY
 ############################################################
+FILES=("aocyyyy_dd.py" "test/test_aocyyyy_dd.py")
 
+for f in ${FILES[@]}; do
+    RESULT=$( echo $f | sed "s/yyyy/${YEAR}/ ; s/dd/${DAY}/")
+    mv ${DAY}/$f ${DAY}/$RESULT
+done
 
+# substitute references to yyyy and dd with YEAR and DAY in the test files
+sed -i "s/yyyy_dd/${YEAR}_${DAY}/g" ${DAY}/test/test_aoc${YEAR}_${DAY}.py
 
 echo "Called from ${SCRIPT_DIR}"

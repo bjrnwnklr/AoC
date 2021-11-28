@@ -6,7 +6,7 @@
 from aocyyyy_dd import load_input, part1, part2
 
 
-class Test_AOCYYYY_DD:
+class Test_AOCyyyy_dd:
     """Specifies the tests for parts 1 and 2.
 
     Create test_n_n functions for each example given in the puzzle definition, put the example in a 
