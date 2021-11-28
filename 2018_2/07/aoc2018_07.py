@@ -75,6 +75,7 @@ def toposort_2(pi, num_workers, duration):
     baselist = set(c for c in boxes if c not in pre)
     result = []
     worker_queue = []
+    time_on_box = dict()
     t = 0
     while baselist or worker_queue:
         # if the worker queue still has capacity and there is work to do (i.e.,
@@ -86,31 +87,32 @@ def toposort_2(pi, num_workers, duration):
             next_box = sorted(baselist)[0]
             baselist.remove(next_box)
 
-            worker_queue.append((next_box, dur(next_box, duration)))
+            worker_queue.append(next_box)
+            time_on_box[next_box] = dur(next_box, duration)
+
+        print(f'{t=} {worker_queue} {time_on_box} {result}')
 
         # go through the worker queue and reduce time
-        new_queue = []
-        for b, d in worker_queue:
-            d -= 1
-            if d > 0:
-                new_queue.append((b, d))
-            else:
+        # TODO: SOMEHOW, F stays in the worker queue 7 turns, not 6. This makes this run 16 instead of 15 turns.
+        for b in worker_queue:
+            time_on_box[b] -= 1
+            if time_on_box[b] == 0:
                 # the worker has cleared the box, so we can remove it from all dependencies
+                # and the worker queue
                 result.append(b)
+                worker_queue.remove(b)
                 for box in pre:
                     # remove the box from all predecessors since we have cleared the dependency
                     if b in pre[box]:
                         pre[box].remove(b)
-                    # generate the new baselist - all boxes in predecessor that have an empty list
-                    # i.e. are not depending on any predecessor
-                    # TODO:This is not right - this will add a box that is already being worked on
-                    # to the baselist e.g. F will get added a second time.
-                    # We will need to remove any empty predecessors from the pre dictionary.
-                    if box not in result and not pre[box]:
-                        baselist.add(box)
-                        del pre[box]
 
-        worker_queue = new_queue[:]
+        # generate the new baselist - all boxes in predecessor that have an empty list
+        # i.e. are not depending on any predecessor. Exclude all boxes that have been worked on
+        # or are still being worked on
+        for box in pre:
+            if box not in result and box not in worker_queue and not pre[box]:
+                baselist.add(box)
+
         # one cycle has elapsed
         t += 1
 
