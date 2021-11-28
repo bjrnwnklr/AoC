@@ -28,12 +28,11 @@ Help()
    echo "the current folder, if not existing, then copies files from the"
    echo "'template' folder into the new folder and does some renaming."
    echo
-   echo "Syntax: aocsetup [-h|v|V] -y YEAR -d DAY"
+   echo "Syntax: aocsetup [-h|v|V] YEAR DAY"
    echo "Set up Advent of Code folder <DAY> in current directory."
    echo
    echo "Options:"
    echo "   -h     Print this Help."
-   echo "   -v     Verbose mode."
    echo "   -V     Print software version and exit."
    echo
 }
@@ -57,37 +56,27 @@ Version()
 ############################################################
 # Process the input options. Add options as needed.        #
 ############################################################
-# Get the options
-while getopts ":hVy:d:" option; do
-    case $option in
-        h) # display Help
-            Help
-            exit;;
-        V) # display Version and exit
-            Version
-            exit;;
-        y) # the AoC Year
-            YEAR=$OPTARG;;
-        d) # the AoC day
-            DAY=$OPTARG;;
-        \?) # Invalid option
-            echo "Error: Invalid option"
-            exit 1;;
+# Get the options. This is not using getopts and works fine
+# with positional arguments, but has the disadvantage of
+# not being able to recognize incorrect arguments.
+while :
+do
+    case "$1" in
+        -V) Version ; exit;;
+        -h) Help ; exit;;
+        *) break ;;
     esac
+    shift
 done
 
-# check if date and year have been Set
-if [[ -z ${YEAR} ]];
-then
-    echo "Year not specified, exiting."
-    exit 1;
+if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+    echo Usage: $0 [-h] [-V] YEAR DAY
+    exit 1
+else
+    YEAR="$1"
+    DAY="$2"
 fi
 
-if [[ -z ${DAY} ]];
-then
-    echo "Day not specified, exiting."
-    exit 1;
-fi
 
 ############################################################
 # Check if Day folder exists, if not create it.
@@ -129,4 +118,4 @@ done
 # substitute references to yyyy and dd with YEAR and DAY in the test files
 sed -i "s/yyyy_dd/${YEAR}_${DAY}/g" ${DAY}/test/test_aoc${YEAR}_${DAY}.py
 
-echo "Called from ${SCRIPT_DIR}"
+echo "Advent of Code folder set up for ${DAY}/${YEAR}. Have fun!"
