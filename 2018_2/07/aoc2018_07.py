@@ -1,7 +1,8 @@
 # Load any required modules. Most commonly used:
 
 # import re
-# from collections import defaultdict
+from collections import defaultdict
+
 
 def load_input(f_name):
     """Loads the puzzle input from the specified file. Specify the relative path 
@@ -19,12 +20,41 @@ def load_input(f_name):
     """
     with open(f_name, 'r') as f:
         puzzle_input = []
-        # CHANGE HERE: depending on the input file, change how the lines are processed and what
-        # happens with the extracted values, e.g. convert to Integer.
         for line in f.readlines():
-            puzzle_input.append(line.strip())
+            words = line.strip().split()
+            puzzle_input.append((words[1], words[7]))
 
     return puzzle_input
+
+
+def toposort(pi):
+    pre = defaultdict(list)
+    boxes = set()
+    for a, b in pi:
+        boxes.add(a)
+        boxes.add(b)
+        pre[b].append(a)
+
+    # find any elements that don't have predecessors - this is the element to start with
+    baselist = set(c for c in boxes if c not in pre)
+    result = []
+    while baselist:
+        # take the alphabetically first element of the baselist - it doesnt have
+        # any predecessors so it is the next box to process
+        next_box = sorted(baselist)[0]
+        baselist.remove(next_box)
+        result.append(next_box)
+
+        for box in pre:
+            # remove the box from all predecessors since we have cleared the dependency
+            if next_box in pre[box]:
+                pre[box].remove(next_box)
+            # generate the new baselist - all boxes in predecessor that have an empty list
+            # i.e. are not depending on any predecessor
+            if box not in result and not pre[box]:
+                baselist.add(box)
+
+    return ''.join(result)
 
 
 def part1(puzzle_input):
@@ -37,9 +67,7 @@ def part1(puzzle_input):
         Depends...: Typically an Integer value, but often also a String - this can be used on adventofcode 
         as the answer to the puzzle.
     """
-    # Add code here
-
-    return 1
+    return toposort(puzzle_input)
 
 
 def part2(puzzle_input):
