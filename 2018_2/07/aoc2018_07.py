@@ -90,21 +90,21 @@ def toposort_2(pi, num_workers, duration):
             worker_queue.append(next_box)
             time_on_box[next_box] = dur(next_box, duration)
 
-        print(f'{t=} {worker_queue} {time_on_box} {result}')
+        # print(f'{t=} {worker_queue} {time_on_box} {result}')
 
         # go through the worker queue and reduce time
-        # TODO: SOMEHOW, F stays in the worker queue 7 turns, not 6. This makes this run 16 instead of 15 turns.
         for b in worker_queue:
             time_on_box[b] -= 1
             if time_on_box[b] == 0:
                 # the worker has cleared the box, so we can remove it from all dependencies
-                # and the worker queue
                 result.append(b)
-                worker_queue.remove(b)
                 for box in pre:
                     # remove the box from all predecessors since we have cleared the dependency
                     if b in pre[box]:
                         pre[box].remove(b)
+
+        # update the worker queue - remove any where the work to be done is 0
+        worker_queue = [w for w in worker_queue if time_on_box[w] > 0]
 
         # generate the new baselist - all boxes in predecessor that have an empty list
         # i.e. are not depending on any predecessor. Exclude all boxes that have been worked on
@@ -147,13 +147,14 @@ def part2(puzzle_input, workers=5, duration=60):
 
 if __name__ == '__main__':
     # read the puzzle input
-    puzzle_input = load_input('test/test1_1.txt')
-    # puzzle_input = load_input('input.txt')
+    # puzzle_input = load_input('test/test1_1.txt')
+    puzzle_input = load_input('input.txt')
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)
     print(f'Part 1: {p1}')
 
     # Solve part 2 and print the answer
-    p2 = part2(puzzle_input, 2, 0)
+    p2 = part2(puzzle_input)
+    # p2 = part2(puzzle_input, 2, 0)
     print(f'Part 2: {p2}')
