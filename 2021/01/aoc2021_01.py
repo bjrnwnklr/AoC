@@ -26,9 +26,12 @@ def load_input(f_name):
 
 
 def calc_increase(inp, n=1):
-    return sum(
-        1 for i in range(len(inp) - n) if sum(inp[i:i+n]) < sum(inp[i+1:i+1+n])
-    )
+    # return sum(
+    #     1 for i in range(len(inp) - n) if sum(inp[i:i+n]) < sum(inp[i+1:i+1+n])
+    # )
+
+    # a + b + c < b + c + d if a < d...
+    return sum(n1 < n2 for n1, n2 in zip(inp, inp[n:]))
 
 
 def part1(puzzle_input):
