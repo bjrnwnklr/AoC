@@ -40,3 +40,6 @@ if __name__ == '__main__':
     # Solve part 2 and print the answer
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
+
+# Part 1: Start:  End:
+# Part 2: Start:  End:
