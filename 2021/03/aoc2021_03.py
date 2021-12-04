@@ -31,7 +31,7 @@ def most_common_bit(l, pos):
         x[pos] == 0 for x in l
     )
 
-    return 1 if ones > zeros else 0
+    return 1 if ones >= zeros else 0
 
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
@@ -50,13 +50,7 @@ def part2(puzzle_input):
     l = puzzle_input[:]
     pos = 0
     while len(l) > 1:
-        ones = [x for x in l if x[pos] == 1]
-        zeros = [x for x in l if x[pos] == 0]
-        if len(ones) >= len(zeros):
-            l = ones
-        else:
-            l = zeros
-        
+        l = [x for x in l if x[pos] == most_common_bit(l, pos)]
         pos += 1
 
     oxy = l[0]
@@ -65,13 +59,7 @@ def part2(puzzle_input):
     l = puzzle_input[:]
     pos = 0
     while len(l) > 1:
-        ones = [x for x in l if x[pos] == 1]
-        zeros = [x for x in l if x[pos] == 0]
-        if len(zeros) <= len(ones):
-            l = zeros
-        else:
-            l = ones
-
+        l = [x for x in l if x[pos] != most_common_bit(l, pos)]
         pos += 1
 
     co2 = l[0]
