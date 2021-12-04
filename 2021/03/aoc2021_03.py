@@ -17,67 +17,71 @@ def load_input(f_name):
     return puzzle_input
 
 
-def gamma(l):
-    # how many lines in the list - used to calc the most frequent bit
-    n = len(l)
-    columns = list(zip(*l))
-    g = [
-        1 if sum(c) > n // 2 else 0 for c in columns
-    ]
-    return ''.join(str(x) for x in g)
-
-
-def epsilon(g):
-    return ''.join('1' if x == '0' else '0' for x in g)
-
-
-def bin_to_int(b):
+def bin_to_int(l):
+    b = ''.join(str(x) for x in l)
     return int(b, base=2)
 
 
 def most_common_bit(l, pos):
-    n = len(l)
-    col = list(zip(*l))[pos]
-    # TODO: This is incorrect e.g. for list with 7 elements and 3 1s and 4 0s
-    # this returns 1 (3 >= 7//2 = 3)
-    return 1 if sum(col) >= n // 2 else 0
+    ones = sum(
+        x[pos] == 1 for x in l
+    )
 
+    zeros = sum(
+        x[pos] == 0 for x in l
+    )
 
-def rating(l, r_type='oxy'):
-    pos = 0
-    while len(l) > 1:
-        bit_criteria = most_common_bit(l, pos)
-        if r_type == 'co2':
-            bit_criteria = 0 if bit_criteria == 1 else 1
-        l = [x for x in l if x[pos] == bit_criteria]
-        print(f'{pos=}, {bit_criteria=}, {l=}')
-        pos += 1
-
-    return ''.join(str(x) for x in l[0])
-
+    return 1 if ones > zeros else 0
 
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
-    g = gamma(puzzle_input)
-    e = epsilon(g)
+    # gamma
+    g = [most_common_bit(puzzle_input[:], i) for i in range(len(puzzle_input[0]))]
+    e = [1 if x == 0 else 0 for x in g]
 
     return bin_to_int(g) * bin_to_int(e)
 
 
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+   
+    # calculate oxy rating (most common bit in position, 1 in a tie)
+    l = puzzle_input[:]
+    pos = 0
+    while len(l) > 1:
+        ones = [x for x in l if x[pos] == 1]
+        zeros = [x for x in l if x[pos] == 0]
+        if len(ones) >= len(zeros):
+            l = ones
+        else:
+            l = zeros
+        
+        pos += 1
 
-    oxy = rating(puzzle_input[:])
-    co2 = rating(puzzle_input[:], 'co2')
+    oxy = l[0]
+
+    # calculate co2 rating (least common bit in position, 0 in a tie)
+    l = puzzle_input[:]
+    pos = 0
+    while len(l) > 1:
+        ones = [x for x in l if x[pos] == 1]
+        zeros = [x for x in l if x[pos] == 0]
+        if len(zeros) <= len(ones):
+            l = zeros
+        else:
+            l = ones
+
+        pos += 1
+
+    co2 = l[0]
 
     return bin_to_int(oxy) * bin_to_int(co2)
 
 
 if __name__ == '__main__':
     # read the puzzle input
-    # puzzle_input = load_input('input.txt')
-    puzzle_input = load_input('test/test1_1.txt')
+    puzzle_input = load_input('input.txt')
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)
@@ -88,4 +92,7 @@ if __name__ == '__main__':
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 19:11, End: 19:29
-# Part 2: Start: 19:30, End:
+# Part 2: Start: 19:30, End: 9:59 (next day)
+
+# Part 1: 1131506
+# Part 2: 7863147
