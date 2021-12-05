@@ -34,6 +34,7 @@ class Board:
             for row in b.strip().split('\n')
         ]
         self.board = np.array(grid)
+        self.won = False
 
     def __str__(self) -> str:
         out = 'Board: \n'
@@ -56,7 +57,10 @@ class Board:
         cols = self.marked.all(axis=0)
         col_bingo = cols.any()
 
-        return col_bingo or row_bingo
+        if col_bingo or row_bingo:
+            self.won = True
+
+        return self.won
 
     def score(self):
         """Calculate the score of the board - sum of all unmarked numbers"""
@@ -86,7 +90,22 @@ def part1(bingo_numbers, boards):
 def part2(bingo_numbers, boards):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    # how many boards are remaining?
+    remaining_boards = len(boards)
+
+    # go through numbers and mark each number on the board
+    for n in bingo_numbers:
+        for board in boards:
+            if not board.won:
+                bingo_won = board.mark(n)
+                if bingo_won:
+                    # we have a bingo, mark the board as won and reduce number of remaining boards
+                    remaining_boards -= 1
+                    # if this was the last board, we have our winner
+                    if remaining_boards == 0:
+                        result = board.score() * n
+
+    return result
 
 
 if __name__ == '__main__':
@@ -97,9 +116,10 @@ if __name__ == '__main__':
     p1 = part1(bingo_numbers, boards)
     print(f'Part 1: {p1}')
 
+    bingo_numbers, boards = load_input('input/04.txt')
     # Solve part 2 and print the answer
     p2 = part2(bingo_numbers, boards)
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 17:58 End: 15:13 (next day - ca 1 hour)
-# Part 2: Start:  End:
+# Part 2: Start: 15:20 End: 15:27

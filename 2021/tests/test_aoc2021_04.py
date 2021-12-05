@@ -17,6 +17,6 @@ class Test_AOC2021_04:
         bingo_numbers, boards = load_input('testinput/04_1_1.txt')
         assert part1(bingo_numbers, boards) == 4512
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('test/test2_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_1(self):
+        bingo_numbers, boards = load_input('testinput/04_1_1.txt')
+        assert part2(bingo_numbers, boards) == 1924
