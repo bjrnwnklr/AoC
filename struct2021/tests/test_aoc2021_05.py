@@ -1,10 +1,10 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from aocyyyy_dd import load_input, part1, part2
+from solutions.aoc2021_05 import load_input, part1, part2
 
 
-class Test_AOCyyyy_dd:
+class Test_AOC2021_05:
     """Specifies the tests for parts 1 and 2.
 
     Create test_n_n functions for each example given in the puzzle definition, put the example in a 
@@ -14,9 +14,9 @@ class Test_AOCyyyy_dd:
     """
 
     def test_1_1(self):
-        puzzle_input = load_input('test/test1_1.txt')
+        puzzle_input = load_input('testinput/05_1_1.txt')
         assert part1(puzzle_input) == 1
 
     # def test_2_1(self):
-    #     puzzle_input = load_input('test/test2_1.txt')
+    #     puzzle_input = load_input('testinput/05_1_1.txt')
     #     assert part2(puzzle_input) == 1

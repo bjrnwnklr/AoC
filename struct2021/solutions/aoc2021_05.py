@@ -31,7 +31,7 @@ def part2(puzzle_input):
 
 if __name__ == '__main__':
     # read the puzzle input
-    puzzle_input = load_input('input/dd.txt')
+    puzzle_input = load_input('input/05.txt')
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)

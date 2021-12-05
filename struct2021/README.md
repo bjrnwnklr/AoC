@@ -3,42 +3,27 @@
 # How to set up a new day
 
 ## Manually 
-- copy the `template` directory and rename to the day's number (with leading zero, e.g. `01`).
-- Rename the `aoc2021_nn.py` and `test/test_aoc2021_nn.py` files with the day's number
-- Change the highlighted references in both files to the day's number
+- copy the files from the `template` directory:
+  - `aocyyyy_dd.py` into the `solutions` directory - this is the actual solution
+  - `test_aocyyyy_dd.py` into the `tests` directory - this contains the test cases for the day's solution
+  - `dd_1_1.txt` into the `testinput` directory - paste the day's test example into this file. Create more files with similar naming if more than one example required.
+- Rename the `solutions/aocyyyy_dd.py`, `tests/test_aocyyyy_dd.py` and `testinput/dd_1_1.txt` files with the day's number
+- Change the highlighted references in both files to the day's number (in the imports, the file names of the input / test files)
 - Download the input file using the `aoc_downloader.py` file (note this will create a new directory if it doesn't yet exist)
 
 ## Using the `aocsetup.sh` script
 
 - Go in the year's directory (e.g. `2021`)
-- Run `../aocsetup.sh 2021 01` to create a directory for day `01`
+- Run `../aocsetup.sh 2021 01` to set up the files for day 01
 - The script then copies the template files into the directory and renames the files according to year and day.
 
-Then use the Python `aoc_downloader.py` to download the input file and (optionally) the offline description for part 1.
+## Downloading the day's puzzle input
+
+Use curl:
 
 ```shell
-[aoc/2021] > python ../aoc_downloader.py 2021 01 -s <sessioncookie> --offline --verbose
-```
-
-```
-usage: aoc_downloader.py [-h] [-v] [-o] [-s SESSIONCOOKIE] year day
-
-positional arguments:
-  year                  year to download
-  day                   day to download
-
-options:
-  -h, --help            show this help message and exit
-  -v, --verbose         increase output verbosity
-  -o, --offline         prepare for offline use by downloading AoC HTML page for the day
-  -s SESSIONCOOKIE, --sessioncookie SESSIONCOOKIE
-                        session cookie for the AoC website
-```
-
-Alternatively, just use `curl` to download the `input.txt` file.
-
-```shell
-$ curl https://adventofcode.com/2021/day/<DAY - no leading zeros!>/input --cookie "session=SESSION" > input.txt
+$ curl https://adventofcode.com/2021/day/<DAY - no leading zeros!>/input --cookie "session=SESSION" > input/<day - with leading zeros!>.txt
+$ curl https://adventofcode.com/2021/day/3/input --cookie "session=SESSION" > input/03.txt
 ```
 
 Session cookie can be found by:

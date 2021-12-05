@@ -77,20 +77,12 @@ else
     DAY="$2"
 fi
 
-
 ############################################################
-# Check if Day folder exists, if not create it.
-############################################################
-if [[ -d ${DAY} ]];
-then
-    echo "Folder ${DAY} already exists, exiting."
-    exit 1;
-else
-    mkdir ${DAY}
-fi
-
-############################################################
-# Copy templates folder contents into the new Day folder
+# Copy templates folder contents into the respective directories:
+#
+# - aocyyyy_dd.py -> solutions
+# - test_aocyyyy_dd.py -> tests
+# - dd_1_1.txt -> testinput
 ############################################################
 # get the directory the script is run from
 # https://stackoverflow.com/a/246128
@@ -99,7 +91,9 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # check if templates directory exists
 if [[ -d "${SCRIPT_DIR}/template" ]];
 then
-    cp -r "${SCRIPT_DIR}"/template/* "${DAY}"
+    cp "${SCRIPT_DIR}"/template/aocyyyy_dd.py solutions
+    cp "${SCRIPT_DIR}"/template/test_aocyyyy_dd.py tests
+    cp "${SCRIPT_DIR}"/template/dd_1_1.txt testinput
 else
     echo "Template directory not found in ${SCRIPT_DIR}, exiting."
     exit 1;
@@ -108,14 +102,16 @@ fi
 ############################################################
 # Rename the files with YEAR and DAY
 ############################################################
-FILES=("aocyyyy_dd.py" "test/test_aocyyyy_dd.py")
+FILES=("solutions/aocyyyy_dd.py" "tests/test_aocyyyy_dd.py" "testinput/dd_1_1.txt")
 
 for f in ${FILES[@]}; do
     RESULT=$( echo $f | sed "s/yyyy/${YEAR}/ ; s/dd/${DAY}/")
-    mv ${DAY}/$f ${DAY}/$RESULT
+    mv $f $RESULT
 done
 
 # substitute references to yyyy and dd with YEAR and DAY in the test files
-sed -i "s/yyyy_dd/${YEAR}_${DAY}/g" ${DAY}/test/test_aoc${YEAR}_${DAY}.py
+sed -i "s/yyyy_dd/${YEAR}_${DAY}/g" tests/test_aoc${YEAR}_${DAY}.py
+sed -i "s/dd_1_1/${DAY}_1_1/g" tests/test_aoc${YEAR}_${DAY}.py
+sed -i "s/dd.txt/${DAY}.txt/g" solutions/aoc${YEAR}_${DAY}.py
 
 echo "Advent of Code folder set up for ${DAY}/${YEAR}. Have fun!"
