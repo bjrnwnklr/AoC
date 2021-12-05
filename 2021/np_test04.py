@@ -1,48 +1,52 @@
 import numpy as np
 
 
-def bingo(a):
-    rows = a.all(axis=1)
-    row_bingo = rows.any()
-    print('Rows:')
-    print(rows)
-    print(row_bingo)
+def diagonal(x1, y1, x2, y2, a):
+    # sort pairs by minimum y coordinate (start with upper row)
+    pos1 = min([(x1, y1), (x2, y2)], key=lambda x: x[1])
+    pos2 = max([(x1, y1), (x2, y2)], key=lambda x: x[1])
 
-    cols = a.all(axis=0)
-    col_bingo = cols.any()
-    print('Columns:')
-    print(cols)
-    print(col_bingo)
+    # if x1 > x2, we need to walk backwards on the x axis
+    direction = -1 if pos1[0] > pos2[0] else 1
 
-    return col_bingo or row_bingo
+    coords = []
+    for i in range(pos2[1] + 1 - pos1[1]):
+        coords.append((pos1[1] + i, pos1[0] + (direction * i)))
+
+    for pos in coords:
+        a[pos] += 1
 
 
 if __name__ == '__main__':
-    z = np.zeros((5, 5), dtype=bool)
+    z = np.zeros((10, 10))
 
-    # set element [2, 4] to True
     a = z.copy()
-    a[2, 4] = True
-
-    print('One element marked:')
     print(a)
-    print(bingo(a))
-    print('\n\n')
 
-    # create a full row
-    a = z.copy()
-    a[2] = True
+    # TODO: generate the indices by +1 each x and y value
 
-    print('One row marked.')
+    x1 = 6
+    y1 = 4
+
+    x2 = 2
+    y2 = 0
+
+    diagonal(x1, y1, x2, y2, a)
     print(a)
-    print(bingo(a))
-    print('\n\n')
 
-    # create a full column
-    a = z.copy()
-    a[:, 2] = True
+    x1 = 8
+    y1 = 0
 
-    print('One column marked.')
+    x2 = 0
+    y2 = 8
+
+    diagonal(x1, y1, x2, y2, a)
     print(a)
-    print(bingo(a))
-    print('\n\n')
+
+    x1 = 0
+    y1 = 9
+    x2 = 5
+    y2 = 9
+
+    diagonal(x1, y1, x2, y2, a)
+    print(a)
