@@ -2,7 +2,7 @@
 
 My Advent of Code repositories.
 
-Currently running on Python 3.9.2. Main requirements are:
+Currently running on Python 3.10.0. Main requirements are:
 
 - numpy
 - pandas

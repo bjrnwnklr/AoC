@@ -2,6 +2,7 @@
 
 # import re
 # from collections import defaultdict
+from utils.aoctools import aoc_timer
 import numpy as np
 
 
@@ -49,27 +50,39 @@ class Board:
 
     def bingo(self):
         """Return true if either a row or a column of the board is filled."""
-        cols = self.marked.all(axis=0)
-        col_bingo = cols.any()
-
         rows = self.marked.all(axis=1)
         row_bingo = rows.any()
 
+        cols = self.marked.all(axis=0)
+        col_bingo = cols.any()
+
         return col_bingo or row_bingo
 
+    def score(self):
+        """Calculate the score of the board - sum of all unmarked numbers"""
+        s = self.board[~self.marked].sum()
+        return s
 
+
+@aoc_timer
 def part1(bingo_numbers, boards):
     """Solve part 1. Return the required output value."""
 
     # go through numbers and mark each number on the board
-    n = bingo_numbers[0]
-    for board in boards:
-        board.mark(n)
-        print(board)
+    for n in bingo_numbers:
+        for board in boards:
+            bingo_won = board.mark(n)
+            if bingo_won:
+                # we have a bingo!
+                result = board.score() * n
+                break
+        if bingo_won:
+            break
 
-    return 1
+    return result
 
 
+@aoc_timer
 def part2(bingo_numbers, boards):
     """Solve part 2. Return the required output value."""
 
@@ -88,5 +101,5 @@ if __name__ == '__main__':
     p2 = part2(bingo_numbers, boards)
     print(f'Part 2: {p2}')
 
-# Part 1: Start: 17:58 End:
+# Part 1: Start: 17:58 End: 15:13 (next day - ca 1 hour)
 # Part 2: Start:  End:
