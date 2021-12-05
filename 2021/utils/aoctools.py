@@ -12,7 +12,7 @@ def aoc_timer(func):
         value = func(*args, **kwargs)
         # do some more timing and print
         duration = timeit.default_timer() - start_time
-        print(f'Elapsed time to run {func.__name__}: {duration:.2f} seconds.')
+        print(f'Elapsed time to run {func.__name__}: {duration:.5f} seconds.')
         return value
 
     return _wrapper
