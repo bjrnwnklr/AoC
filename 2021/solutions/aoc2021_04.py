@@ -51,12 +51,15 @@ class Board:
 
     def bingo(self):
         """Return true if either a row or a column of the board is filled."""
+        # `all` checks if any of the rows have ALL True values and returns a 1-dim array with value for each row
+        # `any` then checks if there is a True value in that row array - if there is one, one row was filled.
         rows = self.marked.all(axis=1)
         row_bingo = rows.any()
 
         cols = self.marked.all(axis=0)
         col_bingo = cols.any()
 
+        # board is filled if there is either a row or column with all marked numbers
         if col_bingo or row_bingo:
             self.won = True
 
@@ -64,8 +67,9 @@ class Board:
 
     def score(self):
         """Calculate the score of the board - sum of all unmarked numbers"""
-        s = self.board[~self.marked].sum()
-        return s
+        # ~self.marked is the reverse mask of all marked fields, i.e. all unmarked fields in the array
+        # we then sum up all of those
+        return self.board[~self.marked].sum()
 
 
 @aoc_timer
