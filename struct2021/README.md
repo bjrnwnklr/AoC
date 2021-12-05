@@ -1,0 +1,66 @@
+# Advent of Code 2021
+
+# How to set up a new day
+
+## Manually 
+- copy the `template` directory and rename to the day's number (with leading zero, e.g. `01`).
+- Rename the `aoc2021_nn.py` and `test/test_aoc2021_nn.py` files with the day's number
+- Change the highlighted references in both files to the day's number
+- Download the input file using the `aoc_downloader.py` file (note this will create a new directory if it doesn't yet exist)
+
+## Using the `aocsetup.sh` script
+
+- Go in the year's directory (e.g. `2021`)
+- Run `../aocsetup.sh 2021 01` to create a directory for day `01`
+- The script then copies the template files into the directory and renames the files according to year and day.
+
+Then use the Python `aoc_downloader.py` to download the input file and (optionally) the offline description for part 1.
+
+```shell
+[aoc/2021] > python ../aoc_downloader.py 2021 01 -s <sessioncookie> --offline --verbose
+```
+
+```
+usage: aoc_downloader.py [-h] [-v] [-o] [-s SESSIONCOOKIE] year day
+
+positional arguments:
+  year                  year to download
+  day                   day to download
+
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+  -o, --offline         prepare for offline use by downloading AoC HTML page for the day
+  -s SESSIONCOOKIE, --sessioncookie SESSIONCOOKIE
+                        session cookie for the AoC website
+```
+
+Alternatively, just use `curl` to download the `input.txt` file.
+
+```shell
+$ curl https://adventofcode.com/2021/day/<DAY - no leading zeros!>/input --cookie "session=SESSION" > input.txt
+```
+
+Session cookie can be found by:
+- Chrome> Inspect
+- tab over to `Application`
+- Under `Storage`, expand `Cookies`
+- click on the `https://adventofcode.com` cookie
+- grab the value for session.
+
+# Run a solution
+
+The puzzle solutions are in the `solutions` directory. Run a day's solution as a module using the `-m` option. This will get the imports (e.g. from `utils`) correct.
+
+```shell
+[aoc/2021] > python -m solutions.aoc2021_03
+```
+
+# Testing with `pytest`
+
+Tests are located in the `tests` subdirectory and should be used to test the examples given in the puzzle description. Run a test from within the year's directory with `pytest`, using either the path/filename of the testfile to run or use the `-k` (keyword) option and specify the day:
+
+```shell
+[aoc/2021] > pytest tests/test_aoc2021_03.py
+[aoc/2021] > pytest -k "03"
+```
