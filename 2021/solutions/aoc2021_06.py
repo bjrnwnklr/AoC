@@ -89,6 +89,7 @@ def part3(puzzle_input):
 
     return sum(fish.values())
 
+
 @aoc_timer
 def part4(puzzle_input):
     """Solve part 2 using a list and just count the number of fish spawned."""
@@ -108,6 +109,26 @@ def part4(puzzle_input):
                 new_fish[i-1] += fish[i]
 
         fish = new_fish[:]
+
+    return sum(fish)
+
+
+@aoc_timer
+def part5(puzzle_input):
+    """Solve part 2 using a list and shifting the elements and just count the number of fish spawned."""
+    fish = [0] * 9
+
+    for f in range(7):
+        fish[f] = puzzle_input.count(f)
+
+    t = 256
+    for _ in range(t):
+        # shift left
+        f = fish.pop(0)
+        # add at pos 8
+        fish.append(f)
+        # increment #6
+        fish[6] += f
 
     return sum(fish)
 
@@ -133,17 +154,22 @@ if __name__ == '__main__':
     p4 = part4(puzzle_input)
     print(f'Part 4: {p4}')
 
+    # Solve part 2 and print the answer
+    p5 = part5(puzzle_input)
+    print(f'Part 5: {p5}')
 
 # Part 1: Start: 17:47 End: 18:01
 # Part 2: Start: 18:02 End: 18:18
 
 """
-Elapsed time to run part1: 0.57671 seconds.
+Elapsed time to run part1: 0.62157 seconds.
 Part 1: 388419
-Elapsed time to run part2: 0.36486 seconds.
+Elapsed time to run part2: 0.34589 seconds.
 Part 2: 1740449478328
-Elapsed time to run part3: 0.00133 seconds.
+Elapsed time to run part3: 0.00083 seconds.
 Part 3: 1740449478328
-Elapsed time to run part4: 0.00077 seconds.
+Elapsed time to run part4: 0.00062 seconds.
 Part 4: 1740449478328
+Elapsed time to run part5: 0.00007 seconds.
+Part 5: 1740449478328
 """
