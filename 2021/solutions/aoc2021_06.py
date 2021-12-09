@@ -1,7 +1,7 @@
 # Load any required modules. Most commonly used:
 
 # import re
-# from collections import defaultdict
+from collections import defaultdict
 from utils.aoctools import aoc_timer
 from functools import lru_cache
 
@@ -47,6 +47,7 @@ def part1(puzzle_input):
 
 @lru_cache()
 def spawn_fish(n, t):
+    """Solve part 2 using recursion / memoization."""
     if t == 0:
         return 1
     else:
@@ -66,6 +67,35 @@ def part2(puzzle_input):
     return result
 
 
+def track_fish(pi):
+    """Solve part 2 using a dictionary and just count the number of fish spawned."""
+    fish = defaultdict(int)
+
+    for f in pi:
+        fish[f] += 1
+
+    t = 256
+    for _ in range(t):
+        new_fish = defaultdict(int)
+        for f, cnt in fish.items():
+            if f == 0:
+                new_fish[6] += cnt
+                new_fish[8] += cnt
+            else:
+                new_fish[f-1] += cnt
+
+        fish = new_fish.copy()
+
+    return sum(fish.values())
+
+
+@aoc_timer
+def part3(puzzle_input):
+    """Solve part 2 with a different approach. Return the required output value."""
+
+    return track_fish(puzzle_input)
+
+
 if __name__ == '__main__':
     # read the puzzle input
     # puzzle_input = load_input('testinput/06_1_1.txt')
@@ -79,5 +109,18 @@ if __name__ == '__main__':
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
 
+    # Solve part 2 and print the answer
+    p3 = part3(puzzle_input)
+    print(f'Part 3: {p3}')
+
 # Part 1: Start: 17:47 End: 18:01
 # Part 2: Start: 18:02 End: 18:18
+
+"""
+Elapsed time to run part1: 0.28521 seconds.
+Part 1: 388419
+Elapsed time to run part2: 0.20640 seconds.
+Part 2: 1740449478328
+Elapsed time to run part3: 0.00059 seconds.
+Part 3: 1740449478328
+"""
