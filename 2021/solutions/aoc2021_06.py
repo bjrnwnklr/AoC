@@ -67,11 +67,12 @@ def part2(puzzle_input):
     return result
 
 
-def track_fish(pi):
+@aoc_timer
+def part3(puzzle_input):
     """Solve part 2 using a dictionary and just count the number of fish spawned."""
     fish = defaultdict(int)
 
-    for f in pi:
+    for f in puzzle_input:
         fish[f] += 1
 
     t = 256
@@ -88,12 +89,27 @@ def track_fish(pi):
 
     return sum(fish.values())
 
-
 @aoc_timer
-def part3(puzzle_input):
-    """Solve part 2 with a different approach. Return the required output value."""
+def part4(puzzle_input):
+    """Solve part 2 using a list and just count the number of fish spawned."""
+    fish = [0] * 9
 
-    return track_fish(puzzle_input)
+    for f in range(7):
+        fish[f] = puzzle_input.count(f)
+
+    t = 256
+    for _ in range(t):
+        new_fish = [0] * 9
+        for i in range(9):
+            if i == 0:
+                new_fish[6] += fish[0]
+                new_fish[8] += fish[0]
+            else:
+                new_fish[i-1] += fish[i]
+
+        fish = new_fish[:]
+
+    return sum(fish)
 
 
 if __name__ == '__main__':
@@ -113,14 +129,21 @@ if __name__ == '__main__':
     p3 = part3(puzzle_input)
     print(f'Part 3: {p3}')
 
+    # Solve part 2 and print the answer
+    p4 = part4(puzzle_input)
+    print(f'Part 4: {p4}')
+
+
 # Part 1: Start: 17:47 End: 18:01
 # Part 2: Start: 18:02 End: 18:18
 
 """
-Elapsed time to run part1: 0.28521 seconds.
+Elapsed time to run part1: 0.57671 seconds.
 Part 1: 388419
-Elapsed time to run part2: 0.20640 seconds.
+Elapsed time to run part2: 0.36486 seconds.
 Part 2: 1740449478328
-Elapsed time to run part3: 0.00059 seconds.
+Elapsed time to run part3: 0.00133 seconds.
 Part 3: 1740449478328
+Elapsed time to run part4: 0.00077 seconds.
+Part 4: 1740449478328
 """
