@@ -133,6 +133,26 @@ def part5(puzzle_input):
     return sum(fish)
 
 
+@aoc_timer
+def part6(puzzle_input):
+    """Solve part 2 using a list and shifting the index."""
+    fish = [0] * 9
+
+    for f in range(7):
+        fish[f] = puzzle_input.count(f)
+
+    t = 256
+    m = len(fish)
+    i = 0
+    for _ in range(t):
+        # increase index by 1 - shift left
+        i = (i + 1) % m
+        # add previous index 0 to index 6
+        fish[(i+6) % m] += fish[(i-1) % m]
+
+    return sum(fish)
+
+
 if __name__ == '__main__':
     # read the puzzle input
     # puzzle_input = load_input('testinput/06_1_1.txt')
@@ -158,18 +178,24 @@ if __name__ == '__main__':
     p5 = part5(puzzle_input)
     print(f'Part 5: {p5}')
 
+    # Solve part 2 and print the answer
+    p6 = part6(puzzle_input)
+    print(f'Part 6: {p6}')
+
 # Part 1: Start: 17:47 End: 18:01
 # Part 2: Start: 18:02 End: 18:18
 
 """
-Elapsed time to run part1: 0.62157 seconds.
+Elapsed time to run part1: 0.27157 seconds.
 Part 1: 388419
-Elapsed time to run part2: 0.34589 seconds.
+Elapsed time to run part2: 0.20131 seconds.
 Part 2: 1740449478328
-Elapsed time to run part3: 0.00083 seconds.
+Elapsed time to run part3: 0.00057 seconds.
 Part 3: 1740449478328
-Elapsed time to run part4: 0.00062 seconds.
+Elapsed time to run part4: 0.00040 seconds.
 Part 4: 1740449478328
-Elapsed time to run part5: 0.00007 seconds.
+Elapsed time to run part5: 0.00005 seconds.
 Part 5: 1740449478328
+Elapsed time to run part6: 0.00011 seconds.
+Part 6: 1740449478328
 """
