@@ -3,7 +3,7 @@
 # import re
 from collections import defaultdict
 from utils.aoctools import aoc_timer
-from functools import lru_cache
+from functools import cache
 
 
 def load_input(f_name):
@@ -48,7 +48,7 @@ def cost_part1(dist):
     return dist
 
 
-@lru_cache
+@cache
 def cost_part2(dist):
     return sum(range(dist + 1))
 
@@ -85,10 +85,10 @@ if __name__ == '__main__':
 """
 Min Fuel: 352331
 Position: 349
-Elapsed time to run part1: 0.18057 seconds.
+Elapsed time to run part1: 0.18246 seconds.
 Part 1: 352331
 Min Fuel: 99266250
 Position: 488
-Elapsed time to run part2: 10.02159 seconds.
+Elapsed time to run part2: 0.21530 seconds.
 Part 2: 99266250
 """
