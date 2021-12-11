@@ -14,9 +14,13 @@ class Test_AOC2021_08:
     """
 
     def test_1_1(self):
-        puzzle_input = load_input('testinput/08_1_1.txt')
-        assert part1(puzzle_input) == 1
+        puzzle_input = load_input('testinput/08_1_2.txt')
+        assert part1(puzzle_input) == 26
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/08_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_1(self):
+        puzzle_input = load_input('testinput/08_1_1.txt')
+        assert part2(puzzle_input) == 5353
+
+    # def test_2_2(self):
+    #     puzzle_input = load_input('testinput/08_1_2.txt')
+    #     assert part2(puzzle_input) == 61229
