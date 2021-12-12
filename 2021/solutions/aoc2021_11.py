@@ -14,6 +14,8 @@ class Grid:
         }
         self.flashes = 0
         self.already_flashed = set()
+        self.all_octopi = len(self.pl)
+        self.all_flashed = False
 
     def neighbors(self, r, c):
         neigh = []
@@ -27,6 +29,7 @@ class Grid:
 
     def cycle(self):
         flashed = True
+        self.all_flashed = False
         # increase energy level by 1 for all octopi
         for r, c in self.pl:
             self.pl[(r, c)] += 1
@@ -50,6 +53,10 @@ class Grid:
         # reset all flashed octopi to 0
         for r, c in self.already_flashed:
             self.pl[(r, c)] = 0
+
+        # part 2: check if all octopi have flashed in this step
+        if len(self.already_flashed) == self.all_octopi:
+            self.all_flashed = True
 
         self.already_flashed = set()
 
@@ -83,7 +90,14 @@ def part1(puzzle_input):
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    g = Grid(puzzle_input)
+    i = 1
+    while True:
+        g.cycle()
+        if g.all_flashed:
+            # all octopi have flashed, return the number
+            return i
+        i += 1
 
 
 if __name__ == '__main__':
@@ -99,4 +113,4 @@ if __name__ == '__main__':
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 15:13 End: 15:45
-# Part 2: Start:  End:
+# Part 2: Start: 15:53 End: 15:57
