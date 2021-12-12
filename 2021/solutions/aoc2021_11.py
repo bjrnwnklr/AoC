@@ -20,7 +20,7 @@ class Grid:
         for dr in [-1, 0, 1]:
             for dc in [-1, 0, 1]:
                 nr, nc = r + dr, c + dc
-                if (nr, nc) in self.pl:
+                if (nr, nc) in self.pl and (dr, dc) != (0, 0):
                     neigh.append((nr, nc))
 
         return neigh
