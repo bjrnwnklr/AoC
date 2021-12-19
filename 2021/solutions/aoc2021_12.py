@@ -62,7 +62,7 @@ def bfs(g: defaultdict(list)) -> list:
     return paths
 
 
-def bfs2(g: defaultdict(list), small_cave: str) -> list:
+def bfs2(g: defaultdict(list)) -> list:
     """Run a Breadth First Search on the provided bi-directional graph and return
     a list of possible paths from 'start' to 'end'.
 
@@ -71,30 +71,29 @@ def bfs2(g: defaultdict(list), small_cave: str) -> list:
     - all other small caves (small letters, incl 'start' and 'end') can only be visited once.
     - large caves (capital letters) can be visited any number of times.
     """
-    q = [('start', 'start', set(), False)]
+    # current node, current path, current seen, which small cave can be visited twice
+    q = [('start', 'start', set(['start']), '')]
     target = 'end'
-    # this will only hold small caves, large caves can be visited multiple times.
-    paths = []
+    paths = set()
 
     while q:
-        cur_node, cur_path, cur_seen, scvisited = q.pop(0)
-        if cur_node in cur_seen:
-            continue
-
-        if cur_node.islower():
-            if cur_node == small_cave and not scvisited:
-                scvisited = True
-            else:
-                cur_seen.add(cur_node)
+        cur_node, cur_path, cur_seen, sc = q.pop(0)
 
         if cur_node == target:
             # we have reached the end, add the path to the list of found paths
-            paths.append(cur_path)
+            paths.add(cur_path)
+            continue
 
         for next_node in g[cur_node]:
-            if next_node not in cur_seen:
+            if next_node.isupper() or next_node not in cur_seen:
+                if next_node.islower() and sc == '':
+                    q.append((next_node, cur_path + ',' +
+                             next_node, cur_seen.copy(), next_node))
+                next_seen = cur_seen.copy()
+                next_seen.add(next_node)
+
                 q.append((next_node, cur_path + ',' +
-                          next_node, cur_seen.copy(), scvisited))
+                          next_node, next_seen, sc))
 
     return paths
 
@@ -113,16 +112,11 @@ def part1(puzzle_input):
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    paths = []
     g = build_graph(puzzle_input)
 
-    # get all small letters in the graph
-    small_caves = [x for x in g if x.islower() and x not in ['start', 'end']]
+    paths = bfs2(g)
 
-    for small_cave in small_caves:
-        paths += bfs2(g, small_cave)
-
-    return len(set(paths))
+    return len(paths)
 
 
 if __name__ == '__main__':
@@ -140,3 +134,8 @@ if __name__ == '__main__':
 
 # Part 1: Start: 17:39 End: 18:15
 # Part 2: Start: 18:21 End: 19:04
+
+# Elapsed time to run part1: 0.08188 seconds.
+# Part 1: 3708
+# Elapsed time to run part2: 3.58784 seconds.
+# Part 2: 93858
