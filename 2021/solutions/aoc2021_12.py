@@ -85,15 +85,15 @@ def dfs2(g: defaultdict(list)) -> list:
             continue
 
         for next_node in g[cur_node]:
-            if next_node.isupper() or next_node not in cur_seen:
-                if next_node.islower() and sc == '':
-                    q.append((next_node, cur_path + ',' +
-                             next_node, cur_seen.copy(), next_node))
+            if next_node not in cur_seen:
                 next_seen = cur_seen.copy()
-                next_seen.add(next_node)
-
+                if next_node.islower():
+                    next_seen.add(next_node)
                 q.append((next_node, cur_path + ',' +
                           next_node, next_seen, sc))
+            elif next_node in cur_seen and sc == '' and next_node not in ['start', 'end']:
+                q.append((next_node, cur_path + ',' +
+                          next_node, cur_seen.copy(), next_node))
 
     return paths
 
