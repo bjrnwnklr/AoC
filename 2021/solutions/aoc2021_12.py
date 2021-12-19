@@ -29,8 +29,8 @@ def build_graph(inp):
     return g
 
 
-def bfs(g: defaultdict(list)) -> list:
-    """Run a Breadth First Search on the provided bi-directional graph and return
+def dfs(g: defaultdict(list)) -> list:
+    """Run a Depth First Search on the provided bi-directional graph and return
     a list of possible paths from 'start' to 'end'.
 
     Rules followed: 
@@ -43,7 +43,7 @@ def bfs(g: defaultdict(list)) -> list:
     paths = []
 
     while q:
-        cur_node, cur_path, cur_seen = q.pop(0)
+        cur_node, cur_path, cur_seen = q.pop()
         if cur_node in cur_seen:
             continue
 
@@ -62,8 +62,8 @@ def bfs(g: defaultdict(list)) -> list:
     return paths
 
 
-def bfs2(g: defaultdict(list)) -> list:
-    """Run a Breadth First Search on the provided bi-directional graph and return
+def dfs2(g: defaultdict(list)) -> list:
+    """Run a Depth First Search on the provided bi-directional graph and return
     a list of possible paths from 'start' to 'end'.
 
     Rules followed: 
@@ -77,7 +77,7 @@ def bfs2(g: defaultdict(list)) -> list:
     paths = set()
 
     while q:
-        cur_node, cur_path, cur_seen, sc = q.pop(0)
+        cur_node, cur_path, cur_seen, sc = q.pop()
 
         if cur_node == target:
             # we have reached the end, add the path to the list of found paths
@@ -103,7 +103,7 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
     g = build_graph(puzzle_input)
-    paths = bfs(g)
+    paths = dfs(g)
 
     return len(paths)
 
@@ -114,7 +114,7 @@ def part2(puzzle_input):
 
     g = build_graph(puzzle_input)
 
-    paths = bfs2(g)
+    paths = dfs2(g)
 
     return len(paths)
 
@@ -135,7 +135,14 @@ if __name__ == '__main__':
 # Part 1: Start: 17:39 End: 18:15
 # Part 2: Start: 18:21 End: 19:04
 
+# With BFS:
 # Elapsed time to run part1: 0.08188 seconds.
 # Part 1: 3708
 # Elapsed time to run part2: 3.58784 seconds.
+# Part 2: 93858
+
+# With DFS (just changing the .pop(0) to .pop()):
+# Elapsed time to run part1: 0.03161 seconds.
+# Part 1: 3708
+# Elapsed time to run part2: 0.25143 seconds.
 # Part 2: 93858
