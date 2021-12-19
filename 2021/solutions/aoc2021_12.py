@@ -146,3 +146,9 @@ if __name__ == '__main__':
 # Part 1: 3708
 # Elapsed time to run part2: 0.25143 seconds.
 # Part 2: 93858
+
+# With DFS and optimized part 2:
+# Elapsed time to run part1: 0.02820 seconds.
+# Part 1: 3708
+# Elapsed time to run part2: 0.18876 seconds.
+# Part 2: 93858
