@@ -39,7 +39,7 @@ def process_polymer(poly, rules):
     return new_poly
 
 
-def process_polymer2(polydict, last_pair, rules):
+def process_polymer2(polydict, last_char, rules):
     d = defaultdict(int)
     char_counter = defaultdict(int)
 
@@ -51,9 +51,12 @@ def process_polymer2(polydict, last_pair, rules):
         d[new_poly_1] += v
         d[new_poly_2] += v
 
-    # add the last element
-    char_counter[last_pair[1]] += 1
-    return d, last_pair, char_counter
+    # add the last element - this never changes, it is simply the last character of the
+    # overall starting template, so just needs to be added here once.
+    # (We could also do this in the overall solution as it is only required once in the last
+    # turn)
+    char_counter[last_char] += 1
+    return d, char_counter
 
 
 @aoc_timer
@@ -89,11 +92,11 @@ def part2(puzzle_input):
         pair = ''.join(pp)
         polydict[pair] += 1
 
-    last_pair = poly_template[-2:]
+    last_char = poly_template[-1]
 
-    for i in range(40):
-        polydict, last_pair, char_counter = process_polymer2(
-            polydict.copy(), last_pair, rules)
+    for _ in range(40):
+        polydict, char_counter = process_polymer2(
+            polydict.copy(), last_char, rules)
 
     # get the max and min occurence
     c_min = min(char_counter.values())
