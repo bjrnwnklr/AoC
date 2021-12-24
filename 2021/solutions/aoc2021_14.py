@@ -1,8 +1,8 @@
 # Load any required modules. Most commonly used:
 
 # import re
-from collections import Counter
-# from utils.aoctools import aoc_timer
+from collections import Counter, defaultdict
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -37,9 +37,26 @@ def process_polymer(poly, rules):
     new_poly += poly[-1]
 
     return new_poly
-# @aoc_timer
 
 
+def process_polymer2(polydict, last_pair, rules):
+    d = defaultdict(int)
+    char_counter = defaultdict(int)
+
+    for k, v in polydict.items():
+        new_poly_1 = k[0] + rules[k]
+        new_poly_2 = rules[k] + k[1]
+        char_counter[k[0]] += v
+        char_counter[rules[k]] += v
+        d[new_poly_1] += v
+        d[new_poly_2] += v
+
+    # add the last element
+    char_counter[last_pair[1]] += 1
+    return d, last_pair, char_counter
+
+
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
 
@@ -60,16 +77,35 @@ def part1(puzzle_input):
     return c.most_common()[0][1] - c.most_common()[-1][1]
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    poly_template, pair_rules = puzzle_input
+    rules = {x: y for x, y in pair_rules}
+
+    polydict = defaultdict(int)
+    for pp in zip(poly_template[:], poly_template[1:]):
+        pair = ''.join(pp)
+        polydict[pair] += 1
+
+    last_pair = poly_template[-2:]
+
+    for i in range(40):
+        polydict, last_pair, char_counter = process_polymer2(
+            polydict.copy(), last_pair, rules)
+
+    # get the max and min occurence
+    c_min = min(char_counter.values())
+    c_max = max(char_counter.values())
+
+    return c_max - c_min
 
 
 if __name__ == '__main__':
     # read the puzzle input
     puzzle_input = load_input('input/14.txt')
+    # puzzle_input = load_input('testinput/14_1_1.txt')
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)
@@ -80,4 +116,9 @@ if __name__ == '__main__':
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 11:15 End: 11:41
-# Part 2: Start: 11:42 End:
+# Part 2: Start: 11:42 End: 12:41
+
+# Elapsed time to run part1: 0.00469 seconds.
+# Part 1: 2602
+# Elapsed time to run part2: 0.00219 seconds.
+# Part 2: 2942885922173
