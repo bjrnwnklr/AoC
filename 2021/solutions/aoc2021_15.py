@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from heapq import heappush, heappop
 
 
@@ -53,7 +53,36 @@ def generate_grid(inp):
             }
 
 
-# @aoc_timer
+def mod_m(n, dn, m):
+    """Generates (n + dn) % m, but wrapping around to 1 instead of 0."""
+    return ((n + dn - 1) % m) + 1
+
+
+def extend_grid(inp):
+    # first extend the original grid columns 5 times to the right
+    new_grid = []
+    for row in inp:
+        temp_row = row[:]
+        for dc in range(1, 5):
+            temp_row.extend([mod_m(x, dc, 9) for x in row])
+        new_grid.append(temp_row)
+
+    # then extend the new grid rows 5 times down
+    final_grid = new_grid[:]
+    for dr in range(1, 5):
+        for row in new_grid:
+            new_row = [mod_m(x, dr, 9) for x in row]
+            final_grid.append(new_row)
+
+    return final_grid
+
+
+def print_grid(list_grid):
+    for row in list_grid:
+        print(''.join(str(x) for x in row))
+
+
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
@@ -64,11 +93,15 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    extended_inp = extend_grid(puzzle_input)
+    g = generate_grid(extended_inp)
+    target = (len(extended_inp) - 1, len(extended_inp[0]) - 1)
+    result = dijkstra(g, (0, 0), target)
+    return result
 
 
 if __name__ == '__main__':
@@ -84,4 +117,9 @@ if __name__ == '__main__':
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 19:01 End: 19:21
-# Part 2: Start: 19:22 End:
+# Part 2: Start: 19:22 End: 20:06
+
+# Elapsed time to run part1: 0.03161 seconds.
+# Part 1: 373
+# Elapsed time to run part2: 1.04882 seconds.
+# Part 2: 2868
