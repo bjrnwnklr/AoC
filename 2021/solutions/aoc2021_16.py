@@ -72,14 +72,7 @@ def parse_packet(packet: list[int]):
     Returns sum of versions of contained packets and length consumed by the processed packets.
     """
     v_sum = 0
-    used_length = 0
 
-    if len(packet) == 0:
-        # if there is nothing left to process, return 0
-        return 0, 0
-    if sum(packet) == 0:
-        # elemental case - if remaining packet is all 0s, we can return a 0
-        return 0, len(packet)
     if packet_type(packet) == 4:
         # literal value - length determined by counting bits in groups of five
         # until the first bit is a 0
@@ -88,13 +81,12 @@ def parse_packet(packet: list[int]):
         # return the packet version (this is the leaf case)
 
         # calculate used length
-        i = 6
+        used_length = 6
         last = False
         while not last:
-            if packet[i] == 0:
+            if packet[used_length] == 0:
                 last = True
-            i += 5
-        used_length += i
+            used_length += 5
 
         return packet_version(packet), used_length
     else:
@@ -147,12 +139,6 @@ def parse_packet_2(packet: list[int]):
     """
     used_length = 0
 
-    if len(packet) == 0:
-        # if there is nothing left to process, return 0
-        return 0, 0
-    if sum(packet) == 0:
-        # elemental case - if remaining packet is all 0s, we can return a 0
-        return 0, len(packet)
     if packet_type(packet) == 4:
         # literal value - length determined by counting bits in groups of five
         # until the first bit is a 0
@@ -161,13 +147,12 @@ def parse_packet_2(packet: list[int]):
         # return the packet version (this is the leaf case)
 
         # calculate used length
-        i = 6
+        used_length = 6
         last = False
         while not last:
-            if packet[i] == 0:
+            if packet[used_length] == 0:
                 last = True
-            i += 5
-        used_length += i
+            used_length += 5
 
         return literal_value(packet), used_length
     else:
