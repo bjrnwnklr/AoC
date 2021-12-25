@@ -71,7 +71,6 @@ def parse_packet(packet: list[int]):
 
     Returns sum of versions of contained packets and length consumed by the processed packets.
     """
-    v_sum = 0
 
     if packet_type(packet) == 4:
         # literal value - length determined by counting bits in groups of five
@@ -93,7 +92,7 @@ def parse_packet(packet: list[int]):
         # operator packages
         # these contribute their own version number and then the version numbers
         # of any packages contained within
-        v_sum += packet_version(packet)
+        v_sum = packet_version(packet)
         match packet_length_type(packet):
             case 0:
                 # next 15 bits are a number that represents the total length
@@ -127,8 +126,6 @@ def parse_packet(packet: list[int]):
                     processed_packages += 1
 
                 return v_sum, 18 + used_length
-
-    return v_sum, 0
 
 
 def parse_packet_2(packet: list[int]):
@@ -259,4 +256,10 @@ if __name__ == '__main__':
 # Elapsed time to run part1: 0.00736 seconds.
 # Part 1: 875
 # Elapsed time to run part2: 0.00710 seconds.
+# Part 2: 1264857437203
+
+# After removing some unnecessary calculations (i in literal vals, v_sum):
+# Elapsed time to run part1: 0.00360 seconds.
+# Part 1: 875
+# Elapsed time to run part2: 0.00415 seconds.
 # Part 2: 1264857437203
