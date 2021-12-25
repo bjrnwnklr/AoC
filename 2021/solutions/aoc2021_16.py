@@ -93,6 +93,7 @@ def parse_packet(packet: list[int]):
         # these contribute their own version number and then the version numbers
         # of any packages contained within
         v_sum = packet_version(packet)
+        used_length = 0
         match packet_length_type(packet):
             case 0:
                 # next 15 bits are a number that represents the total length
@@ -103,7 +104,6 @@ def parse_packet(packet: list[int]):
                 # process full length, which processes the first packet, then process
                 # remaining length until nothing is left
                 l = bitlist_to_int(packet[7:22])
-                used_length = 0
                 while used_length < l:
                     v_sum_inc, used_length_inc = parse_packet(
                         packet[22 + used_length:22 + l])
@@ -116,7 +116,6 @@ def parse_packet(packet: list[int]):
 
                 # identify the number of packages contained within
                 n = bitlist_to_int(packet[7:18])
-                used_length = 0
                 processed_packages = 0
                 while processed_packages < n:
                     v_sum_inc, used_length_inc = parse_packet(
@@ -157,7 +156,7 @@ def parse_packet_2(packet: list[int]):
         # the value of this packet is derived from the operator type and values
         # of any packages contained within
         vals = []
-        length = 0
+        used_length = 0
         match packet_length_type(packet):
             case 0:
                 # next 15 bits are a number that represents the total length
@@ -168,7 +167,6 @@ def parse_packet_2(packet: list[int]):
                 # process full length, which processes the first packet, then process
                 # remaining length until nothing is left
                 l = bitlist_to_int(packet[7:22])
-                used_length = 0
                 while used_length < l:
                     val, used_length_inc = parse_packet_2(
                         packet[22 + used_length:22 + l])
@@ -182,7 +180,6 @@ def parse_packet_2(packet: list[int]):
 
                 # identify the number of packages contained within
                 n = bitlist_to_int(packet[7:18])
-                used_length = 0
                 processed_packages = 0
                 while processed_packages < n:
                     val, used_length_inc = parse_packet_2(
