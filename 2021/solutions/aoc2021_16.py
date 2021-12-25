@@ -24,13 +24,13 @@ def hex_to_bitlist(hex_inp: str) -> list[int]:
     for h in hex_inp:
         h_int = int(h, base=16)
         h_bin = f'{h_int:0>4b}'
-        bitlist.extend(list(h_bin))
+        bitlist.extend(list(map(int, list(h_bin))))
     return bitlist
 
 
 def bitlist_to_int(bitlist: list[int]) -> int:
     """Convert a list of bits (0 and 1 values) into an integer. Most significant bit comes first."""
-    b = ''.join(x for x in bitlist)
+    b = ''.join(str(x) for x in bitlist)
     return int(b, base=2)
 
 
@@ -39,6 +39,11 @@ class Packet:
 
     def __init__(self, bitlist: list[int]) -> None:
         self.bitlist = bitlist
+        self.version = self.packet_version()
+        self.ptype = self.packet_type()
+
+    def __repr__(self) -> str:
+        return f'[v{self.version} / t{self.ptype}]'
 
     def packet_version(self) -> int:
         """Parse the header of a packet and return the packet version (bits 0-2) as an int."""
@@ -48,18 +53,50 @@ class Packet:
         """Parse the header of a packet and return the packet type (bits 3-5) as an int."""
         return bitlist_to_int(self.bitlist[3:6])
 
+    def packet_length_type(self) -> int:
+        """For operator type packets, return the length type ID (bit 7)."""
+        assert self.ptype != 4
+        return self.bitlist[7]
+
+    def packet_length(self) -> int:
+        """Determine the length in bits, comprised of the header (6 bits), operator mode
+        length type bit (1 bit) and any payload (literal values, total length, number of
+        sub packets immediately contained).
+        """
+        if self.ptype == 4:
+            # literal value - lenght determined by counting bits in groups of five
+            # until the first bit is a 0
+            i = 6
+            while self.bitlist[i] == 1:
+                i += 5
+            return i + 5
+        else:
+            # operator packages
+            match self.packet_length_type():
+                case 0:
+                    # next 15 bits are a number that represents the total length
+                    # in bits of the sub-packets contained by this packet
+                    # so total length is 7 (header plus length bit) plus 15 plus
+                    # the length of the subpackets
+                    return 7 + 15 + bitlist_to_int(self.bitlist[8:24])
+                case 1:
+                    # next 11 bits are a number that represents the number of
+                    # sub-packets immediately contained by this packet
+                    pass
+
     def literal_value(self) -> int:
         """Decode the value of a literal value type packet (packet_type == 4)."""
-        assert self.packet_type() == 4
+        assert self.ptype == 4
         group_length = 5
-        payload = self.bitlist[6:]
-        num_groups = len(payload) // group_length
-        bitlist = []
-        for i in range(num_groups):
-            b = payload[i * group_length: (i * group_length) + group_length]
-            bitlist.extend(b[1:])
+        i = 6
+        lit_val_bitlist = []
+        while True:
+            lit_val_bitlist.extend(self.bitlist[i + 1: i + group_length])
+            if self.bitlist[i] == 0:
+                break
+            i += 5
 
-        return bitlist_to_int(bitlist)
+        return bitlist_to_int(lit_val_bitlist)
 
 
 def parse_packet(packet: list[int]):
