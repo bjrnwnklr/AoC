@@ -49,7 +49,6 @@ class Test_AOC2021_16:
 
         The sum of versions is 1 + 6 + 2 = 9, length is 49.
         """
-        print('Test 1_2')
         puzzle_input = load_input('testinput/16_1_2.txt')
         bitlist = hex_to_bitlist(puzzle_input)
         assert parse_packet(bitlist) == (9, 49)
@@ -64,44 +63,46 @@ class Test_AOC2021_16:
 
         The sum of versions is 7 + 2 + 4 + 1 = 14, length is 51.
         """
-        print('Test 1_3')
         puzzle_input = load_input('testinput/16_1_3.txt')
         bitlist = hex_to_bitlist(puzzle_input)
-        print(f'Passing in the following bitlist: {bitlist}')
         assert parse_packet(bitlist) == (14, 51)
 
-    # def test_1_4(self):
-    #     """
-    #     8A004A801A8002F478 represents an operator packet (version 4) which contains
-    #     an operator packet (version 1) which contains an operator packet (version 5)
-    #     which contains a literal value (version 6); this packet has a version sum of 16.
-    #     """
-    #     puzzle_input = load_input('testinput/16_1_4.txt')
-    #     assert part1(puzzle_input) == 16
+    def test_1_4(self):
+        """
+        8A004A801A8002F478 represents an operator packet (version 4) which contains
+        an operator packet (version 1) which contains an operator packet (version 5)
+        which contains a literal value (version 6); this packet has a version sum of 16.
+        """
+        puzzle_input = load_input('testinput/16_1_4.txt')
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet(bitlist)[0] == 16
 
-    # def test_1_5(self):
-    #     """
-    #     620080001611562C8802118E34 represents an operator packet (version 3) which contains
-    #     two sub-packets; each sub-packet is an operator packet that contains
-    #     two literal values. This packet has a version sum of 12.
-    #     """
-    #     puzzle_input = load_input('testinput/16_1_5.txt')
-    #     assert part1(puzzle_input) == 12
+    def test_1_5(self):
+        """
+        620080001611562C8802118E34 represents an operator packet (version 3) which contains
+        two sub-packets; each sub-packet is an operator packet that contains
+        two literal values. This packet has a version sum of 12.
+        """
+        puzzle_input = load_input('testinput/16_1_5.txt')
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet(bitlist)[0] == 12
 
-    # def test_1_6(self):
-    #     """
-    #     C0015000016115A2E0802F182340 has the same structure as the previous example,
-    #     but the outermost packet uses a different length type ID.
-    #     This packet has a version sum of 23.
-    #     """
-    #     puzzle_input = load_input('testinput/16_1_6.txt')
-    #     assert part1(puzzle_input) == 23
+    def test_1_6(self):
+        """
+        C0015000016115A2E0802F182340 has the same structure as the previous example,
+        but the outermost packet uses a different length type ID.
+        This packet has a version sum of 23.
+        """
+        puzzle_input = load_input('testinput/16_1_6.txt')
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet(bitlist)[0] == 23
 
-    # def test_1_7(self):
-    #     """
-    #     A0016C880162017C3686B18A3D4780 is an operator packet that contains an
-    #     operator packet that contains an operator packet that contains
-    #     five literal values; it has a version sum of 31.
-    #     """
-    #     puzzle_input = load_input('testinput/16_1_7.txt')
-    #     assert part1(puzzle_input) == 31
+    def test_1_7(self):
+        """
+        A0016C880162017C3686B18A3D4780 is an operator packet that contains an
+        operator packet that contains an operator packet that contains
+        five literal values; it has a version sum of 31.
+        """
+        puzzle_input = load_input('testinput/16_1_7.txt')
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet(bitlist)[0] == 31

@@ -74,14 +74,14 @@ def parse_packet(packet: list[int]):
     v_sum = 0
     used_length = 0
 
-    print(f'Parsing the bitlist: {packet}')
+    # print(f'Parsing the bitlist: {packet}')
     if len(packet) == 0:
         # if there is nothing left to process, return 0
-        print(f'Length 0 packet: {packet}')
+        # print(f'Length 0 packet: {packet}')
         return 0, 0
     if sum(packet) == 0:
         # elemental case - if remaining packet is all 0s, we can return a 0
-        print(f'Sum 0 packet, {packet}')
+        # print(f'Sum 0 packet, {packet}')
         return 0, len(packet)
     if packet_type(packet) == 4:
         # literal value - length determined by counting bits in groups of five
@@ -91,7 +91,7 @@ def parse_packet(packet: list[int]):
         # return the packet version (this is the leaf case)
 
         # calculate used length
-        print(f'Literal packet {packet}')
+        # print(f'Literal packet {packet}')
         i = 6
         last = False
         while not last:
@@ -115,7 +115,7 @@ def parse_packet(packet: list[int]):
 
                 # process full length, which processes the first packet, then process
                 # remaining length until nothing is left
-                print(f'Type 0 packet, {packet}')
+                # print(f'Type 0 packet, {packet}')
                 l = bitlist_to_int(packet[7:22])
                 used_length = 0
                 while used_length < l:
@@ -129,13 +129,13 @@ def parse_packet(packet: list[int]):
                 # sub-packets immediately contained by this packet
 
                 # identify the number of packages contained within
-                print(f'Type 1 packet, {packet}')
+                # print(f'Type 1 packet, {packet}')
                 n = bitlist_to_int(packet[7:18])
                 used_length = 0
                 processed_packages = 0
                 while processed_packages < n:
-                    print(
-                        f'{n=}, {processed_packages=}, {packet[18 + used_length:]}')
+                    # print(
+                    # f'{n=}, {processed_packages=}, {packet[18 + used_length:]}')
                     v_sum_inc, used_length_inc = parse_packet(
                         packet[18 + used_length:])
                     v_sum += v_sum_inc
@@ -154,7 +154,7 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
     bitlist = hex_to_bitlist(puzzle_input)
-    return 1
+    return parse_packet(bitlist)[0]
 
 
 # @aoc_timer
@@ -176,5 +176,5 @@ if __name__ == '__main__':
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
 
-# Part 1: Start: 11:41 End:  (Reading the text and creating 7 test cases took until 11:59!)
-# Part 2: Start:  End:
+# Part 1: Start: 11:41 End: 17:42 (Reading the text and creating 7 test cases took until 11:59!)
+# Part 2: Start: 17:44 End:
