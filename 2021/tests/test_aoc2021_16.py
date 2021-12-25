@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_16 import load_input, part1, part2, hex_to_bitlist, literal_value, parse_packet
+from solutions.aoc2021_16 import load_input, part1, part2, hex_to_bitlist, literal_value, parse_packet, parse_packet_2
 
 
 class Test_AOC2021_16:
@@ -106,3 +106,67 @@ class Test_AOC2021_16:
         puzzle_input = load_input('testinput/16_1_7.txt')
         bitlist = hex_to_bitlist(puzzle_input)
         assert parse_packet(bitlist)[0] == 31
+
+    def test_2_1(self):
+        """
+        C200B40A82 finds the sum of 1 and 2, resulting in the value 3.
+        """
+        puzzle_input = 'C200B40A82'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 3
+
+    def test_2_2(self):
+        """
+        04005AC33890 finds the product of 6 and 9, resulting in the value 54.
+        """
+        puzzle_input = '04005AC33890'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 54
+
+    def test_2_3(self):
+        """
+        880086C3E88112 finds the minimum of 7, 8, and 9, resulting in the value 7.
+        """
+        puzzle_input = '880086C3E88112'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 7
+
+    def test_2_4(self):
+        """
+        CE00C43D881120 finds the maximum of 7, 8, and 9, resulting in the value 9.
+        """
+        puzzle_input = 'CE00C43D881120'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 9
+
+    def test_2_5(self):
+        """
+        D8005AC2A8F0 produces 1, because 5 is less than 15.
+        """
+        puzzle_input = 'D8005AC2A8F0'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 1
+
+    def test_2_6(self):
+        """
+        F600BC2D8F produces 0, because 5 is not greater than 15.
+        """
+        puzzle_input = 'F600BC2D8F'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 0
+
+    def test_2_7(self):
+        """
+        9C005AC2F8F0 produces 0, because 5 is not equal to 15.
+        """
+        puzzle_input = '9C005AC2F8F0'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 0
+
+    def test_2_8(self):
+        """
+        9C0141080250320F1802104A08 produces 1, because 1 + 3 = 2 * 2.
+        """
+        puzzle_input = '9C0141080250320F1802104A08'
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet_2(bitlist)[0] == 1
