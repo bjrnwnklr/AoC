@@ -45,9 +45,9 @@ def packet_type(bitlist: list[int]) -> int:
 
 
 def packet_length_type(bitlist: list[int]) -> int:
-    """For operator type packets, return the length type ID (bit 7)."""
+    """For operator type packets, return the length type ID (bit 6)."""
     assert packet_type(bitlist) != 4
-    return bitlist[7]
+    return bitlist[6]
 
 
 def literal_value(bitlist: list[int]) -> int:
@@ -74,11 +74,14 @@ def parse_packet(packet: list[int]):
     v_sum = 0
     used_length = 0
 
+    print(f'Parsing the bitlist: {packet}')
     if len(packet) == 0:
         # if there is nothing left to process, return 0
+        print(f'Length 0 packet: {packet}')
         return 0, 0
     if sum(packet) == 0:
         # elemental case - if remaining packet is all 0s, we can return a 0
+        print(f'Sum 0 packet, {packet}')
         return 0, len(packet)
     if packet_type(packet) == 4:
         # literal value - length determined by counting bits in groups of five
@@ -112,6 +115,7 @@ def parse_packet(packet: list[int]):
 
                 # process full length, which processes the first packet, then process
                 # remaining length until nothing is left
+                print(f'Type 0 packet, {packet}')
                 l = bitlist_to_int(packet[7:22])
                 used_length = 0
                 while used_length < l:
@@ -123,7 +127,22 @@ def parse_packet(packet: list[int]):
             case 1:
                 # next 11 bits are a number that represents the number of
                 # sub-packets immediately contained by this packet
-                pass
+
+                # identify the number of packages contained within
+                print(f'Type 1 packet, {packet}')
+                n = bitlist_to_int(packet[7:18])
+                used_length = 0
+                processed_packages = 0
+                while processed_packages < n:
+                    print(
+                        f'{n=}, {processed_packages=}, {packet[18 + used_length:]}')
+                    v_sum_inc, used_length_inc = parse_packet(
+                        packet[18 + used_length:])
+                    v_sum += v_sum_inc
+                    used_length += used_length_inc
+                    processed_packages += 1
+
+                return v_sum, 18 + used_length
 
     return v_sum, 0
 

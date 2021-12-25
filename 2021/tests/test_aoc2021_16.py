@@ -49,21 +49,26 @@ class Test_AOC2021_16:
 
         The sum of versions is 1 + 6 + 2 = 9, length is 49.
         """
+        print('Test 1_2')
         puzzle_input = load_input('testinput/16_1_2.txt')
         bitlist = hex_to_bitlist(puzzle_input)
         assert parse_packet(bitlist) == (9, 49)
 
-    # def test_1_3(self):
-    #     """Convert a hex input into a decimal number
+    def test_1_3(self):
+        """Convert a hex input into a decimal number
 
-    #     This is a length type 1 packet containing two sub packets.
+        This is a length type 1 packet containing three sub packets.
 
-    #     This input (EE00D40C823060) is represented as bits:
-    #     11101110000000001101010000001100100000100011000001100000
-    #     with the literal number encoded being 1, 2 and 3 in the three sub packets.
-    #     """
-    #     puzzle_input = load_input('testinput/16_1_3.txt')
-    #     assert part1(puzzle_input) == 123
+        This input (EE00D40C823060) is represented as bits:
+        11101110000000001101010000001100100000100011000001100000
+
+        The sum of versions is 7 + 2 + 4 + 1 = 14, length is 51.
+        """
+        print('Test 1_3')
+        puzzle_input = load_input('testinput/16_1_3.txt')
+        bitlist = hex_to_bitlist(puzzle_input)
+        print(f'Passing in the following bitlist: {bitlist}')
+        assert parse_packet(bitlist) == (14, 51)
 
     # def test_1_4(self):
     #     """
