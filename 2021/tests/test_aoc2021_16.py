@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_16 import Packet, load_input, part1, part2, hex_to_bitlist
+from solutions.aoc2021_16 import load_input, part1, part2, hex_to_bitlist, literal_value, parse_packet
 
 
 class Test_AOC2021_16:
@@ -23,20 +23,35 @@ class Test_AOC2021_16:
         """
         puzzle_input = load_input('testinput/16_1_1.txt')
         bitlist = hex_to_bitlist(puzzle_input)
-        p = Packet(bitlist)
-        assert p.literal_value() == 2021
+        assert literal_value(bitlist) == 2021
 
-    # def test_1_2(self):
-    #     """Convert a hex input into a decimal number
+    def test_1_1_version(self):
+        """Return the version number of the simplest use case (one literal package)
 
-    #     This is a length type 0 packet containing two sub packets.
+        This is a type 4 (literal) packet.
 
-    #     This input (38006F45291200) is represented as bits:
-    #     00111000000000000110111101000101001010010001001000000000
-    #     with the literal number encoded being 10 and 20 in the two sub packets.
-    #     """
-    #     puzzle_input = load_input('testinput/16_1_2.txt')
-    #     assert part1(puzzle_input) == 1020
+        This input (D2FE28) is represented as bits: 110100101111111000101000
+        with the literal number encoded being 2021.
+
+        The version number is 6 and length processed is 21
+        """
+        puzzle_input = load_input('testinput/16_1_1.txt')
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet(bitlist) == (6, 21)
+
+    def test_1_2(self):
+        """Convert a hex input into a decimal number
+
+        This is a length type 0 packet containing two sub packets.
+
+        This input (38006F45291200) is represented as bits:
+        00111000000000000110111101000101001010010001001000000000
+
+        The sum of versions is 1 + 6 + 2 = 9, length is 49.
+        """
+        puzzle_input = load_input('testinput/16_1_2.txt')
+        bitlist = hex_to_bitlist(puzzle_input)
+        assert parse_packet(bitlist) == (9, 49)
 
     # def test_1_3(self):
     #     """Convert a hex input into a decimal number

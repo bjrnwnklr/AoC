@@ -34,75 +34,99 @@ def bitlist_to_int(bitlist: list[int]) -> int:
     return int(b, base=2)
 
 
-class Packet:
-    """Defines a BITS packet"""
+def packet_version(bitlist: list[int]) -> int:
+    """Parse the header of a packet and return the packet version (bits 0-2) as an int."""
+    return bitlist_to_int(bitlist[:3])
 
-    def __init__(self, bitlist: list[int]) -> None:
-        self.bitlist = bitlist
-        self.version = self.packet_version()
-        self.ptype = self.packet_type()
 
-    def __repr__(self) -> str:
-        return f'[v{self.version} / t{self.ptype}]'
+def packet_type(bitlist: list[int]) -> int:
+    """Parse the header of a packet and return the packet type (bits 3-5) as an int."""
+    return bitlist_to_int(bitlist[3:6])
 
-    def packet_version(self) -> int:
-        """Parse the header of a packet and return the packet version (bits 0-2) as an int."""
-        return bitlist_to_int(self.bitlist[:3])
 
-    def packet_type(self) -> int:
-        """Parse the header of a packet and return the packet type (bits 3-5) as an int."""
-        return bitlist_to_int(self.bitlist[3:6])
+def packet_length_type(bitlist: list[int]) -> int:
+    """For operator type packets, return the length type ID (bit 7)."""
+    assert packet_type(bitlist) != 4
+    return bitlist[7]
 
-    def packet_length_type(self) -> int:
-        """For operator type packets, return the length type ID (bit 7)."""
-        assert self.ptype != 4
-        return self.bitlist[7]
 
-    def packet_length(self) -> int:
-        """Determine the length in bits, comprised of the header (6 bits), operator mode
-        length type bit (1 bit) and any payload (literal values, total length, number of
-        sub packets immediately contained).
-        """
-        if self.ptype == 4:
-            # literal value - lenght determined by counting bits in groups of five
-            # until the first bit is a 0
-            i = 6
-            while self.bitlist[i] == 1:
-                i += 5
-            return i + 5
-        else:
-            # operator packages
-            match self.packet_length_type():
-                case 0:
-                    # next 15 bits are a number that represents the total length
-                    # in bits of the sub-packets contained by this packet
-                    # so total length is 7 (header plus length bit) plus 15 plus
-                    # the length of the subpackets
-                    return 7 + 15 + bitlist_to_int(self.bitlist[8:24])
-                case 1:
-                    # next 11 bits are a number that represents the number of
-                    # sub-packets immediately contained by this packet
-                    pass
+def literal_value(bitlist: list[int]) -> int:
+    """Decode the value of a literal value type packet (packet_type == 4)."""
+    assert packet_type(bitlist) == 4
+    group_length = 5
+    i = 6
+    lit_val_bitlist = []
+    while True:
+        lit_val_bitlist.extend(bitlist[i + 1: i + group_length])
+        if bitlist[i] == 0:
+            break
+        i += 5
 
-    def literal_value(self) -> int:
-        """Decode the value of a literal value type packet (packet_type == 4)."""
-        assert self.ptype == 4
-        group_length = 5
-        i = 6
-        lit_val_bitlist = []
-        while True:
-            lit_val_bitlist.extend(self.bitlist[i + 1: i + group_length])
-            if self.bitlist[i] == 0:
-                break
-            i += 5
-
-        return bitlist_to_int(lit_val_bitlist)
+    return bitlist_to_int(lit_val_bitlist)
 
 
 def parse_packet(packet: list[int]):
-    """Parse a packet recursively and return the sum of the packet versions contained 
-    in all subpackets within."""
-    pass
+    """Parse a packet and return the sum of the packet versions contained 
+    in all subpackets within.
+
+    Returns sum of versions of contained packets and length consumed by the processed packets.
+    """
+    v_sum = 0
+    used_length = 0
+
+    if len(packet) == 0:
+        # if there is nothing left to process, return 0
+        return 0, 0
+    if sum(packet) == 0:
+        # elemental case - if remaining packet is all 0s, we can return a 0
+        return 0, len(packet)
+    if packet_type(packet) == 4:
+        # literal value - length determined by counting bits in groups of five
+        # until the first bit is a 0
+        #
+        # a literal type packet does not contain any sub-packets, so we can just
+        # return the packet version (this is the leaf case)
+
+        # calculate used length
+        print(f'Literal packet {packet}')
+        i = 6
+        last = False
+        while not last:
+            if packet[i] == 0:
+                last = True
+            i += 5
+        used_length += i
+
+        return packet_version(packet), used_length
+    else:
+        # operator packages
+        # these contribute their own version number and then the version numbers
+        # of any packages contained within
+        v_sum += packet_version(packet)
+        match packet_length_type(packet):
+            case 0:
+                # next 15 bits are a number that represents the total length
+                # in bits of the sub-packets contained by this packet
+                # so total length is 7 (header plus length bit) plus 15 plus
+                # the length of the subpackets
+
+                # process full length, which processes the first packet, then process
+                # remaining length until nothing is left
+                l = bitlist_to_int(packet[7:22])
+                used_length = 0
+                while used_length < l:
+                    v_sum_inc, used_length_inc = parse_packet(
+                        packet[22 + used_length:22 + l])
+                    v_sum += v_sum_inc
+                    used_length += used_length_inc
+                return v_sum, 22 + l
+            case 1:
+                # next 11 bits are a number that represents the number of
+                # sub-packets immediately contained by this packet
+                pass
+
+    return v_sum, 0
+
 
 # @aoc_timer
 
@@ -111,7 +135,6 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
     bitlist = hex_to_bitlist(puzzle_input)
-    p = Packet(bitlist)
     return 1
 
 
