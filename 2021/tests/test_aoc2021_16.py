@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_16 import load_input, part1, part2, hex_to_bitlist, literal_value
+from solutions.aoc2021_16 import Packet, load_input, part1, part2, hex_to_bitlist
 
 
 class Test_AOC2021_16:
@@ -23,7 +23,8 @@ class Test_AOC2021_16:
         """
         puzzle_input = load_input('testinput/16_1_1.txt')
         bitlist = hex_to_bitlist(puzzle_input)
-        assert literal_value(bitlist) == 2021
+        p = Packet(bitlist)
+        assert p.literal_value() == 2021
 
     # def test_1_2(self):
     #     """Convert a hex input into a decimal number

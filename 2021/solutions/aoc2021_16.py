@@ -34,28 +34,32 @@ def bitlist_to_int(bitlist: list[int]) -> int:
     return int(b, base=2)
 
 
-def packet_version(packet: list[int]) -> int:
-    """Parse the header of a packet and return the packet version (bits 0-2) as an int."""
-    return bitlist_to_int(packet[:3])
+class Packet:
+    """Defines a BITS packet"""
 
+    def __init__(self, bitlist: list[int]) -> None:
+        self.bitlist = bitlist
 
-def packet_type(packet: list[int]) -> int:
-    """Parse the header of a packet and return the packet type (bits 3-5) as an int."""
-    return bitlist_to_int(packet[3:6])
+    def packet_version(self) -> int:
+        """Parse the header of a packet and return the packet version (bits 0-2) as an int."""
+        return bitlist_to_int(self.bitlist[:3])
 
+    def packet_type(self) -> int:
+        """Parse the header of a packet and return the packet type (bits 3-5) as an int."""
+        return bitlist_to_int(self.bitlist[3:6])
 
-def literal_value(packet: list[int]) -> int:
-    """Decode the value of a literal value type packet (packet_type == 4)."""
-    assert packet_type(packet) == 4
-    group_length = 5
-    payload = packet[6:]
-    num_groups = len(payload) // group_length
-    bitlist = []
-    for i in range(num_groups):
-        b = payload[i * group_length: (i * group_length) + group_length]
-        bitlist.extend(b[1:])
+    def literal_value(self) -> int:
+        """Decode the value of a literal value type packet (packet_type == 4)."""
+        assert self.packet_type() == 4
+        group_length = 5
+        payload = self.bitlist[6:]
+        num_groups = len(payload) // group_length
+        bitlist = []
+        for i in range(num_groups):
+            b = payload[i * group_length: (i * group_length) + group_length]
+            bitlist.extend(b[1:])
 
-    return bitlist_to_int(bitlist)
+        return bitlist_to_int(bitlist)
 
 
 def parse_packet(packet: list[int]):
@@ -70,7 +74,7 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
     bitlist = hex_to_bitlist(puzzle_input)
-    literal_value(bitlist)
+    p = Packet(bitlist)
     return 1
 
 
