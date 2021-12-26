@@ -7,9 +7,9 @@ import math
 
 
 def load_input(f_name):
-    """Loads the puzzle input from the specified file. 
+    """Loads the puzzle input from the specified file.
 
-    Specify the relative path if loading files from a subdirectory, 
+    Specify the relative path if loading files from a subdirectory,
     e.g. for loading test inputs, specify `testinput/01_1_1.txt`.
     """
     with open(f_name, 'r') as f:
@@ -51,7 +51,78 @@ def convert_snstr_to_list(sn_string):
     return result
 
 
-def reduce(sn_orig):
+def explode(sn_str):
+    """Process one explosion"""
+    sn = convert_snstr_to_list(sn_str)
+    i = 0
+    depth = 0
+    while i < len(sn):
+        c = sn[i]
+        if c == '[':
+            depth += 1
+            if depth == 5:
+                # explode
+                left_num = sn[i + 1]
+                right_num = sn[i + 3]
+                # left and right snippets of the number
+                left = sn[:i]
+                right = sn[i + 5:]
+                # print(f'Explode (pre):  {convert_snlist_to_str(sn)=}')
+                # look for the last integer in the left list
+                for j in range(len(left) - 1, -1, -1):
+                    if isinstance(left[j], int):
+                        left[j] += left_num
+                        break
+                # look for the next integer in the right list
+                for j in range(len(right)):
+                    if isinstance(right[j], int):
+                        right[j] += right_num
+                        break
+                # now put the left and right elements together with a 0 in the middle
+                sn = left + [0] + right
+                # print(f'Explode (post): {convert_snlist_to_str(sn)=}')
+                # print()
+                break
+            else:
+                i += 1
+        elif c == ']':
+            depth -= 1
+            i += 1
+        else:
+            i += 1
+
+    return convert_snlist_to_str(sn)
+
+
+def split_sn(sn_str):
+    """Perform one split operation on the snailfish number string."""
+    sn = convert_snstr_to_list(sn_str)
+    i = 0
+    while i < len(sn):
+        c = sn[i]
+        if isinstance(c, int):
+            if c >= 10:
+                # split
+                left = sn[:i]
+                right = sn[i + 1:]
+                # left number gets rounded down, right number gets rounded up
+                left_num = math.floor(c / 2)
+                right_num = math.ceil(c / 2)
+                # print(f'Split (post):   {convert_snlist_to_str(sn)=}')
+                # replace the split number with the left and right pair
+                sn = left + ['[', left_num, ',', right_num, ']'] + right
+                # print(f'Split (pre):    {convert_snlist_to_str(sn)=}')
+                # print()
+                break
+            else:
+                i += 1
+        else:
+            i += 1
+
+    return convert_snlist_to_str(sn)
+
+
+def reduce(sn):
     """Reduce a snailfish number until no further reduction is possible.
 
     To reduce a snailfish number, you must repeatedly do the first action
@@ -61,59 +132,33 @@ def reduce(sn_orig):
     - If any regular number is 10 or greater, the leftmost such regular number splits.
     """
     changed = True
-    sn = sn_orig[:]
+    sn_post_split = sn
     while changed:
         changed = False
-        i = 0
-        depth = 0
-        while i < len(sn):
-            c = sn[i]
-            if c == '[':
-                depth += 1
-                if depth == 5:
-                    # explode
-                    left_num = sn[i + 1]
-                    right_num = sn[i + 3]
-                    # left and right snippets of the number
-                    left = sn[:i]
-                    right = sn[i + 5:]
-                    # look for the last integer in the left list
-                    for j in range(len(left) - 1, -1, -1):
-                        if isinstance(left[j], int):
-                            left[j] += left_num
-                            break
-                    # look for the next integer in the right list
-                    for j in range(len(right)):
-                        if isinstance(right[j], int):
-                            right[j] += right_num
-                            break
-                    # now put the left and right elements together with a 0 in the middle
-                    sn = left + [0] + right
-                    changed = True
-                    break
-                else:
-                    i += 1
-            elif c == ']':
-                depth -= 1
-                i += 1
-            elif c == ',':
-                i += 1
-            elif isinstance(c, int):
-                if c >= 10:
-                    # split
-                    left = sn[:i]
-                    right = sn[i + 1:]
-                    # left number gets rounded down, right number gets rounded up
-                    left_num = math.floor(c / 2)
-                    right_num = math.ceil(c / 2)
-                    # replace the split number with the left and right pair
-                    sn = left + ['[', left_num, ',', right_num, ']'] + right
-                    changed = True
-                    break
-                else:
-                    i += 1
+        sn_pre_explode = sn_post_split
+        sn_post_explode = explode(sn_pre_explode)
+        while sn_pre_explode != sn_post_explode:
+            changed = True
+            sn_pre_explode = sn_post_explode
+            sn_post_explode = explode((sn_pre_explode))
 
-    return convert_snlist_to_str(sn)
+        sn_pre_split = sn_post_explode
+        sn_post_split = split_sn(sn_pre_split)
+        if sn_pre_split != sn_post_split:
+            changed = True
+
+    return convert_snlist_to_str(sn_post_split)
+
+
+def add_all_numbers(puzzle_input):
+    """Process all numbers in the input and add them up."""
+    current_number = puzzle_input.pop(0)
+    while puzzle_input:
+        next_number = puzzle_input.pop(0)
+        temp_number = add(current_number, next_number)
+        current_number = reduce(temp_number)
+
+    return current_number
 
 # @aoc_timer
 
