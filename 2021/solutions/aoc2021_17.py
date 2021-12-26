@@ -67,7 +67,7 @@ def part1(puzzle_input):
     min_x, max_x, min_y, max_y = puzzle_input
 
     for vy in range(min_y, abs(min_y) + 1):
-        for n in range(1, 50 * max_x):
+        for n in range(1, 2 * max_x):
             y = calc_y(vy, n)
             if y_in_target(y, puzzle_input):
                 for vx in range(1, max_x + 1):
@@ -86,7 +86,7 @@ def part2(puzzle_input):
     min_x, max_x, min_y, max_y = puzzle_input
 
     for vy in range(min_y, abs(min_y) + 1):
-        for n in range(1, 50 * max_x):
+        for n in range(1, 2 * max_x):
             y = calc_y(vy, n)
             if y_in_target(y, puzzle_input):
                 for vx in range(1, max_x + 1):
@@ -126,4 +126,10 @@ if __name__ == '__main__':
 # Elapsed time to run part1: 0.56029 seconds.
 # Part 1: 9730
 # Elapsed time to run part2: 0.55905 seconds.
+# Part 2: 4110
+
+# Further optimized by limiting n range to 2 * max_x
+# Elapsed time to run part1: 0.04279 seconds.
+# Part 1: 9730
+# Elapsed time to run part2: 0.04189 seconds.
 # Part 2: 4110
