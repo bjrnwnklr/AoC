@@ -65,20 +65,15 @@ def part1(puzzle_input):
 
     valid_velocities = set()
     min_x, max_x, min_y, max_y = puzzle_input
-    for vx in range(1, min_x):
-        for n in range(1, min_x):
-            x = calc_x(vx, n)
-            if x_in_target(x, puzzle_input):
-                # we found a like x velocity and (minimum) number of steps
-                # now test any likely y velocity numbers and steps.
-                # We assume vy can only be positive to reach a maximum, so ignore
-                # any negative numbers.
-                for vy in range(1, abs(min_y)):
-                    for ny in range(n, 3 * n):
-                        y = calc_y(vy, ny)
-                        new_x = calc_x(vx, ny)
-                        if in_target(new_x, y, puzzle_input):
-                            valid_velocities.add((vx, vy, ny))
+
+    for vy in range(min_y, abs(min_y) + 1):
+        for n in range(1, 50 * max_x):
+            y = calc_y(vy, n)
+            if y_in_target(y, puzzle_input):
+                for vx in range(1, max_x + 1):
+                    x = calc_x(vx, n)
+                    if in_target(x, y, puzzle_input):
+                        valid_velocities.add((vx, vy, n))
 
     vx_best, vy_best, n_best = max(valid_velocities, key=lambda x: x[1])
     return calc_max_y_positions(vx_best, vy_best, n_best)
@@ -89,20 +84,15 @@ def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
     valid_velocities = set()
     min_x, max_x, min_y, max_y = puzzle_input
-    for vx in range(1, max_x + 1):
-        for n in range(1, min_x):
-            x = calc_x(vx, n)
-            if x_in_target(x, puzzle_input):
-                # we found a like x velocity and (minimum) number of steps
-                # now test any likely y velocity numbers and steps.
-                for vy in range(min_y, abs(min_y) + 1):
-                    for ny in range(n, 5 * n):
-                        y = calc_y(vy, ny)
-                        new_x = calc_x(vx, ny)
-                        if in_target(new_x, y, puzzle_input):
-                            # print(
-                            #     f'vx/vy/x/y/n/ny: {vx}, {vy}, {new_x}, {y}, {n}, {ny}')
-                            valid_velocities.add((vx, vy))
+
+    for vy in range(min_y, abs(min_y) + 1):
+        for n in range(1, 50 * max_x):
+            y = calc_y(vy, n)
+            if y_in_target(y, puzzle_input):
+                for vx in range(1, max_x + 1):
+                    x = calc_x(vx, n)
+                    if in_target(x, y, puzzle_input):
+                        valid_velocities.add((vx, vy))
 
     return len(valid_velocities)
 
@@ -130,4 +120,10 @@ if __name__ == '__main__':
 # Elapsed time to run part1: 3.23388 seconds.
 # Part 1: 9730
 # Elapsed time to run part2: 12.96972 seconds.
+# Part 2: 4110
+
+# Optimized by first finding vy, then finding matching vx.
+# Elapsed time to run part1: 0.56029 seconds.
+# Part 1: 9730
+# Elapsed time to run part2: 0.55905 seconds.
 # Part 2: 4110
