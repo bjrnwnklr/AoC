@@ -3,7 +3,7 @@
 import re
 import math
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -20,33 +20,65 @@ def load_input(f_name):
     return puzzle_input
 
 
+def calc_x(vx, n):
+    """Calculates the x value given velocity vx and steps n."""
+    steps_x = min(vx, n)
+    return steps_x * vx - ((steps_x - 1) * steps_x) // 2
+
+
+def calc_y(vy, n):
+    """Calculates the y value given velocity vy and steps n."""
+    return n * vy - ((n - 1) * n) // 2
+
+
+def y_in_target(y, target):
+    """True if y is within the target."""
+    return target[2] <= y <= target[3]
+
+
+def x_in_target(x, target):
+    """True if x is within the target."""
+    return target[0] <= x <= target[1]
+
+
+def in_target(x, y, target):
+    """True if both x and y are within the target."""
+    return x_in_target(x, target) and y_in_target(y, target)
+
+
+def calc_max_y_positions(vx, vy, n):
+    """Calculate the maximum of y positions given velocities vx and vy for steps 1-n."""
+    temp_vy = vy
+    y = 0
+    results = []
+    for i in range(1, n + 1):
+        y += temp_vy
+        temp_vy -= 1
+        results.append(y)
+
+    return max(results)
+
+
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
+    valid_velocities = set()
     min_x, max_x, min_y, max_y = puzzle_input
-    valid_vx = []
-    valid_velocity = []
-    for vx in range(1, max_x):
-        temp_vx = vx
-        n = 0
-        x = 0
-        while temp_vx > 0:
-            x += temp_vx
-            temp_vx -= 1
-            n += 1
-            if min_x <= x <= max_x:
-                for ny in range(n, 10 * n):
-                    for vy in range(10 * min_y, 10 * abs(min_y)):
-                        sumny, rem_y = divmod((ny-1) * ny, 2)
-                        if rem_y == 0:
-                            y = ny * vy - sumny
-                            # TODO: Need a good way to calculate x with vx - this takes any y values that fit in.
-                            if min_y <= y <= max_y and min_x <= x <= max_x:
-                                valid_velocity.append((vx, vy, ny))
+    for vx in range(1, min_x):
+        for n in range(1, min_x):
+            x = calc_x(vx, n)
+            if x_in_target(x, puzzle_input):
+                # we found a like x velocity and (minimum) number of steps
+                # now test any likely y velocity numbers and steps
+                for vy in range(1, abs(min_y)):
+                    for ny in range(n, 3 * n):
+                        y = calc_y(vy, ny)
+                        if in_target(x, y, puzzle_input):
+                            valid_velocities.add((vx, vy, ny))
 
-    print(valid_velocity)
-
-    return 1
+    vx_best, vy_best, n_best = max(valid_velocities, key=lambda x: x[1])
+    return calc_max_y_positions(vx_best, vy_best, n_best)
 
 
 # @aoc_timer
@@ -58,8 +90,8 @@ def part2(puzzle_input):
 
 if __name__ == '__main__':
     # read the puzzle input
-    # puzzle_input = load_input('input/17.txt')
-    puzzle_input = load_input('testinput/17_1_1.txt')
+    puzzle_input = load_input('input/17.txt')
+    # puzzle_input = load_input('testinput/17_1_1.txt')
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)
@@ -69,5 +101,9 @@ if __name__ == '__main__':
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
 
-# Part 1: Start: 10:26 End:
+# Part 1: Start: 10:26 End: 15:45
 # Part 2: Start:  End:
+
+# First ugly solution takes too long to find the part 1 result:
+# Elapsed time to run part1: 4.19220 seconds.
+# Part 1: 9730
