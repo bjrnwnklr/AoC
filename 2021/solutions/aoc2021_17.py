@@ -70,22 +70,41 @@ def part1(puzzle_input):
             x = calc_x(vx, n)
             if x_in_target(x, puzzle_input):
                 # we found a like x velocity and (minimum) number of steps
-                # now test any likely y velocity numbers and steps
+                # now test any likely y velocity numbers and steps.
+                # We assume vy can only be positive to reach a maximum, so ignore
+                # any negative numbers.
                 for vy in range(1, abs(min_y)):
                     for ny in range(n, 3 * n):
                         y = calc_y(vy, ny)
-                        if in_target(x, y, puzzle_input):
+                        new_x = calc_x(vx, ny)
+                        if in_target(new_x, y, puzzle_input):
                             valid_velocities.add((vx, vy, ny))
 
     vx_best, vy_best, n_best = max(valid_velocities, key=lambda x: x[1])
     return calc_max_y_positions(vx_best, vy_best, n_best)
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    valid_velocities = set()
+    min_x, max_x, min_y, max_y = puzzle_input
+    for vx in range(1, max_x + 1):
+        for n in range(1, min_x):
+            x = calc_x(vx, n)
+            if x_in_target(x, puzzle_input):
+                # we found a like x velocity and (minimum) number of steps
+                # now test any likely y velocity numbers and steps.
+                for vy in range(min_y, abs(min_y) + 1):
+                    for ny in range(n, 5 * n):
+                        y = calc_y(vy, ny)
+                        new_x = calc_x(vx, ny)
+                        if in_target(new_x, y, puzzle_input):
+                            # print(
+                            #     f'vx/vy/x/y/n/ny: {vx}, {vy}, {new_x}, {y}, {n}, {ny}')
+                            valid_velocities.add((vx, vy))
 
-    return 1
+    return len(valid_velocities)
 
 
 if __name__ == '__main__':
@@ -102,8 +121,13 @@ if __name__ == '__main__':
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 10:26 End: 15:45
-# Part 2: Start:  End:
+# Part 2: Start: 15:45 End: 17:07
 
 # First ugly solution takes too long to find the part 1 result:
 # Elapsed time to run part1: 4.19220 seconds.
 # Part 1: 9730
+
+# Elapsed time to run part1: 3.23388 seconds.
+# Part 1: 9730
+# Elapsed time to run part2: 12.96972 seconds.
+# Part 2: 4110
