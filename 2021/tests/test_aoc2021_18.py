@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_18 import load_input, part1, part2, reduce, add, convert
+from solutions.aoc2021_18 import load_input, part1, part2, reduce, add, convert_snstr_to_list
 
 
 class Test_AOC2021_18:
@@ -15,24 +15,22 @@ class Test_AOC2021_18:
 
     def test_1_convert_1(self):
         puzzle_input = '[[[[[9,8],1],2],3],4]'
-        assert convert(puzzle_input) == [[[[[9, 8], 1], 2], 3], 4]
+        assert convert_snstr_to_list(puzzle_input) == [
+            '[', '[', '[', '[', '[', 9, ',', 8, ']', ',', 1, ']', ',', 2, ']', ',', 3, ']', ',', 4, ']']
 
     def test_1_add_1(self):
         a, b = '[[[[4,3],4],4],[7,[[8,4],9]]]', '[1,1]'
-        sn_a = convert(a)
-        sn_b = convert(b)
-        assert add(sn_a, sn_b) == [
-            [[[[4, 3], 4], 4], [7, [[8, 4], 9]]], [1, 1]]
+        assert add(a, b) == '[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]'
 
     def test_1_reduction_1(self):
         puzzle_input = '[[[[[9,8],1],2],3],4]'
-        assert reduce(
-            puzzle_input) == '[[[[0,9],2],3],4]'
+        sn = convert_snstr_to_list(puzzle_input)
+        assert reduce(sn) == '[[[[0,9],2],3],4]'
 
     def test_1_reduction_2(self):
         puzzle_input = '[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]'
-        assert reduce(
-            puzzle_input) == '[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'
+        sn = convert_snstr_to_list(puzzle_input)
+        assert reduce(sn) == '[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'
 
     # def test_1_1(self):
     #     puzzle_input = load_input('testinput/18_1_1.txt')
