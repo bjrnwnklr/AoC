@@ -49,6 +49,6 @@ class Test_AOC2021_18:
         puzzle_input = load_input('testinput/18_1_3.txt')
         assert part1(puzzle_input) == 4140
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/18_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_largest_magnitude_1(self):
+        puzzle_input = load_input('testinput/18_1_3.txt')
+        assert part2(puzzle_input) == 3993

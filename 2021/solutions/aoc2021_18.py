@@ -2,6 +2,7 @@
 
 # import re
 # from collections import defaultdict
+from itertools import permutations
 from utils.aoctools import aoc_timer
 import math
 
@@ -197,11 +198,17 @@ def part1(puzzle_input):
     return magnitude(sn_list)
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    m_max = 0
+    for p in permutations(puzzle_input, 2):
+        permutation_pair = add_all_numbers(list(p))
+        m = magnitude(eval(permutation_pair))
+        if m > m_max:
+            m_max = m
 
-    return 1
+    return m_max
 
 
 if __name__ == '__main__':
@@ -212,9 +219,15 @@ if __name__ == '__main__':
     p1 = part1(puzzle_input)
     print(f'Part 1: {p1}')
 
+    puzzle_input = load_input('input/18.txt')
     # Solve part 2 and print the answer
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 18:05 End: 11:17 (next day, worked until 22:00 previous night)
-# Part 2: Start: 11:18 End:
+# Part 2: Start: 11:18 End: 11:25 (easy as magnitude just needed to run through permutations of all inputs)
+
+# Elapsed time to run part1: 0.58723 seconds.
+# Part 1: 4391
+# Elapsed time to run part2: 7.48933 seconds.
+# Part 2: 4626
