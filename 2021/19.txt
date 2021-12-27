@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.1, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
+rootdir: /home/bjoern/src/aoc/2021
+collected 65 items / 64 deselected / 1 selected
+
+tests/test_aoc2021_19.py (68, -1246, -43)
+F
+
+=================================== FAILURES ===================================
+___________________________ Test_AOC2021_19.test_1_1 ___________________________
+
+self = <tests.test_aoc2021_19.Test_AOC2021_19 object at 0x7f6f4f038280>
+
+    def test_1_1(self):
+        """Longer example in part 1 with 4 scanners. How many beacons are in the map?"""
+        puzzle_input = load_input('testinput/19_1_2.txt')
+>       assert part1(puzzle_input) == 79
+E       assert 1 == 79
+E        +  where 1 = part1([[0]: {0: (404, -588, -901), 1: (528, -643, 409), 2: (-838, 591, 734), 3: (390, -675, -793), 4: (-537, -823, -458), 5:...12, 582), 21: (807, 604, 487), 22: (839, -516, 451), 23: (891, -625, 532), 24: (-652, -548, -490), 25: (30, -46, -14)}])
+
+tests/test_aoc2021_19.py:19: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_aoc2021_19.py::Test_AOC2021_19::test_1_1 - assert 1 == 79
+======================= 1 failed, 64 deselected in 0.12s =======================
