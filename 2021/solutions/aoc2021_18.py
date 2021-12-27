@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 import math
 
 
@@ -25,13 +25,13 @@ def add(a, b):
     return f'[{a},{b}]'
 
 
-def convert_snlist_to_str(sn_list):
+def to_str(sn_list):
     """Convert a snailfish list to a string representation"""
     return ''.join(str(c) for c in sn_list)
 
 
-def convert_snstr_to_list(sn_string):
-    """Convert a snailfish number from a string to a list with integers."""
+def tokenize(sn_string):
+    """Tokenize a snailfish number from a string to a list with integers."""
     result = []
     i = ''
     s = list(sn_string)
@@ -52,8 +52,15 @@ def convert_snstr_to_list(sn_string):
 
 
 def explode(sn_str):
-    """Process one explosion"""
-    sn = convert_snstr_to_list(sn_str)
+    """Process one explosion by parsing the tokens 
+    - counting parantheses depth
+    - if a depth >= 5 found, process explosion by searching left and right for
+      integers to add to
+    - Return a completed number, converted back to a string
+    """
+    # Tokenize - convert from string to list of tokens as it is easier to process
+    sn = tokenize(sn_str)
+
     i = 0
     depth = 0
     while i < len(sn):
@@ -64,7 +71,7 @@ def explode(sn_str):
                 # explode
                 left_num = sn[i + 1]
                 right_num = sn[i + 3]
-                # left and right snippets of the number
+                # snippets to the left and right of the numbers
                 left = sn[:i]
                 right = sn[i + 5:]
                 # print(f'Explode (pre):  {convert_snlist_to_str(sn)=}')
@@ -91,25 +98,30 @@ def explode(sn_str):
         else:
             i += 1
 
-    return convert_snlist_to_str(sn)
+    # convert resulting snailfish number back to a string as it is easier to compare to each other
+    return to_str(sn)
 
 
 def split_sn(sn_str):
     """Perform one split operation on the snailfish number string."""
-    sn = convert_snstr_to_list(sn_str)
+    # Tokenize - convert from string to list of tokens as it is easier to process
+    sn = tokenize(sn_str)
+
     i = 0
     while i < len(sn):
         c = sn[i]
         if isinstance(c, int):
             if c >= 10:
                 # split
+                # snippets to the left and the right of the number to be split
                 left = sn[:i]
                 right = sn[i + 1:]
                 # left number gets rounded down, right number gets rounded up
                 left_num = math.floor(c / 2)
                 right_num = math.ceil(c / 2)
                 # print(f'Split (post):   {convert_snlist_to_str(sn)=}')
-                # replace the split number with the left and right pair
+                # replace the split number with the new pair and bracket in between the
+                # left and right snippets
                 sn = left + ['[', left_num, ',', right_num, ']'] + right
                 # print(f'Split (pre):    {convert_snlist_to_str(sn)=}')
                 # print()
@@ -119,7 +131,8 @@ def split_sn(sn_str):
         else:
             i += 1
 
-    return convert_snlist_to_str(sn)
+    # convert resulting snailfish number back to a string as it is easier to compare to each other
+    return to_str(sn)
 
 
 def reduce(sn):
@@ -135,6 +148,7 @@ def reduce(sn):
     sn_post_split = sn
     while changed:
         changed = False
+        # Run explode as many times as required - until no further pairs to explode
         sn_pre_explode = sn_post_split
         sn_post_explode = explode(sn_pre_explode)
         while sn_pre_explode != sn_post_explode:
@@ -142,12 +156,13 @@ def reduce(sn):
             sn_pre_explode = sn_post_explode
             sn_post_explode = explode((sn_pre_explode))
 
+        # do a single split once no further explosions possibly
         sn_pre_split = sn_post_explode
         sn_post_split = split_sn(sn_pre_split)
         if sn_pre_split != sn_post_split:
             changed = True
 
-    return convert_snlist_to_str(sn_post_split)
+    return sn_post_split
 
 
 def add_all_numbers(puzzle_input):
@@ -160,13 +175,26 @@ def add_all_numbers(puzzle_input):
 
     return current_number
 
-# @aoc_timer
+
+def magnitude(sn_list):
+    """Recursively calculate the magnitude of a snailfish number (which needs to be in
+    a python list format with integers).
+    """
+    if isinstance(sn_list, int):
+        return sn_list
+    else:
+        return 3 * magnitude(sn_list[0]) + 2 * magnitude(sn_list[1])
 
 
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
-    return 1
+    added_number = add_all_numbers(puzzle_input)
+    # turn the resulting number into a python list
+    sn_list = eval(added_number)
+
+    return magnitude(sn_list)
 
 
 # @aoc_timer
@@ -188,5 +216,5 @@ if __name__ == '__main__':
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
 
-# Part 1: Start: 18:05 End:
-# Part 2: Start:  End:
+# Part 1: Start: 18:05 End: 11:17 (next day, worked until 22:00 previous night)
+# Part 2: Start: 11:18 End:

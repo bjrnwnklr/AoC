@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_18 import add_all_numbers, load_input, part1, part2, reduce, add, convert_snstr_to_list, add_all_numbers
+from solutions.aoc2021_18 import add_all_numbers, load_input, part1, part2, reduce, add, tokenize, add_all_numbers
 
 
 class Test_AOC2021_18:
@@ -15,7 +15,7 @@ class Test_AOC2021_18:
 
     def test_1_convert_1(self):
         puzzle_input = '[[[[[9,8],1],2],3],4]'
-        assert convert_snstr_to_list(puzzle_input) == [
+        assert tokenize(puzzle_input) == [
             '[', '[', '[', '[', '[', 9, ',', 8, ']', ',', 1, ']', ',', 2, ']', ',', 3, ']', ',', 4, ']']
 
     def test_1_add_1(self):
@@ -40,10 +40,14 @@ class Test_AOC2021_18:
         assert add_all_numbers(
             puzzle_input) == '[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]'
 
-    # def test_1_1(self):
-    #     puzzle_input = load_input('testinput/18_1_1.txt')
-    #     assert part1(
-    #         puzzle_input) == '[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]'
+    def test_1_add_all_3(self):
+        puzzle_input = load_input('testinput/18_1_3.txt')
+        assert add_all_numbers(
+            puzzle_input) == '[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]'
+
+    def test_1_magnitude_1(self):
+        puzzle_input = load_input('testinput/18_1_3.txt')
+        assert part1(puzzle_input) == 4140
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/18_1_1.txt')
