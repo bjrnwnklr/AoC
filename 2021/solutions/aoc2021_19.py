@@ -202,9 +202,30 @@ def part1(puzzle_input: list[Scanner]) -> int:
     # convert coordinates of s4 via s1 to s0 reference
     # result should be: -20,-1133,1061
     print('S4 coordinates converted via s1 to s0:')
-    s4_coords, _, _ = conversions[(1, 4)]
-    s1_coords, rot, direction = conversions[(0, 1)]
-    x = relative_coords(s1_coords, s4_coords, rot, direction)
+    s, _, _ = conversions[(1, 4)]
+    r, rot, direction = conversions[(0, 1)]
+    x = relative_coords(r, s, rot, direction)
+    print(x)
+
+    # convert coordinates of s3 via s1 to s0 reference
+    # result should be: -92,-2380,-20
+    print('S3 coordinates converted via s1 to s0:')
+    s, _, _ = conversions[(1, 3)]
+    r, rot, direction = conversions[(0, 1)]
+    x = relative_coords(r, s, rot, direction)
+    print(x)
+
+    # convert coordinates of s2 via s4 to s1 and then to s0 reference
+    # result should be: 1105,-1205,1229
+    print('S2 coordinates converted via s4 to s1:')
+    s, _, _ = conversions[(4, 2)]
+    r, rot, direction = conversions[(1, 4)]
+    x = relative_coords(r, s, rot, direction)
+    print(x)
+    print('S2 coordinates converted via s1 to s0:')
+    # s, _, _ = conversions[(4, 2)]
+    r, rot, direction = conversions[(0, 1)]
+    x = relative_coords(r, x, rot, direction)
     print(x)
 
     # this is the correct conversion:
@@ -216,6 +237,11 @@ def part1(puzzle_input: list[Scanner]) -> int:
     # s4_coords, _, _ = conversions[(1, 4)]
     # s1_coords, rot, direction = conversions[(0, 1)]
     # x = relative_coords(s1_coords, s4_coords, rot, direction)
+
+    # Convert 2 to 4 to 1 to 0:
+    # x=-1205, p=1 * a=-1246 + q=-1 * b=72 + r=1 * c=113
+    # x=1229, p=-1 * a=-1104 + q=1 * b=168 + r=1 * c=-43
+    # x=1105, p=-1 * a=-1125 + q=1 * b=68 + r=-1 * c=88
 
     # # find matching beacons
     # matching_ids = find_matching_beacons(s0, s1)
