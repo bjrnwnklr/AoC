@@ -3,22 +3,155 @@ platform linux -- Python 3.10.1, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
 rootdir: /home/bjoern/src/aoc/2021
 collected 65 items / 64 deselected / 1 selected
 
-tests/test_aoc2021_19.py (68, -1246, -43)
+tests/test_aoc2021_19.py Matching beacons found between 0 and 1: 12
+Matching beacons found between 1 and 0: 12
+Matching beacons found between 1 and 3: 12
+Matching beacons found between 1 and 4: 12
+Matching beacons found between 2 and 4: 12
+Matching beacons found between 3 and 1: 12
+Matching beacons found between 4 and 1: 12
+Matching beacons found between 4 and 2: 12
+{(0, 1): [(0, 3), (1, 8), (3, 12), (4, 1), (5, 24), (6, 18), (7, 10), (9, 0), (12, 2), (14, 5), (19, 15), (24, 19)], (1, 0): [(0, 9), (1, 4), (2, 12), (3, 0), (5, 14), (8, 1), (10, 7), (12, 3), (15, 19), (18, 6), (19, 24), (24, 5)], (1, 3): [(6, 2), (7, 13), (9, 20), (11, 3), (13, 6), (14, 0), (16, 11), (17, 5), (20, 17), (21, 12), (22, 21), (23, 24)], (1, 4): [(2, 4), (6, 11), (8, 24), (13, 1), (15, 18), (16, 15), (18, 17), (19, 5), (21, 13), (22, 12), (23, 16), (24, 3)], (2, 4): [(0, 14), (1, 18), (7, 23), (8, 22), (11, 11), (12, 19), (13, 6), (16, 1), (19, 5), (20, 7), (23, 13), (25, 24)], (3, 1): [(0, 14), (2, 6), (3, 11), (5, 17), (6, 13), (11, 16), (12, 21), (13, 7), (17, 20), (20, 9), (21, 22), (24, 23)], (4, 1): [(1, 13), (3, 24), (4, 2), (5, 19), (11, 6), (12, 22), (13, 21), (15, 16), (16, 23), (17, 18), (18, 15), (24, 8)], (4, 2): [(1, 16), (5, 19), (6, 13), (7, 20), (11, 11), (13, 23), (14, 0), (18, 1), (19, 12), (22, 8), (23, 7), (24, 25)]}
+finding scanner coordinates conversion: 0 -> 1, [(0, 3), (1, 8), (3, 12), (4, 1), (5, 24), (6, 18), (7, 10), (9, 0), (12, 2), (14, 5), (19, 15), (24, 19)]
+c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
+c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=1
+c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
+c=0, p=(1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=0, p=(1, -1, 1)
+finding scanner coordinates conversion: 1 -> 0, [(0, 9), (1, 4), (2, 12), (3, 0), (5, 14), (8, 1), (10, 7), (12, 3), (15, 19), (18, 6), (19, 24), (24, 5)]
+c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
+c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=1
+c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
+c=0, p=(1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=0, p=(1, -1, 1)
+finding scanner coordinates conversion: 1 -> 3, [(6, 2), (7, 13), (9, 20), (11, 3), (13, 6), (14, 0), (16, 11), (17, 5), (20, 17), (21, 12), (22, 21), (23, 24)]
+c=0, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=0, p=(-1, -1, -1)
+finding scanner coordinates conversion: 1 -> 4, [(2, 4), (6, 11), (8, 24), (13, 1), (15, 18), (16, 15), (18, 17), (19, 5), (21, 13), (22, 12), (23, 16), (24, 3)]
+c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(-1, -1, -1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(-1, -1, 1): len(xs)=1 len(ys)=12 len(zs)=1
+c=1, p=(-1, 1, -1): len(xs)=1 len(ys)=1 len(zs)=12
+c=1, p=(-1, 1, 1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=1, p=(-1, 1, 1)
+finding scanner coordinates conversion: 2 -> 4, [(0, 14), (1, 18), (7, 23), (8, 22), (11, 11), (12, 19), (13, 6), (16, 1), (19, 5), (20, 7), (23, 13), (25, 24)]
+c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=1, p=(-1, -1, -1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(-1, -1, 1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(-1, 1, -1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(-1, 1, 1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=3, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
+c=3, p=(-1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=3, p=(-1, -1, 1)
+finding scanner coordinates conversion: 3 -> 1, [(0, 14), (2, 6), (3, 11), (5, 17), (6, 13), (11, 16), (12, 21), (13, 7), (17, 20), (20, 9), (21, 22), (24, 23)]
+c=0, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=0, p=(-1, -1, -1)
+finding scanner coordinates conversion: 4 -> 1, [(1, 13), (3, 24), (4, 2), (5, 19), (11, 6), (12, 22), (13, 21), (15, 16), (16, 23), (17, 18), (18, 15), (24, 8)]
+c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=1
+c=2, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=2, p=(1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
+c=2, p=(1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=2, p=(1, -1, 1)
+finding scanner coordinates conversion: 4 -> 2, [(1, 16), (5, 19), (6, 13), (7, 20), (11, 11), (13, 23), (14, 0), (18, 1), (19, 12), (22, 8), (23, 7), (24, 25)]
+c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
+c=1, p=(-1, -1, -1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(-1, -1, 1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(-1, 1, -1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(-1, 1, 1): len(xs)=1 len(ys)=12 len(zs)=12
+c=1, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=1, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
+c=2, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
+c=2, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
+c=3, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
+c=3, p=(-1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
+Matching config found: c=3, p=(-1, -1, 1)
+Conversion dictionary:
+(0, 1) ((68, -1246, -43), 0, (1, -1, 1))
+(1, 0) ((68, 1246, -43), 0, (1, -1, 1))
+(1, 3) ((160, -1134, -23), 0, (-1, -1, -1))
+(1, 4) ((88, 113, -1104), 1, (-1, 1, 1))
+(2, 4) ((1125, -168, 72), 3, (-1, -1, 1))
+(3, 1) ((-160, 1134, 23), 0, (-1, -1, -1))
+(4, 1) ((-1104, -88, 113), 2, (1, -1, 1))
+(4, 2) ((168, -1125, 72), 3, (-1, -1, 1))
 F
 
 =================================== FAILURES ===================================
 ___________________________ Test_AOC2021_19.test_1_1 ___________________________
 
-self = <tests.test_aoc2021_19.Test_AOC2021_19 object at 0x7f6f4f038280>
+self = <tests.test_aoc2021_19.Test_AOC2021_19 object at 0x7f5772a2e380>
 
     def test_1_1(self):
         """Longer example in part 1 with 4 scanners. How many beacons are in the map?"""
         puzzle_input = load_input('testinput/19_1_2.txt')
 >       assert part1(puzzle_input) == 79
 E       assert 1 == 79
-E        +  where 1 = part1([[0]: {0: (404, -588, -901), 1: (528, -643, 409), 2: (-838, 591, 734), 3: (390, -675, -793), 4: (-537, -823, -458), 5:...12, 582), 21: (807, 604, 487), 22: (839, -516, 451), 23: (891, -625, 532), 24: (-652, -548, -490), 25: (30, -46, -14)}])
+E        +  where 1 = part1([<[TypeError("'tuple' object is not callable") raised in repr()] Scanner object at 0x7f5772a2e290>, <[TypeError("'tupl... at 0x7f5772a2f1c0>, <[TypeError("'tuple' object is not callable") raised in repr()] Scanner object at 0x7f57728785b0>])
 
 tests/test_aoc2021_19.py:19: AssertionError
 =========================== short test summary info ============================
 FAILED tests/test_aoc2021_19.py::Test_AOC2021_19::test_1_1 - assert 1 == 79
-======================= 1 failed, 64 deselected in 0.12s =======================
+======================= 1 failed, 64 deselected in 0.20s =======================

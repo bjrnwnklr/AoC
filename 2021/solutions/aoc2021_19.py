@@ -6,51 +6,55 @@ from itertools import product
 # from utils.aoctools import aoc_timer
 
 ROTATION = {
-    0: ('x', 'y', 'z'),
-    1: ('y', 'z', 'x'),
-    2: ('z', 'x', 'y')}
+    0: (0, 1, 2),
+    1: (1, 2, 0),
+    2: (2, 0, 1),
+    3: (1, 0, 2),
+    4: (2, 1, 0),
+    5: (0, 2, 1)}
 
 
 class Beacon:
     def __init__(self, id, x, y, z) -> None:
         self.id = id
-        self.x = x
-        self.y = y
-        self.z = z
+        self.coords = (x, y, z)
+        # self.x = x
+        # self.y = y
+        # self.z = z
 
-    def __eq__(self, __o: object) -> bool:
-        return self.x == __o.x and self.y == __o.y and self.z == __o.z
+    # def __eq__(self, __o: object) -> bool:
+    #     return self.x == __o.x and self.y == __o.y and self.z == __o.z
 
-    def __lt__(self, __o: object) -> bool:
-        return sum([self.x, self.y, self.z]) < sum([__o.x, __o.y, __o.z])
+    # def __lt__(self, __o: object) -> bool:
+    #     return sum([self.x, self.y, self.z]) < sum([__o.x, __o.y, __o.z])
 
     def __repr__(self) -> str:
-        return f'({self.x}, {self.y}, {self.z})'
+        return f'({self.id}): {self.coords()}'
 
-    def dist(self, o: object):
+    def dist(self, o: 'Beacon'):
         """Manhattan distance to another beacon."""
-        return (abs(self.x - o.x) + abs(self.y - o.y) + abs(self.z - o.z))
+        return (abs(self.coords[0] - o.coords[0]) + abs(self.coords[1] - o.coords[1]) + abs(self.coords[2] - o.coords[2]))
 
-    def coords(self):
-        return (self.x, self.y, self.z)
+    # def coords(self):
+    #     return (self.x, self.y, self.z)
 
 
 class Scanner:
     def __init__(self, id: int, beacons: list[Beacon]) -> None:
         self.id = id
         self.beacons = {b.id: b for b in beacons}
-        self.x = 0
-        self.y = 0
-        self.z = 0
-        self.rotation = 0
-        self.direction = (1, 1, 1)
+        # self.x = 0
+        # self.y = 0
+        # self.z = 0
+        # self.rotation = 0
+        # self.direction = (1, 1, 1)
         self.pattern = self.generate_pattern()
 
     def __repr__(self) -> str:
         return f'[{self.id}]: {self.beacons}'
 
-    def coords(self):
-        return (self.x, self.y, self.z)
+    # def coords(self):
+    #     return (self.x, self.y, self.z)
 
     def generate_pattern(self):
         """Generate the relative pattern of beacons seen by the scanner,
@@ -83,7 +87,7 @@ def load_input(f_name):
             # find the scanner ID in the first line
             m = regex.search(lines[0])
             if m:
-                id = m[0]
+                id = int(m[0])
             beacons = []
             for i, line in enumerate(lines[1:]):
                 beacons.append(
@@ -112,33 +116,35 @@ def find_matching_beacons(s: Scanner, t: Scanner):
 
 
 def find_scanner_coords(s: Scanner, t: Scanner, matching_ids: list[tuple[int]]):
-    """Find the coordinates of scanner t relative to scanner s (which is assumed to be at (0, 0, 0))."""
-    found = False
-    while not found:
-        for c in ROTATION:
-            for p in product([-1, 1], repeat=3):
-                # all combinations of products of how to calculate (s.x - t.x) (8)
-                # TODO: probably also need to account for rotation by swapping x, y and z - should be 24 combinations to check
-                xs = {s.beacons[s_id].x + p[0] *
-                      getattr(t.beacons[t_id], ROTATION[c][0]) for s_id, t_id in matching_ids}
-                ys = {s.beacons[s_id].y + p[1] *
-                      getattr(t.beacons[t_id], ROTATION[c][1]) for s_id, t_id in matching_ids}
-                zs = {s.beacons[s_id].z + p[2] *
-                      getattr(t.beacons[t_id], ROTATION[c][2]) for s_id, t_id in matching_ids}
-                if len(xs) == 1 and len(ys) == 1 and len(zs) == 1:
-                    # we found a matching configuration
-                    print(f'Matching config found: {c=}, {p=}')
-                    # update position, rotation, direction of t
-                    t.rotation = c
-                    t.direction = p
-                    t.x = xs.pop()
-                    t.y = ys.pop()
-                    t.z = zs.pop()
-                    found = True
-                    break
+    """Find the coordinates of scanner t relative to scanner s (which is assumed to be at (0, 0, 0)).
+
+    Returns:
+    - converted (x, y, z)
+    - rotation required to match s's rotation
+    - directions for (x, y, z) required to match s's directions
+    """
+    print(
+        f'finding scanner coordinates conversion: {s.id} -> {t.id}, {matching_ids}')
+    for c in ROTATION:
+        for p in product([-1, 1], repeat=3):
+            # all combinations of products of how to calculate (s.x - t.x) (8)
+            # ys = {s.beacons[s_id].coords[1] + p[1] *
+            #       getattr(t.beacons[t_id], ROTATION[c][1]) for s_id, t_id in matching_ids}
+            xs = {s.beacons[s_id].coords[0] + p[0] *
+                  t.beacons[t_id].coords[ROTATION[c][0]] for s_id, t_id in matching_ids}
+            ys = {s.beacons[s_id].coords[1] + p[1] *
+                  t.beacons[t_id].coords[ROTATION[c][1]] for s_id, t_id in matching_ids}
+            zs = {s.beacons[s_id].coords[2] + p[2] *
+                  t.beacons[t_id].coords[ROTATION[c][2]] for s_id, t_id in matching_ids}
+            # print(f'{c=}, {p=}: {len(xs)=} {len(ys)=} {len(zs)=}')
+            if len(xs) == 1 and len(ys) == 1 and len(zs) == 1:
+                # we found a matching configuration
+                # print(f'Matching config found: {c=}, {p=}')
+
+                return ((xs.pop(), ys.pop(), zs.pop()), c, p)
 
 
-def relative_coords(r: Scanner, s):
+def relative_coords(r: tuple[int], s: tuple[int], rot: int, direction: tuple[int]):
     """Calculate coordinates of a position s (x, y, z) (can be a beacon or scanner position) 
     relative to r, using r's rotation, direction and position relative to (0, 0, 0) 
     (no rotation and direction (1, 1, 1)).
@@ -148,11 +154,14 @@ def relative_coords(r: Scanner, s):
     scanner 1s coordinates (rel to scanner 1) as r and
     scanner 4s coordinates (rel to scanner 1) as s.
     """
-    c = ROTATION[r.rotation]
-    p = r.direction
-    return (getattr(r, c[0]) - p[0] * s[0],
-            getattr(r, c[1]) - p[1] * s[1],
-            getattr(r, c[2]) - p[2] * s[2])
+    c = ROTATION[rot]
+    p = direction
+    return (r[c[0]] - p[0] * s[0],
+            r[c[1]] - p[1] * s[1],
+            r[c[2]] - p[2] * s[2])
+    # return (getattr(r, c[0]) - p[0] * s[0],
+    #         getattr(r, c[1]) - p[1] * s[1],
+    #         getattr(r, c[2]) - p[2] * s[2])
 
     # @aoc_timer
 
@@ -160,30 +169,75 @@ def relative_coords(r: Scanner, s):
 def part1(puzzle_input: list[Scanner]) -> int:
     """Solve part 1. Return the required output value."""
 
+    scanners = puzzle_input[:]
     unique_beacons = set()
 
-    s0 = puzzle_input[0]
-    s1 = puzzle_input[1]
+    # for b in s0.beacons:
+    #     unique_beacons.add(s0.beacons[b].coords)
 
-    # find matching beacons
-    matching_ids = find_matching_beacons(s0, s1)
-    # add the first set of matching beacons to the list - using the coordinates relative to scanner 0
-    for m, _ in matching_ids:
-        unique_beacons.add(s0.beacons[m].coords())
-    find_scanner_coords(s0, s1, matching_ids)
-    print()
-    print(f'Scanner 1 coordinates: {s1.coords()}')
-    print(f'Unique beacons so far: {unique_beacons}')
+    # find matching beacons between all scanners
+    matching_beacons = dict()
+    for s in puzzle_input:
+        for t in puzzle_input:
+            if s.id != t.id:
+                matching_ids = find_matching_beacons(s, t)
+                if len(matching_ids) >= 12:
+                    matching_beacons[(s.id, t.id)] = matching_ids
+                    print(
+                        f'Matching beacons found between {s.id} and {t.id}: {len(matching_ids)}')
 
-    # try again with scanner 1 vs scanner 4
-    s4 = puzzle_input[4]
-    matching_ids = find_matching_beacons(s1, s4)
-    find_scanner_coords(s1, s4, matching_ids)
-    print()
-    print(f'Scanner 4 coordinates, relative to scanner 1: {s4.coords()}')
-    s4_coords = relative_coords(s1, s4.coords())
-    print(f'Scanner 4 coordinates, relative to scanner 0: {s4_coords}')
-    # now need to convert coordinates relative to scanner 1 to scanner 0
+    print(matching_beacons)
+
+    # try some conversions for the scanner coordinates
+    conversions = dict()
+    for s, t in matching_beacons:
+        t_coords, rot, direction = find_scanner_coords(
+            scanners[s], scanners[t], matching_beacons[(s, t)])
+        conversions[(s, t)] = (t_coords, rot, direction)
+
+    print('Conversion dictionary:')
+    for k, v in conversions.items():
+        print(k, v)
+
+    # convert coordinates of s4 via s1 to s0 reference
+    # result should be: -20,-1133,1061
+    print('S4 coordinates converted via s1 to s0:')
+    s4_coords, _, _ = conversions[(1, 4)]
+    s1_coords, rot, direction = conversions[(0, 1)]
+    x = relative_coords(s1_coords, s4_coords, rot, direction)
+    print(x)
+
+    # this is the correct conversion:
+    # To convert s4 coordinates (relate to s1) into s0 coordinates:
+    # take coords (s) from coversion[(1, 4)]
+    # take coords (r), rot, direction from conversion[(0, 1)]
+    # then run into relative_coords(r, s, rot, direction)
+    #
+    # s4_coords, _, _ = conversions[(1, 4)]
+    # s1_coords, rot, direction = conversions[(0, 1)]
+    # x = relative_coords(s1_coords, s4_coords, rot, direction)
+
+    # # find matching beacons
+    # matching_ids = find_matching_beacons(s0, s1)
+    # # add the first set of matching beacons to the list - using the coordinates relative to scanner 0
+    # find_scanner_coords(s0, s1, matching_ids)
+
+    # # try to convert s1's beacons to s0 coordinates
+    # for b in s1.beacons:
+    #     print(
+    #         f's1 Beacon converted to s0 coordinates: ({b}) {s1.beacons[b].coords()} -> {relative_coords(s1, s1.beacons[b].coords())}')
+
+    # # try again with scanner 1 vs scanner 4
+    # s4 = puzzle_input[4]
+    # matching_ids = find_matching_beacons(s1, s4)
+    # find_scanner_coords(s1, s4, matching_ids)
+    # print()
+    # print(f'Scanner 4 coordinates, relative to scanner 1: {s4.coords()}')
+    # s4_coords = relative_coords(s1, s4.coords())
+    # print(f'Scanner 4 coordinates, relative to scanner 0: {s4_coords}')
+    # # now need to convert coordinates relative to scanner 1 to scanner 0
+
+    # TODO: Convert ALL beacons of all scanners into s0 coordinates, then put into a set to match.
 
     return 1
 
