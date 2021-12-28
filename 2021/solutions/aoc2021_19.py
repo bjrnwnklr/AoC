@@ -22,10 +22,6 @@ class Beacon:
     def __repr__(self) -> str:
         return f'({self.id}): {self.coords}'
 
-    def dist(self, o: 'Beacon'):
-        """Manhattan distance to another beacon."""
-        return (abs(self.coords[0] - o.coords[0]) + abs(self.coords[1] - o.coords[1]) + abs(self.coords[2] - o.coords[2]))
-
 
 class Scanner:
     def __init__(self, id: int, beacons: list[Beacon]) -> None:
@@ -45,11 +41,16 @@ class Scanner:
             b_distances = []
             for o in self.beacons.values():
                 if b != o:
-                    b_distances.append(b.dist(o))
+                    b_distances.append(dist(b.coords, o.coords))
 
             pattern_dict[b.id] = sorted(b_distances)
 
         return pattern_dict
+
+
+def dist(s: tuple[int], o: tuple[int]):
+    """Manhattan distance to another beacon."""
+    return (abs(s[0] - o[0]) + abs(s[1] - o[1]) + abs(s[2] - o[2]))
 
 
 def load_input(f_name):
@@ -278,10 +279,7 @@ def part1(puzzle_input: list[Scanner]) -> int:
     for s in scanner_coordinates:
         for t in scanner_coordinates:
             if s != t:
-                d = (abs(scanner_coordinates[s][0] - scanner_coordinates[t][0])
-                     + abs(scanner_coordinates[s]
-                           [1] - scanner_coordinates[t][1])
-                     + abs(scanner_coordinates[s][2] - scanner_coordinates[t][2]))
+                d = dist(scanner_coordinates[s], scanner_coordinates[t])
                 if d > max_dist:
                     max_dist = d
                     max_pair = (s, t)
