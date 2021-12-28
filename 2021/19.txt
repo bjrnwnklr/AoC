@@ -11,147 +11,717 @@ Matching beacons found between 2 and 4: 12
 Matching beacons found between 3 and 1: 12
 Matching beacons found between 4 and 1: 12
 Matching beacons found between 4 and 2: 12
-{(0, 1): [(0, 3), (1, 8), (3, 12), (4, 1), (5, 24), (6, 18), (7, 10), (9, 0), (12, 2), (14, 5), (19, 15), (24, 19)], (1, 0): [(0, 9), (1, 4), (2, 12), (3, 0), (5, 14), (8, 1), (10, 7), (12, 3), (15, 19), (18, 6), (19, 24), (24, 5)], (1, 3): [(6, 2), (7, 13), (9, 20), (11, 3), (13, 6), (14, 0), (16, 11), (17, 5), (20, 17), (21, 12), (22, 21), (23, 24)], (1, 4): [(2, 4), (6, 11), (8, 24), (13, 1), (15, 18), (16, 15), (18, 17), (19, 5), (21, 13), (22, 12), (23, 16), (24, 3)], (2, 4): [(0, 14), (1, 18), (7, 23), (8, 22), (11, 11), (12, 19), (13, 6), (16, 1), (19, 5), (20, 7), (23, 13), (25, 24)], (3, 1): [(0, 14), (2, 6), (3, 11), (5, 17), (6, 13), (11, 16), (12, 21), (13, 7), (17, 20), (20, 9), (21, 22), (24, 23)], (4, 1): [(1, 13), (3, 24), (4, 2), (5, 19), (11, 6), (12, 22), (13, 21), (15, 16), (16, 23), (17, 18), (18, 15), (24, 8)], (4, 2): [(1, 16), (5, 19), (6, 13), (7, 20), (11, 11), (13, 23), (14, 0), (18, 1), (19, 12), (22, 8), (23, 7), (24, 25)]}
-finding scanner coordinates conversion: 0 -> 1, [(0, 3), (1, 8), (3, 12), (4, 1), (5, 24), (6, 18), (7, 10), (9, 0), (12, 2), (14, 5), (19, 15), (24, 19)]
-c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
-c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=1
-c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
-c=0, p=(1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=0, p=(1, -1, 1)
-finding scanner coordinates conversion: 1 -> 0, [(0, 9), (1, 4), (2, 12), (3, 0), (5, 14), (8, 1), (10, 7), (12, 3), (15, 19), (18, 6), (19, 24), (24, 5)]
-c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
-c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=1
-c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
-c=0, p=(1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=0, p=(1, -1, 1)
-finding scanner coordinates conversion: 1 -> 3, [(6, 2), (7, 13), (9, 20), (11, 3), (13, 6), (14, 0), (16, 11), (17, 5), (20, 17), (21, 12), (22, 21), (23, 24)]
-c=0, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=0, p=(-1, -1, -1)
-finding scanner coordinates conversion: 1 -> 4, [(2, 4), (6, 11), (8, 24), (13, 1), (15, 18), (16, 15), (18, 17), (19, 5), (21, 13), (22, 12), (23, 16), (24, 3)]
-c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(-1, -1, -1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(-1, -1, 1): len(xs)=1 len(ys)=12 len(zs)=1
-c=1, p=(-1, 1, -1): len(xs)=1 len(ys)=1 len(zs)=12
-c=1, p=(-1, 1, 1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=1, p=(-1, 1, 1)
-finding scanner coordinates conversion: 2 -> 4, [(0, 14), (1, 18), (7, 23), (8, 22), (11, 11), (12, 19), (13, 6), (16, 1), (19, 5), (20, 7), (23, 13), (25, 24)]
-c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=1, p=(-1, -1, -1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(-1, -1, 1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(-1, 1, -1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(-1, 1, 1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=3, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
-c=3, p=(-1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=3, p=(-1, -1, 1)
-finding scanner coordinates conversion: 3 -> 1, [(0, 14), (2, 6), (3, 11), (5, 17), (6, 13), (11, 16), (12, 21), (13, 7), (17, 20), (20, 9), (21, 22), (24, 23)]
-c=0, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=0, p=(-1, -1, -1)
-finding scanner coordinates conversion: 4 -> 1, [(1, 13), (3, 24), (4, 2), (5, 19), (11, 6), (12, 22), (13, 21), (15, 16), (16, 23), (17, 18), (18, 15), (24, 8)]
-c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=1
-c=2, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=2, p=(1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
-c=2, p=(1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=2, p=(1, -1, 1)
-finding scanner coordinates conversion: 4 -> 2, [(1, 16), (5, 19), (6, 13), (7, 20), (11, 11), (13, 23), (14, 0), (18, 1), (19, 12), (22, 8), (23, 7), (24, 25)]
-c=0, p=(-1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=0, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=0, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=1
-c=1, p=(-1, -1, -1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(-1, -1, 1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(-1, 1, -1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(-1, 1, 1): len(xs)=1 len(ys)=12 len(zs)=12
-c=1, p=(1, -1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, -1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=1, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(-1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(-1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(-1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(-1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(1, -1, -1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(1, -1, 1): len(xs)=12 len(ys)=1 len(zs)=12
-c=2, p=(1, 1, -1): len(xs)=12 len(ys)=12 len(zs)=12
-c=2, p=(1, 1, 1): len(xs)=12 len(ys)=12 len(zs)=12
-c=3, p=(-1, -1, -1): len(xs)=1 len(ys)=1 len(zs)=12
-c=3, p=(-1, -1, 1): len(xs)=1 len(ys)=1 len(zs)=1
-Matching config found: c=3, p=(-1, -1, 1)
 Conversion dictionary:
-(0, 1) ((68, -1246, -43), 0, (1, -1, 1))
-(1, 0) ((68, 1246, -43), 0, (1, -1, 1))
-(1, 3) ((160, -1134, -23), 0, (-1, -1, -1))
-(1, 4) ((88, 113, -1104), 1, (-1, 1, 1))
-(2, 4) ((1125, -168, 72), 3, (-1, -1, 1))
-(3, 1) ((-160, 1134, 23), 0, (-1, -1, -1))
-(4, 1) ((-1104, -88, 113), 2, (1, -1, 1))
-(4, 2) ((168, -1125, 72), 3, (-1, -1, 1))
+(1, 0) ((68, -1246, -43), 0, (1, -1, 1))
+(0, 1) ((68, 1246, -43), 0, (1, -1, 1))
+(3, 1) ((160, -1134, -23), 0, (-1, -1, -1))
+(4, 1) ((88, 113, -1104), 1, (-1, 1, 1))
+(4, 2) ((1125, -168, 72), 3, (-1, -1, 1))
+(1, 3) ((-160, 1134, 23), 0, (-1, -1, -1))
+(1, 4) ((-1104, -88, 113), 2, (1, -1, 1))
+(2, 4) ((168, -1125, 72), 3, (-1, -1, 1))
+Start of BFS:
+Processing beacons for scanner 0
+Number of unique beacons: 25
+-892,524,684
+-876,649,763
+-838,591,734
+-789,900,-551
+-689,845,-530
+-661,-816,-575
+-618,-824,-621
+-584,868,-557
+-537,-823,-458
+-485,-357,347
+-447,-329,318
+-345,-311,381
+7,-33,-71
+390,-675,-793
+404,-588,-901
+423,-701,434
+443,580,662
+455,729,728
+459,-707,401
+474,580,667
+528,-643,409
+544,-627,-890
+553,345,-567
+564,392,-477
+630,319,-379
+
+Processing beacons for scanner 1
+Converting beacons from 1 to 0 coordinates.
+Converted beacon coordinates from s[1] to s[0]: ((686, 422, 578)) -> ((618, -824, 621))
+Converted beacon coordinates from s[1] to s[0]: ((605, 423, 415)) -> ((537, -823, 458))
+Converted beacon coordinates from s[1] to s[0]: ((515, 917, -361)) -> ((447, -329, -318))
+Converted beacon coordinates from s[1] to s[0]: ((-336, 658, 858)) -> ((-404, -588, 901))
+Converted beacon coordinates from s[1] to s[0]: ((95, 138, 22)) -> ((27, -1108, 65))
+Converted beacon coordinates from s[1] to s[0]: ((-476, 619, 847)) -> ((-544, -627, 890))
+Converted beacon coordinates from s[1] to s[0]: ((-340, -569, -846)) -> ((-408, -1815, -803))
+Converted beacon coordinates from s[1] to s[0]: ((567, -361, 727)) -> ((499, -1607, 770))
+Converted beacon coordinates from s[1] to s[0]: ((-460, 603, -452)) -> ((-528, -643, -409))
+Converted beacon coordinates from s[1] to s[0]: ((669, -402, 600)) -> ((601, -1648, 643))
+Converted beacon coordinates from s[1] to s[0]: ((729, 430, 532)) -> ((661, -816, 575))
+Converted beacon coordinates from s[1] to s[0]: ((-500, -761, 534)) -> ((-568, -2007, 577))
+Converted beacon coordinates from s[1] to s[0]: ((-322, 571, 750)) -> ((-390, -675, 793))
+Converted beacon coordinates from s[1] to s[0]: ((-466, -666, -811)) -> ((-534, -1912, -768))
+Converted beacon coordinates from s[1] to s[0]: ((-429, -592, 574)) -> ((-497, -1838, 617))
+Converted beacon coordinates from s[1] to s[0]: ((-355, 545, -477)) -> ((-423, -701, -434))
+Converted beacon coordinates from s[1] to s[0]: ((703, -491, -529)) -> ((635, -1737, -486))
+Converted beacon coordinates from s[1] to s[0]: ((-328, -685, 520)) -> ((-396, -1931, 563))
+Converted beacon coordinates from s[1] to s[0]: ((413, 935, -424)) -> ((345, -311, -381))
+Converted beacon coordinates from s[1] to s[0]: ((-391, 539, -444)) -> ((-459, -707, -401))
+Converted beacon coordinates from s[1] to s[0]: ((586, -435, 557)) -> ((518, -1681, 600))
+Converted beacon coordinates from s[1] to s[0]: ((-364, -763, -893)) -> ((-432, -2009, -850))
+Converted beacon coordinates from s[1] to s[0]: ((807, -499, -711)) -> ((739, -1745, -668))
+Converted beacon coordinates from s[1] to s[0]: ((755, -354, -619)) -> ((687, -1600, -576))
+Converted beacon coordinates from s[1] to s[0]: ((553, 889, -390)) -> ((485, -357, -347))
+Number of unique beacons: 50
+-892,524,684
+-876,649,763
+-838,591,734
+-789,900,-551
+-689,845,-530
+-661,-816,-575
+-618,-824,-621
+-584,868,-557
+-568,-2007,577
+-544,-627,890
+-537,-823,-458
+-534,-1912,-768
+-528,-643,-409
+-497,-1838,617
+-485,-357,347
+-459,-707,-401
+-447,-329,318
+-432,-2009,-850
+-423,-701,-434
+-408,-1815,-803
+-404,-588,901
+-396,-1931,563
+-390,-675,793
+-345,-311,381
+7,-33,-71
+27,-1108,65
+345,-311,-381
+390,-675,-793
+404,-588,-901
+423,-701,434
+443,580,662
+447,-329,-318
+455,729,728
+459,-707,401
+474,580,667
+485,-357,-347
+499,-1607,770
+518,-1681,600
+528,-643,409
+537,-823,458
+544,-627,-890
+553,345,-567
+564,392,-477
+601,-1648,643
+618,-824,621
+630,319,-379
+635,-1737,-486
+661,-816,575
+687,-1600,-576
+739,-1745,-668
+
+Processing beacons for scanner 3
+Converting beacons from 3 to 1 coordinates.
+Converted beacon coordinates from s[3] to s[1]: ((-589, 542, 597)) -> ((-429, -592, 574))
+Converted beacon coordinates from s[3] to s[1]: ((605, -692, 669)) -> ((765, -1826, 646))
+Converted beacon coordinates from s[3] to s[1]: ((-500, 565, -823)) -> ((-340, -569, -846))
+Converted beacon coordinates from s[3] to s[1]: ((-660, 373, 557)) -> ((-500, -761, 534))
+Converted beacon coordinates from s[3] to s[1]: ((-458, -679, -417)) -> ((-298, -1813, -440))
+Converted beacon coordinates from s[3] to s[1]: ((-488, 449, 543)) -> ((-328, -685, 520))
+Converted beacon coordinates from s[3] to s[1]: ((-626, 468, -788)) -> ((-466, -666, -811))
+Converted beacon coordinates from s[3] to s[1]: ((338, -750, -386)) -> ((498, -1884, -409))
+Converted beacon coordinates from s[3] to s[1]: ((528, -832, -391)) -> ((688, -1966, -414))
+Converted beacon coordinates from s[3] to s[1]: ((562, -778, 733)) -> ((722, -1912, 710))
+Converted beacon coordinates from s[3] to s[1]: ((-938, -730, 414)) -> ((-778, -1864, 391))
+Converted beacon coordinates from s[3] to s[1]: ((543, 643, -506)) -> ((703, -491, -529))
+Converted beacon coordinates from s[3] to s[1]: ((-524, 371, -870)) -> ((-364, -763, -893))
+Converted beacon coordinates from s[3] to s[1]: ((407, 773, 750)) -> ((567, -361, 727))
+Converted beacon coordinates from s[3] to s[1]: ((-104, 29, 83)) -> ((56, -1105, 60))
+Converted beacon coordinates from s[3] to s[1]: ((378, -903, -323)) -> ((538, -2037, -346))
+Converted beacon coordinates from s[3] to s[1]: ((-778, -728, 485)) -> ((-618, -1862, 462))
+Converted beacon coordinates from s[3] to s[1]: ((426, 699, 580)) -> ((586, -435, 557))
+Converted beacon coordinates from s[3] to s[1]: ((-438, -605, -362)) -> ((-278, -1739, -385))
+Converted beacon coordinates from s[3] to s[1]: ((-469, -447, -387)) -> ((-309, -1581, -410))
+Converted beacon coordinates from s[3] to s[1]: ((509, 732, 623)) -> ((669, -402, 600))
+Converted beacon coordinates from s[3] to s[1]: ((647, 635, -688)) -> ((807, -499, -711))
+Converted beacon coordinates from s[3] to s[1]: ((-868, -804, 481)) -> ((-708, -1938, 458))
+Converted beacon coordinates from s[3] to s[1]: ((614, -800, 639)) -> ((774, -1934, 616))
+Converted beacon coordinates from s[3] to s[1]: ((595, 780, -596)) -> ((755, -354, -619))
+Converting beacons from 1 to 0 coordinates.
+Converted beacon coordinates from s[1] to s[0]: ((-429, -592, 574)) -> ((-497, -1838, 617))
+Converted beacon coordinates from s[1] to s[0]: ((765, -1826, 646)) -> ((697, -3072, 689))
+Converted beacon coordinates from s[1] to s[0]: ((-340, -569, -846)) -> ((-408, -1815, -803))
+Converted beacon coordinates from s[1] to s[0]: ((-500, -761, 534)) -> ((-568, -2007, 577))
+Converted beacon coordinates from s[1] to s[0]: ((-298, -1813, -440)) -> ((-366, -3059, -397))
+Converted beacon coordinates from s[1] to s[0]: ((-328, -685, 520)) -> ((-396, -1931, 563))
+Converted beacon coordinates from s[1] to s[0]: ((-466, -666, -811)) -> ((-534, -1912, -768))
+Converted beacon coordinates from s[1] to s[0]: ((498, -1884, -409)) -> ((430, -3130, -366))
+Converted beacon coordinates from s[1] to s[0]: ((688, -1966, -414)) -> ((620, -3212, -371))
+Converted beacon coordinates from s[1] to s[0]: ((722, -1912, 710)) -> ((654, -3158, 753))
+Converted beacon coordinates from s[1] to s[0]: ((-778, -1864, 391)) -> ((-846, -3110, 434))
+Converted beacon coordinates from s[1] to s[0]: ((703, -491, -529)) -> ((635, -1737, -486))
+Converted beacon coordinates from s[1] to s[0]: ((-364, -763, -893)) -> ((-432, -2009, -850))
+Converted beacon coordinates from s[1] to s[0]: ((567, -361, 727)) -> ((499, -1607, 770))
+Converted beacon coordinates from s[1] to s[0]: ((56, -1105, 60)) -> ((-12, -2351, 103))
+Converted beacon coordinates from s[1] to s[0]: ((538, -2037, -346)) -> ((470, -3283, -303))
+Converted beacon coordinates from s[1] to s[0]: ((-618, -1862, 462)) -> ((-686, -3108, 505))
+Converted beacon coordinates from s[1] to s[0]: ((586, -435, 557)) -> ((518, -1681, 600))
+Converted beacon coordinates from s[1] to s[0]: ((-278, -1739, -385)) -> ((-346, -2985, -342))
+Converted beacon coordinates from s[1] to s[0]: ((-309, -1581, -410)) -> ((-377, -2827, -367))
+Converted beacon coordinates from s[1] to s[0]: ((669, -402, 600)) -> ((601, -1648, 643))
+Converted beacon coordinates from s[1] to s[0]: ((807, -499, -711)) -> ((739, -1745, -668))
+Converted beacon coordinates from s[1] to s[0]: ((-708, -1938, 458)) -> ((-776, -3184, 501))
+Converted beacon coordinates from s[1] to s[0]: ((774, -1934, 616)) -> ((706, -3180, 659))
+Converted beacon coordinates from s[1] to s[0]: ((755, -354, -619)) -> ((687, -1600, -576))
+Number of unique beacons: 63
+-892,524,684
+-876,649,763
+-846,-3110,434
+-838,591,734
+-789,900,-551
+-776,-3184,501
+-689,845,-530
+-686,-3108,505
+-661,-816,-575
+-618,-824,-621
+-584,868,-557
+-568,-2007,577
+-544,-627,890
+-537,-823,-458
+-534,-1912,-768
+-528,-643,-409
+-497,-1838,617
+-485,-357,347
+-459,-707,-401
+-447,-329,318
+-432,-2009,-850
+-423,-701,-434
+-408,-1815,-803
+-404,-588,901
+-396,-1931,563
+-390,-675,793
+-377,-2827,-367
+-366,-3059,-397
+-346,-2985,-342
+-345,-311,381
+-12,-2351,103
+7,-33,-71
+27,-1108,65
+345,-311,-381
+390,-675,-793
+404,-588,-901
+423,-701,434
+430,-3130,-366
+443,580,662
+447,-329,-318
+455,729,728
+459,-707,401
+470,-3283,-303
+474,580,667
+485,-357,-347
+499,-1607,770
+518,-1681,600
+528,-643,409
+537,-823,458
+544,-627,-890
+553,345,-567
+564,392,-477
+601,-1648,643
+618,-824,621
+620,-3212,-371
+630,319,-379
+635,-1737,-486
+654,-3158,753
+661,-816,575
+687,-1600,-576
+697,-3072,689
+706,-3180,659
+739,-1745,-668
+
+Processing beacons for scanner 4
+Converting beacons from 4 to 1 coordinates.
+Converted beacon coordinates from s[4] to s[1]: ((727, 592, 562)) -> ((840, 1696, 474))
+Converted beacon coordinates from s[4] to s[1]: ((-293, -554, 779)) -> ((-180, 550, 691))
+Converted beacon coordinates from s[4] to s[1]: ((441, 611, -461)) -> ((554, 1715, -549))
+Converted beacon coordinates from s[4] to s[1]: ((-714, 465, -776)) -> ((-601, 1569, -864))
+Converted beacon coordinates from s[4] to s[1]: ((-743, 427, -804)) -> ((-630, 1531, -892))
+Converted beacon coordinates from s[4] to s[1]: ((-660, -479, -426)) -> ((-547, 625, -514))
+Converted beacon coordinates from s[4] to s[1]: ((832, -632, 460)) -> ((945, 472, 372))
+Converted beacon coordinates from s[4] to s[1]: ((927, -485, -438)) -> ((1040, 619, -526))
+Converted beacon coordinates from s[4] to s[1]: ((408, 393, -506)) -> ((521, 1497, -594))
+Converted beacon coordinates from s[4] to s[1]: ((466, 436, -512)) -> ((579, 1540, -600))
+Converted beacon coordinates from s[4] to s[1]: ((110, 16, 151)) -> ((223, 1120, 63))
+Converted beacon coordinates from s[4] to s[1]: ((-258, -428, 682)) -> ((-145, 676, 594))
+Converted beacon coordinates from s[4] to s[1]: ((-393, 719, 612)) -> ((-280, 1823, 524))
+Converted beacon coordinates from s[4] to s[1]: ((-211, -452, 876)) -> ((-98, 652, 788))
+Converted beacon coordinates from s[4] to s[1]: ((808, -476, -593)) -> ((921, 628, -681))
+Converted beacon coordinates from s[4] to s[1]: ((-575, 615, 604)) -> ((-462, 1719, 516))
+Converted beacon coordinates from s[4] to s[1]: ((-485, 667, 467)) -> ((-372, 1771, 379))
+Converted beacon coordinates from s[4] to s[1]: ((-680, 325, -822)) -> ((-567, 1429, -910))
+Converted beacon coordinates from s[4] to s[1]: ((-627, -443, -432)) -> ((-514, 661, -520))
+Converted beacon coordinates from s[4] to s[1]: ((872, -547, -609)) -> ((985, 557, -697))
+Converted beacon coordinates from s[4] to s[1]: ((833, 512, 582)) -> ((946, 1616, 494))
+Converted beacon coordinates from s[4] to s[1]: ((807, 604, 487)) -> ((920, 1708, 399))
+Converted beacon coordinates from s[4] to s[1]: ((839, -516, 451)) -> ((952, 588, 363))
+Converted beacon coordinates from s[4] to s[1]: ((891, -625, 532)) -> ((1004, 479, 444))
+Converted beacon coordinates from s[4] to s[1]: ((-652, -548, -490)) -> ((-539, 556, -578))
+Converted beacon coordinates from s[4] to s[1]: ((30, -46, -14)) -> ((143, 1058, -102))
+Converting beacons from 1 to 0 coordinates.
+Converted beacon coordinates from s[1] to s[0]: ((840, 1696, 474)) -> ((772, 450, 517))
+Converted beacon coordinates from s[1] to s[0]: ((-180, 550, 691)) -> ((-248, -696, 734))
+Converted beacon coordinates from s[1] to s[0]: ((554, 1715, -549)) -> ((486, 469, -506))
+Converted beacon coordinates from s[1] to s[0]: ((-601, 1569, -864)) -> ((-669, 323, -821))
+Converted beacon coordinates from s[1] to s[0]: ((-630, 1531, -892)) -> ((-698, 285, -849))
+Converted beacon coordinates from s[1] to s[0]: ((-547, 625, -514)) -> ((-615, -621, -471))
+Converted beacon coordinates from s[1] to s[0]: ((945, 472, 372)) -> ((877, -774, 415))
+Converted beacon coordinates from s[1] to s[0]: ((1040, 619, -526)) -> ((972, -627, -483))
+Converted beacon coordinates from s[1] to s[0]: ((521, 1497, -594)) -> ((453, 251, -551))
+Converted beacon coordinates from s[1] to s[0]: ((579, 1540, -600)) -> ((511, 294, -557))
+Converted beacon coordinates from s[1] to s[0]: ((223, 1120, 63)) -> ((155, -126, 106))
+Converted beacon coordinates from s[1] to s[0]: ((-145, 676, 594)) -> ((-213, -570, 637))
+Converted beacon coordinates from s[1] to s[0]: ((-280, 1823, 524)) -> ((-348, 577, 567))
+Converted beacon coordinates from s[1] to s[0]: ((-98, 652, 788)) -> ((-166, -594, 831))
+Converted beacon coordinates from s[1] to s[0]: ((921, 628, -681)) -> ((853, -618, -638))
+Converted beacon coordinates from s[1] to s[0]: ((-462, 1719, 516)) -> ((-530, 473, 559))
+Converted beacon coordinates from s[1] to s[0]: ((-372, 1771, 379)) -> ((-440, 525, 422))
+Converted beacon coordinates from s[1] to s[0]: ((-567, 1429, -910)) -> ((-635, 183, -867))
+Converted beacon coordinates from s[1] to s[0]: ((-514, 661, -520)) -> ((-582, -585, -477))
+Converted beacon coordinates from s[1] to s[0]: ((985, 557, -697)) -> ((917, -689, -654))
+Converted beacon coordinates from s[1] to s[0]: ((946, 1616, 494)) -> ((878, 370, 537))
+Converted beacon coordinates from s[1] to s[0]: ((920, 1708, 399)) -> ((852, 462, 442))
+Converted beacon coordinates from s[1] to s[0]: ((952, 588, 363)) -> ((884, -658, 406))
+Converted beacon coordinates from s[1] to s[0]: ((1004, 479, 444)) -> ((936, -767, 487))
+Converted beacon coordinates from s[1] to s[0]: ((-539, 556, -578)) -> ((-607, -690, -535))
+Converted beacon coordinates from s[1] to s[0]: ((143, 1058, -102)) -> ((75, -188, -59))
+Number of unique beacons: 89
+-892,524,684
+-876,649,763
+-846,-3110,434
+-838,591,734
+-789,900,-551
+-776,-3184,501
+-698,285,-849
+-689,845,-530
+-686,-3108,505
+-669,323,-821
+-661,-816,-575
+-635,183,-867
+-618,-824,-621
+-615,-621,-471
+-607,-690,-535
+-584,868,-557
+-582,-585,-477
+-568,-2007,577
+-544,-627,890
+-537,-823,-458
+-534,-1912,-768
+-530,473,559
+-528,-643,-409
+-497,-1838,617
+-485,-357,347
+-459,-707,-401
+-447,-329,318
+-440,525,422
+-432,-2009,-850
+-423,-701,-434
+-408,-1815,-803
+-404,-588,901
+-396,-1931,563
+-390,-675,793
+-377,-2827,-367
+-366,-3059,-397
+-348,577,567
+-346,-2985,-342
+-345,-311,381
+-248,-696,734
+-213,-570,637
+-166,-594,831
+-12,-2351,103
+7,-33,-71
+27,-1108,65
+75,-188,-59
+155,-126,106
+345,-311,-381
+390,-675,-793
+404,-588,-901
+423,-701,434
+430,-3130,-366
+443,580,662
+447,-329,-318
+453,251,-551
+455,729,728
+459,-707,401
+470,-3283,-303
+474,580,667
+485,-357,-347
+486,469,-506
+499,-1607,770
+511,294,-557
+518,-1681,600
+528,-643,409
+537,-823,458
+544,-627,-890
+553,345,-567
+564,392,-477
+601,-1648,643
+618,-824,621
+620,-3212,-371
+630,319,-379
+635,-1737,-486
+654,-3158,753
+661,-816,575
+687,-1600,-576
+697,-3072,689
+706,-3180,659
+739,-1745,-668
+772,450,517
+852,462,442
+853,-618,-638
+877,-774,415
+878,370,537
+884,-658,406
+917,-689,-654
+936,-767,487
+972,-627,-483
+
+Processing beacons for scanner 2
+Converting beacons from 2 to 4 coordinates.
+Converted beacon coordinates from s[2] to s[4]: ((649, 640, 665)) -> ((-476, 808, 593))
+Converted beacon coordinates from s[2] to s[4]: ((682, -795, 504)) -> ((-443, -627, 432))
+Converted beacon coordinates from s[2] to s[4]: ((-784, 533, -524)) -> ((-1909, 701, -596))
+Converted beacon coordinates from s[2] to s[4]: ((-644, 584, -595)) -> ((-1769, 752, -667))
+Converted beacon coordinates from s[2] to s[4]: ((-588, -843, 648)) -> ((-1713, -675, 576))
+Converted beacon coordinates from s[2] to s[4]: ((-30, 6, 44)) -> ((-1155, 174, -28))
+Converted beacon coordinates from s[2] to s[4]: ((-674, 560, 763)) -> ((-1799, 728, 691))
+Converted beacon coordinates from s[2] to s[4]: ((500, 723, -460)) -> ((-625, 891, -532))
+Converted beacon coordinates from s[2] to s[4]: ((609, 671, -379)) -> ((-516, 839, -451))
+Converted beacon coordinates from s[2] to s[4]: ((-555, -800, 653)) -> ((-1680, -632, 581))
+Converted beacon coordinates from s[2] to s[4]: ((-675, -892, -343)) -> ((-1800, -724, -415))
+Converted beacon coordinates from s[2] to s[4]: ((697, -426, -610)) -> ((-428, -258, -682))
+Converted beacon coordinates from s[2] to s[4]: ((578, 704, 681)) -> ((-547, 872, 609))
+Converted beacon coordinates from s[2] to s[4]: ((493, 664, -388)) -> ((-632, 832, -460))
+Converted beacon coordinates from s[2] to s[4]: ((-671, -858, 530)) -> ((-1796, -690, 458))
+Converted beacon coordinates from s[2] to s[4]: ((-667, 343, 800)) -> ((-1792, 511, 728))
+Converted beacon coordinates from s[2] to s[4]: ((571, -461, -707)) -> ((-554, -293, -779))
+Converted beacon coordinates from s[2] to s[4]: ((-138, -166, 112)) -> ((-1263, 2, 40))
+Converted beacon coordinates from s[2] to s[4]: ((-889, 563, -600)) -> ((-2014, 731, -672))
+Converted beacon coordinates from s[2] to s[4]: ((646, -828, 498)) -> ((-479, -660, 426))
+Converted beacon coordinates from s[2] to s[4]: ((640, 759, 510)) -> ((-485, 927, 438))
+Converted beacon coordinates from s[2] to s[4]: ((-630, 509, 768)) -> ((-1755, 677, 696))
+Converted beacon coordinates from s[2] to s[4]: ((-681, -892, -333)) -> ((-1806, -724, -405))
+Converted beacon coordinates from s[2] to s[4]: ((673, -379, -804)) -> ((-452, -211, -876))
+Converted beacon coordinates from s[2] to s[4]: ((-742, -814, -386)) -> ((-1867, -646, -458))
+Converted beacon coordinates from s[2] to s[4]: ((577, -820, 562)) -> ((-548, -652, 490))
+Converting beacons from 4 to 1 coordinates.
+Converted beacon coordinates from s[4] to s[1]: ((-476, 808, 593)) -> ((-363, 1912, 505))
+Converted beacon coordinates from s[4] to s[1]: ((-443, -627, 432)) -> ((-330, 477, 344))
+Converted beacon coordinates from s[4] to s[1]: ((-1909, 701, -596)) -> ((-1796, 1805, -684))
+Converted beacon coordinates from s[4] to s[1]: ((-1769, 752, -667)) -> ((-1656, 1856, -755))
+Converted beacon coordinates from s[4] to s[1]: ((-1713, -675, 576)) -> ((-1600, 429, 488))
+Converted beacon coordinates from s[4] to s[1]: ((-1155, 174, -28)) -> ((-1042, 1278, -116))
+Converted beacon coordinates from s[4] to s[1]: ((-1799, 728, 691)) -> ((-1686, 1832, 603))
+Converted beacon coordinates from s[4] to s[1]: ((-625, 891, -532)) -> ((-512, 1995, -620))
+Converted beacon coordinates from s[4] to s[1]: ((-516, 839, -451)) -> ((-403, 1943, -539))
+Converted beacon coordinates from s[4] to s[1]: ((-1680, -632, 581)) -> ((-1567, 472, 493))
+Converted beacon coordinates from s[4] to s[1]: ((-1800, -724, -415)) -> ((-1687, 380, -503))
+Converted beacon coordinates from s[4] to s[1]: ((-428, -258, -682)) -> ((-315, 846, -770))
+Converted beacon coordinates from s[4] to s[1]: ((-547, 872, 609)) -> ((-434, 1976, 521))
+Converted beacon coordinates from s[4] to s[1]: ((-632, 832, -460)) -> ((-519, 1936, -548))
+Converted beacon coordinates from s[4] to s[1]: ((-1796, -690, 458)) -> ((-1683, 414, 370))
+Converted beacon coordinates from s[4] to s[1]: ((-1792, 511, 728)) -> ((-1679, 1615, 640))
+Converted beacon coordinates from s[4] to s[1]: ((-554, -293, -779)) -> ((-441, 811, -867))
+Converted beacon coordinates from s[4] to s[1]: ((-1263, 2, 40)) -> ((-1150, 1106, -48))
+Converted beacon coordinates from s[4] to s[1]: ((-2014, 731, -672)) -> ((-1901, 1835, -760))
+Converted beacon coordinates from s[4] to s[1]: ((-479, -660, 426)) -> ((-366, 444, 338))
+Converted beacon coordinates from s[4] to s[1]: ((-485, 927, 438)) -> ((-372, 2031, 350))
+Converted beacon coordinates from s[4] to s[1]: ((-1755, 677, 696)) -> ((-1642, 1781, 608))
+Converted beacon coordinates from s[4] to s[1]: ((-1806, -724, -405)) -> ((-1693, 380, -493))
+Converted beacon coordinates from s[4] to s[1]: ((-452, -211, -876)) -> ((-339, 893, -964))
+Converted beacon coordinates from s[4] to s[1]: ((-1867, -646, -458)) -> ((-1754, 458, -546))
+Converted beacon coordinates from s[4] to s[1]: ((-548, -652, 490)) -> ((-435, 452, 402))
+Converting beacons from 1 to 0 coordinates.
+Converted beacon coordinates from s[1] to s[0]: ((-363, 1912, 505)) -> ((-431, 666, 548))
+Converted beacon coordinates from s[1] to s[0]: ((-330, 477, 344)) -> ((-398, -769, 387))
+Converted beacon coordinates from s[1] to s[0]: ((-1796, 1805, -684)) -> ((-1864, 559, -641))
+Converted beacon coordinates from s[1] to s[0]: ((-1656, 1856, -755)) -> ((-1724, 610, -712))
+Converted beacon coordinates from s[1] to s[0]: ((-1600, 429, 488)) -> ((-1668, -817, 531))
+Converted beacon coordinates from s[1] to s[0]: ((-1042, 1278, -116)) -> ((-1110, 32, -73))
+Converted beacon coordinates from s[1] to s[0]: ((-1686, 1832, 603)) -> ((-1754, 586, 646))
+Converted beacon coordinates from s[1] to s[0]: ((-512, 1995, -620)) -> ((-580, 749, -577))
+Converted beacon coordinates from s[1] to s[0]: ((-403, 1943, -539)) -> ((-471, 697, -496))
+Converted beacon coordinates from s[1] to s[0]: ((-1567, 472, 493)) -> ((-1635, -774, 536))
+Converted beacon coordinates from s[1] to s[0]: ((-1687, 380, -503)) -> ((-1755, -866, -460))
+Converted beacon coordinates from s[1] to s[0]: ((-315, 846, -770)) -> ((-383, -400, -727))
+Converted beacon coordinates from s[1] to s[0]: ((-434, 1976, 521)) -> ((-502, 730, 564))
+Converted beacon coordinates from s[1] to s[0]: ((-519, 1936, -548)) -> ((-587, 690, -505))
+Converted beacon coordinates from s[1] to s[0]: ((-1683, 414, 370)) -> ((-1751, -832, 413))
+Converted beacon coordinates from s[1] to s[0]: ((-1679, 1615, 640)) -> ((-1747, 369, 683))
+Converted beacon coordinates from s[1] to s[0]: ((-441, 811, -867)) -> ((-509, -435, -824))
+Converted beacon coordinates from s[1] to s[0]: ((-1150, 1106, -48)) -> ((-1218, -140, -5))
+Converted beacon coordinates from s[1] to s[0]: ((-1901, 1835, -760)) -> ((-1969, 589, -717))
+Converted beacon coordinates from s[1] to s[0]: ((-366, 444, 338)) -> ((-434, -802, 381))
+Converted beacon coordinates from s[1] to s[0]: ((-372, 2031, 350)) -> ((-440, 785, 393))
+Converted beacon coordinates from s[1] to s[0]: ((-1642, 1781, 608)) -> ((-1710, 535, 651))
+Converted beacon coordinates from s[1] to s[0]: ((-1693, 380, -493)) -> ((-1761, -866, -450))
+Converted beacon coordinates from s[1] to s[0]: ((-339, 893, -964)) -> ((-407, -353, -921))
+Converted beacon coordinates from s[1] to s[0]: ((-1754, 458, -546)) -> ((-1822, -788, -503))
+Converted beacon coordinates from s[1] to s[0]: ((-435, 452, 402)) -> ((-503, -794, 445))
+Number of unique beacons: 115
+-1969,589,-717
+-1864,559,-641
+-1822,-788,-503
+-1761,-866,-450
+-1755,-866,-460
+-1754,586,646
+-1751,-832,413
+-1747,369,683
+-1724,610,-712
+-1710,535,651
+-1668,-817,531
+-1635,-774,536
+-1218,-140,-5
+-1110,32,-73
+-892,524,684
+-876,649,763
+-846,-3110,434
+-838,591,734
+-789,900,-551
+-776,-3184,501
+-698,285,-849
+-689,845,-530
+-686,-3108,505
+-669,323,-821
+-661,-816,-575
+-635,183,-867
+-618,-824,-621
+-615,-621,-471
+-607,-690,-535
+-587,690,-505
+-584,868,-557
+-582,-585,-477
+-580,749,-577
+-568,-2007,577
+-544,-627,890
+-537,-823,-458
+-534,-1912,-768
+-530,473,559
+-528,-643,-409
+-509,-435,-824
+-503,-794,445
+-502,730,564
+-497,-1838,617
+-485,-357,347
+-471,697,-496
+-459,-707,-401
+-447,-329,318
+-440,525,422
+-440,785,393
+-434,-802,381
+-432,-2009,-850
+-431,666,548
+-423,-701,-434
+-408,-1815,-803
+-407,-353,-921
+-404,-588,901
+-398,-769,387
+-396,-1931,563
+-390,-675,793
+-383,-400,-727
+-377,-2827,-367
+-366,-3059,-397
+-348,577,567
+-346,-2985,-342
+-345,-311,381
+-248,-696,734
+-213,-570,637
+-166,-594,831
+-12,-2351,103
+7,-33,-71
+27,-1108,65
+75,-188,-59
+155,-126,106
+345,-311,-381
+390,-675,-793
+404,-588,-901
+423,-701,434
+430,-3130,-366
+443,580,662
+447,-329,-318
+453,251,-551
+455,729,728
+459,-707,401
+470,-3283,-303
+474,580,667
+485,-357,-347
+486,469,-506
+499,-1607,770
+511,294,-557
+518,-1681,600
+528,-643,409
+537,-823,458
+544,-627,-890
+553,345,-567
+564,392,-477
+601,-1648,643
+618,-824,621
+620,-3212,-371
+630,319,-379
+635,-1737,-486
+654,-3158,753
+661,-816,575
+687,-1600,-576
+697,-3072,689
+706,-3180,659
+739,-1745,-668
+772,450,517
+852,462,442
+853,-618,-638
+877,-774,415
+878,370,537
+884,-658,406
+917,-689,-654
+936,-767,487
+972,-627,-483
+
+Unique beacons (in 0 coordinates):
+-1969,589,-717
+-1864,559,-641
+-1822,-788,-503
+-1761,-866,-450
+-1755,-866,-460
+-1754,586,646
+-1751,-832,413
+-1747,369,683
+-1724,610,-712
+-1710,535,651
+-1668,-817,531
+-1635,-774,536
+-1218,-140,-5
+-1110,32,-73
+-892,524,684
+-876,649,763
+-846,-3110,434
+-838,591,734
+-789,900,-551
+-776,-3184,501
+-698,285,-849
+-689,845,-530
+-686,-3108,505
+-669,323,-821
+-661,-816,-575
+-635,183,-867
+-618,-824,-621
+-615,-621,-471
+-607,-690,-535
+-587,690,-505
+-584,868,-557
+-582,-585,-477
+-580,749,-577
+-568,-2007,577
+-544,-627,890
+-537,-823,-458
+-534,-1912,-768
+-530,473,559
+-528,-643,-409
+-509,-435,-824
+-503,-794,445
+-502,730,564
+-497,-1838,617
+-485,-357,347
+-471,697,-496
+-459,-707,-401
+-447,-329,318
+-440,525,422
+-440,785,393
+-434,-802,381
+-432,-2009,-850
+-431,666,548
+-423,-701,-434
+-408,-1815,-803
+-407,-353,-921
+-404,-588,901
+-398,-769,387
+-396,-1931,563
+-390,-675,793
+-383,-400,-727
+-377,-2827,-367
+-366,-3059,-397
+-348,577,567
+-346,-2985,-342
+-345,-311,381
+-248,-696,734
+-213,-570,637
+-166,-594,831
+-12,-2351,103
+7,-33,-71
+27,-1108,65
+75,-188,-59
+155,-126,106
+345,-311,-381
+390,-675,-793
+404,-588,-901
+423,-701,434
+430,-3130,-366
+443,580,662
+447,-329,-318
+453,251,-551
+455,729,728
+459,-707,401
+470,-3283,-303
+474,580,667
+485,-357,-347
+486,469,-506
+499,-1607,770
+511,294,-557
+518,-1681,600
+528,-643,409
+537,-823,458
+544,-627,-890
+553,345,-567
+564,392,-477
+601,-1648,643
+618,-824,621
+620,-3212,-371
+630,319,-379
+635,-1737,-486
+654,-3158,753
+661,-816,575
+687,-1600,-576
+697,-3072,689
+706,-3180,659
+739,-1745,-668
+772,450,517
+852,462,442
+853,-618,-638
+877,-774,415
+878,370,537
+884,-658,406
+917,-689,-654
+936,-767,487
+972,-627,-483
 F
 
 =================================== FAILURES ===================================
 ___________________________ Test_AOC2021_19.test_1_1 ___________________________
 
-self = <tests.test_aoc2021_19.Test_AOC2021_19 object at 0x7f5772a2e380>
+self = <tests.test_aoc2021_19.Test_AOC2021_19 object at 0x7f163c7e2260>
 
     def test_1_1(self):
         """Longer example in part 1 with 4 scanners. How many beacons are in the map?"""
         puzzle_input = load_input('testinput/19_1_2.txt')
 >       assert part1(puzzle_input) == 79
-E       assert 1 == 79
-E        +  where 1 = part1([<[TypeError("'tuple' object is not callable") raised in repr()] Scanner object at 0x7f5772a2e290>, <[TypeError("'tupl... at 0x7f5772a2f1c0>, <[TypeError("'tuple' object is not callable") raised in repr()] Scanner object at 0x7f57728785b0>])
+E       assert 115 == 79
+E        +  where 115 = part1([[0]: {0: (0): (404, -588, -901), 1: (1): (528, -643, 409), 2: (2): (-838, 591, 734), 3: (3): (390, -675, -793), 4: (4... 487), 22: (22): (839, -516, 451), 23: (23): (891, -625, 532), 24: (24): (-652, -548, -490), 25: (25): (30, -46, -14)}])
 
 tests/test_aoc2021_19.py:19: AssertionError
 =========================== short test summary info ============================
-FAILED tests/test_aoc2021_19.py::Test_AOC2021_19::test_1_1 - assert 1 == 79
-======================= 1 failed, 64 deselected in 0.20s =======================
+FAILED tests/test_aoc2021_19.py::Test_AOC2021_19::test_1_1 - assert 115 == 79
+======================= 1 failed, 64 deselected in 0.21s =======================

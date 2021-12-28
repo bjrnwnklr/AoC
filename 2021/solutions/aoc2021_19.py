@@ -192,9 +192,6 @@ def part1(puzzle_input: list[Scanner]) -> int:
     scanners = puzzle_input[:]
     unique_beacons = set()
 
-    # for b in s0.beacons:
-    #     unique_beacons.add(s0.beacons[b].coords)
-
     # find matching beacons between all scanners
     matching_beacons = dict()
     for s in puzzle_input:
@@ -266,31 +263,47 @@ def part1(puzzle_input: list[Scanner]) -> int:
     # s1_coords, rot, direction = conversions[(0, 1)]
     # x = relative_coords(s1_coords, s4_coords, rot, direction)
 
-    #
+    # Starting from scanner 0, run a BFS until all beacons have been converted
+    # 0) add scanner 0 to queue, with conversion required as path (list of (from, to) tuples)) (empty list for 0)
+    # 1) start BFS
+    # 2)    Pop scanner from queue
+    # 0)    convert beacons and add all beacons from scanner to unique_beacons (do all conversion steps included in path)
+    # 1)    add scanner 0 to seen list
+    # 2)    find all scanners having matching pairs with scanner (from conversion dictionary)
+    # 2a)       add to queue with path (from_next, to_current) added to the left side of path
 
-    # # find matching beacons
-    # matching_ids = find_matching_beacons(s0, s1)
-    # # add the first set of matching beacons to the list - using the coordinates relative to scanner 0
-    # find_scanner_coords(s0, s1, matching_ids)
+    # print('Start of BFS:')
+    # q = [(0, [])]
+    # seen = set()
+    # while q:
+    #     current_scanner, current_path = q.pop(0)
+    #     if current_scanner in seen:
+    #         continue
 
-    # # try to convert s1's beacons to s0 coordinates
-    # for b in s1.beacons:
-    #     print(
-    #         f's1 Beacon converted to s0 coordinates: ({b}) {s1.beacons[b].coords()} -> {relative_coords(s1, s1.beacons[b].coords())}')
+    #     print(f'Processing beacons for scanner {current_scanner}')
+    #     seen.add(current_scanner)
+    #     # convert beacons along conversion path
+    #     x = [b.coords for b in scanners[current_scanner].beacons.values()]
+    #     for from_id, to_id in current_path:
+    #         print(f'Converting beacons from {from_id} to {to_id} coordinates.')
+    #         x = convert_coords(from_id, to_id, x, conversions)
+    #     for b in x:
+    #         unique_beacons.add(b)
 
-    # # try again with scanner 1 vs scanner 4
-    # s4 = puzzle_input[4]
-    # matching_ids = find_matching_beacons(s1, s4)
-    # find_scanner_coords(s1, s4, matching_ids)
-    # print()
-    # print(f'Scanner 4 coordinates, relative to scanner 1: {s4.coords()}')
-    # s4_coords = relative_coords(s1, s4.coords())
-    # print(f'Scanner 4 coordinates, relative to scanner 0: {s4_coords}')
-    # # now need to convert coordinates relative to scanner 1 to scanner 0
+    #     print(f'Number of unique beacons: {len(unique_beacons)}')
+    #     for c in sorted(unique_beacons):
+    #         print(f'{c[0]},{c[1]},{c[2]}')
 
-    # TODO: Convert ALL beacons of all scanners into s0 coordinates, then put into a set to match.
+    #     for pair in [p for p in conversions if p[1] == current_scanner]:
+    #         if pair[0] not in seen:
+    #             q.append((pair[0], [pair] + current_path))
+    #     print()
 
-    return 1
+    # print('Unique beacons (in 0 coordinates):')
+    # for c in sorted(unique_beacons):
+    #     print(f'{c[0]},{c[1]},{c[2]}')
+
+    # return len(unique_beacons)
 
 
 # @aoc_timer
