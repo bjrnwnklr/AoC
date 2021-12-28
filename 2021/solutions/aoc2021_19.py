@@ -169,10 +169,21 @@ def convert_coords(from_id: int, to_id: int, coords: list[tuple[int]], conversio
     E.g. coordinate all beacons from coord in scanner 1 to scanner 0 relative coordinates.
     """
     ref_coords, rot, direction = conversions[(from_id, to_id)]
+    results = []
     for c in coords:
         x = relative_coords(ref_coords, c, rot, direction)
+        results.append(x)
         print(
             f'Converted beacon coordinates from s[{from_id}] to s[{to_id}]: ({c}) -> ({x})')
+
+    return results
+
+
+def convert_beacons(from_id: int, to_id: int, scanners: list[Scanner], conversions: dict):
+    """Convert beacons from scanner 'from_id' to coordinates from scanner 'to_id'."""
+
+    coords = [b.coords for b in scanners[from_id].beacons.values()]
+    return convert_coords(from_id, to_id, coords, conversions)
 
 
 def part1(puzzle_input: list[Scanner]) -> int:
@@ -243,8 +254,7 @@ def part1(puzzle_input: list[Scanner]) -> int:
     print('Converting beacon coordinates from scanner 1 to scanner 0 coordinates:')
     to_id = 0
     from_id = 1
-    coords = [b.coords for b in scanners[from_id].beacons.values()]
-    convert_coords(from_id, to_id, coords, conversions)
+    x = convert_beacons(from_id, to_id, scanners, conversions)
 
     # this is the correct conversion:
     # To convert s4 coordinates (relate to s1) into s0 coordinates:
