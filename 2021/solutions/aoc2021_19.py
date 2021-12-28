@@ -18,15 +18,6 @@ class Beacon:
     def __init__(self, id, x, y, z) -> None:
         self.id = id
         self.coords = (x, y, z)
-        # self.x = x
-        # self.y = y
-        # self.z = z
-
-    # def __eq__(self, __o: object) -> bool:
-    #     return self.x == __o.x and self.y == __o.y and self.z == __o.z
-
-    # def __lt__(self, __o: object) -> bool:
-    #     return sum([self.x, self.y, self.z]) < sum([__o.x, __o.y, __o.z])
 
     def __repr__(self) -> str:
         return f'({self.id}): {self.coords}'
@@ -35,26 +26,15 @@ class Beacon:
         """Manhattan distance to another beacon."""
         return (abs(self.coords[0] - o.coords[0]) + abs(self.coords[1] - o.coords[1]) + abs(self.coords[2] - o.coords[2]))
 
-    # def coords(self):
-    #     return (self.x, self.y, self.z)
-
 
 class Scanner:
     def __init__(self, id: int, beacons: list[Beacon]) -> None:
         self.id = id
         self.beacons = {b.id: b for b in beacons}
-        # self.x = 0
-        # self.y = 0
-        # self.z = 0
-        # self.rotation = 0
-        # self.direction = (1, 1, 1)
         self.pattern = self.generate_pattern()
 
     def __repr__(self) -> str:
         return f'[{self.id}]: {self.beacons}'
-
-    # def coords(self):
-    #     return (self.x, self.y, self.z)
 
     def generate_pattern(self):
         """Generate the relative pattern of beacons seen by the scanner,
@@ -171,19 +151,19 @@ def convert_coords(from_id: int, to_id: int, coords: list[tuple[int]], conversio
     ref_coords, rot, direction = conversions[(from_id, to_id)]
     results = []
     for c in coords:
-        x = relative_coords(ref_coords, c, rot, direction)
+        x = relative_coords(c, ref_coords, rot, direction)
         results.append(x)
-        print(
-            f'Converted beacon coordinates from s[{from_id}] to s[{to_id}]: ({c}) -> ({x})')
+        # print(
+        #     f'Converted beacon coordinates from s[{from_id}] to s[{to_id}]: ({c}) -> ({x})')
 
     return results
 
 
-def convert_beacons(from_id: int, to_id: int, scanners: list[Scanner], conversions: dict):
-    """Convert beacons from scanner 'from_id' to coordinates from scanner 'to_id'."""
+# def convert_beacons(from_id: int, to_id: int, scanners: list[Scanner], conversions: dict):
+#     """Convert beacons from scanner 'from_id' to coordinates from scanner 'to_id'."""
 
-    coords = [b.coords for b in scanners[from_id].beacons.values()]
-    return convert_coords(from_id, to_id, coords, conversions)
+#     coords = [b.coords for b in scanners[from_id].beacons.values()]
+#     return convert_coords(from_id, to_id, coords, conversions)
 
 
 def part1(puzzle_input: list[Scanner]) -> int:
@@ -200,8 +180,8 @@ def part1(puzzle_input: list[Scanner]) -> int:
                 matching_ids = find_matching_beacons(s, t)
                 if len(matching_ids) >= 12:
                     matching_beacons[(s.id, t.id)] = matching_ids
-                    print(
-                        f'Matching beacons found between {s.id} and {t.id}: {len(matching_ids)}')
+                    # print(
+                    #     f'Matching beacons found between {s.id} and {t.id}: {len(matching_ids)}')
 
     # generate conversions for each overlapping scanners
     # dictionary keys:      [from_id, to_id]
@@ -213,45 +193,45 @@ def part1(puzzle_input: list[Scanner]) -> int:
             scanners[s], scanners[t], matching_beacons[(s, t)])
         conversions[(t, s)] = (t_coords, rot, direction)
 
-    print('Conversion dictionary:')
-    for k, v in conversions.items():
-        print(k, v)
+    # print('Conversion dictionary:')
+    # for k, v in conversions.items():
+    #     print(k, v)
 
-    # convert coordinates of s4 via s1 to s0 reference
-    # result should be: -20,-1133,1061
-    print('S4 coordinates converted via s1 to s0:')
-    s, _, _ = conversions[(4, 1)]
-    r, rot, direction = conversions[(1, 0)]
-    x = relative_coords(s, r, rot, direction)
-    print(x)
+    # # convert coordinates of s4 via s1 to s0 reference
+    # # result should be: -20,-1133,1061
+    # print('S4 coordinates converted via s1 to s0:')
+    # s, _, _ = conversions[(4, 1)]
+    # r, rot, direction = conversions[(1, 0)]
+    # x = relative_coords(s, r, rot, direction)
+    # print(x)
 
-    # convert coordinates of s3 via s1 to s0 reference
-    # result should be: -92,-2380,-20
-    print('S3 coordinates converted via s1 to s0:')
-    s, _, _ = conversions[(3, 1)]
-    r, rot, direction = conversions[(1, 0)]
-    x = relative_coords(s, r, rot, direction)
-    print(x)
+    # # convert coordinates of s3 via s1 to s0 reference
+    # # result should be: -92,-2380,-20
+    # print('S3 coordinates converted via s1 to s0:')
+    # s, _, _ = conversions[(3, 1)]
+    # r, rot, direction = conversions[(1, 0)]
+    # x = relative_coords(s, r, rot, direction)
+    # print(x)
 
-    # convert coordinates of s2 via s4 to s1 and then to s0 reference
-    # result should be: 1105,-1205,1229
-    print('S2 coordinates converted via s4 to s1:')
-    s, _, _ = conversions[(2, 4)]
-    r, rot, direction = conversions[(4, 1)]
-    x = relative_coords(s, r, rot, direction)
-    print(x)
-    print('S2 coordinates converted via s1 to s0:')
-    # s, _, _ = conversions[(4, 2)]
-    r, rot, direction = conversions[(1, 0)]
-    x = relative_coords(x, r, rot, direction)
-    print(x)
+    # # convert coordinates of s2 via s4 to s1 and then to s0 reference
+    # # result should be: 1105,-1205,1229
+    # print('S2 coordinates converted via s4 to s1:')
+    # s, _, _ = conversions[(2, 4)]
+    # r, rot, direction = conversions[(4, 1)]
+    # x = relative_coords(s, r, rot, direction)
+    # print(x)
+    # print('S2 coordinates converted via s1 to s0:')
+    # # s, _, _ = conversions[(4, 2)]
+    # r, rot, direction = conversions[(1, 0)]
+    # x = relative_coords(x, r, rot, direction)
+    # print(x)
 
-    # convert beacon coordinates into s0 coordinates
-    # all s1 beacons into s0 coordinates
-    print('Converting beacon coordinates from scanner 1 to scanner 0 coordinates:')
-    to_id = 0
-    from_id = 1
-    x = convert_beacons(from_id, to_id, scanners, conversions)
+    # # convert beacon coordinates into s0 coordinates
+    # # all s1 beacons into s0 coordinates
+    # print('Converting beacon coordinates from scanner 1 to scanner 0 coordinates:')
+    # to_id = 0
+    # from_id = 1
+    # x = convert_beacons(from_id, to_id, scanners, conversions)
 
     # this is the correct conversion:
     # To convert s4 coordinates (relate to s1) into s0 coordinates:
@@ -273,37 +253,37 @@ def part1(puzzle_input: list[Scanner]) -> int:
     # 2a)       add to queue with path (from_next, to_current) added to the left side of path
 
     # print('Start of BFS:')
-    # q = [(0, [])]
-    # seen = set()
-    # while q:
-    #     current_scanner, current_path = q.pop(0)
-    #     if current_scanner in seen:
-    #         continue
+    q = [(0, [])]
+    seen = set()
+    while q:
+        current_scanner, current_path = q.pop(0)
+        if current_scanner in seen:
+            continue
 
-    #     print(f'Processing beacons for scanner {current_scanner}')
-    #     seen.add(current_scanner)
-    #     # convert beacons along conversion path
-    #     x = [b.coords for b in scanners[current_scanner].beacons.values()]
-    #     for from_id, to_id in current_path:
-    #         print(f'Converting beacons from {from_id} to {to_id} coordinates.')
-    #         x = convert_coords(from_id, to_id, x, conversions)
-    #     for b in x:
-    #         unique_beacons.add(b)
+        # print(f'Processing beacons for scanner {current_scanner}')
+        seen.add(current_scanner)
+        # convert beacons along conversion path
+        x = [b.coords for b in scanners[current_scanner].beacons.values()]
+        for from_id, to_id in current_path:
+            # print(f'Converting beacons from {from_id} to {to_id} coordinates.')
+            x = convert_coords(from_id, to_id, x, conversions)
+        for b in x:
+            unique_beacons.add(b)
 
-    #     print(f'Number of unique beacons: {len(unique_beacons)}')
-    #     for c in sorted(unique_beacons):
-    #         print(f'{c[0]},{c[1]},{c[2]}')
+        # print(f'Number of unique beacons: {len(unique_beacons)}')
+        # for c in sorted(unique_beacons):
+            # print(f'{c[0]},{c[1]},{c[2]}')
 
-    #     for pair in [p for p in conversions if p[1] == current_scanner]:
-    #         if pair[0] not in seen:
-    #             q.append((pair[0], [pair] + current_path))
-    #     print()
+        for pair in [p for p in conversions if p[1] == current_scanner]:
+            if pair[0] not in seen:
+                q.append((pair[0], [pair] + current_path))
+        # print()
 
     # print('Unique beacons (in 0 coordinates):')
     # for c in sorted(unique_beacons):
     #     print(f'{c[0]},{c[1]},{c[2]}')
 
-    # return len(unique_beacons)
+    return len(unique_beacons)
 
 
 # @aoc_timer
