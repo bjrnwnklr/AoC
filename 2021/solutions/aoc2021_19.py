@@ -156,9 +156,12 @@ def relative_coords(r: tuple[int], s: tuple[int], rot: int, direction: tuple[int
     """
     c = ROTATION[rot]
     p = direction
-    return (r[c[0]] - p[0] * s[0],
-            r[c[1]] - p[1] * s[1],
-            r[c[2]] - p[2] * s[2])
+    return (r[0] - p[0] * s[c[0]],
+            r[1] - p[1] * s[c[1]],
+            r[2] - p[2] * s[c[2]])
+    # return (r[c[0]] - p[0] * s[0],
+    #         r[c[1]] - p[1] * s[1],
+    #         r[c[2]] - p[2] * s[2])
     # return (getattr(r, c[0]) - p[0] * s[0],
     #         getattr(r, c[1]) - p[1] * s[1],
     #         getattr(r, c[2]) - p[2] * s[2])
