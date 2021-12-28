@@ -49,7 +49,7 @@ class Scanner:
 
 
 def dist(s: tuple[int], o: tuple[int]):
-    """Manhattan distance to another beacon."""
+    """Manhattan distance between two (x, y, z) coordinates."""
     return (abs(s[0] - o[0]) + abs(s[1] - o[1]) + abs(s[2] - o[2]))
 
 
@@ -104,24 +104,17 @@ def find_scanner_coords(s: Scanner, t: Scanner, matching_ids: list[tuple[int]]):
     - rotation required to match s's rotation
     - directions for (x, y, z) required to match s's directions
     """
-    # print(
-    #     f'finding scanner coordinates conversion: {s.id} -> {t.id}, {matching_ids}')
     for c in ROTATION:
         for p in product([-1, 1], repeat=3):
             # all combinations of products of how to calculate (s.x - t.x) (8)
-            # ys = {s.beacons[s_id].coords[1] + p[1] *
-            #       getattr(t.beacons[t_id], ROTATION[c][1]) for s_id, t_id in matching_ids}
             xs = {s.beacons[s_id].coords[0] + p[0] *
                   t.beacons[t_id].coords[ROTATION[c][0]] for s_id, t_id in matching_ids}
             ys = {s.beacons[s_id].coords[1] + p[1] *
                   t.beacons[t_id].coords[ROTATION[c][1]] for s_id, t_id in matching_ids}
             zs = {s.beacons[s_id].coords[2] + p[2] *
                   t.beacons[t_id].coords[ROTATION[c][2]] for s_id, t_id in matching_ids}
-            # print(f'{c=}, {p=}: {len(xs)=} {len(ys)=} {len(zs)=}')
             if len(xs) == 1 and len(ys) == 1 and len(zs) == 1:
-                # we found a matching configuration
-                # print(f'Matching config found: {c=}, {p=}')
-
+                # found a matching configuration
                 return ((xs.pop(), ys.pop(), zs.pop()), c, p)
 
 
@@ -152,17 +145,9 @@ def convert_coords(from_id: int, to_id: int, coords: list[tuple[int]], conversio
     for c in coords:
         x = relative_coords(c, ref_coords, rot, direction)
         results.append(x)
-        # print(
-        #     f'Converted beacon coordinates from s[{from_id}] to s[{to_id}]: ({c}) -> ({x})')
 
     return results
 
-
-# def convert_beacons(from_id: int, to_id: int, scanners: list[Scanner], conversions: dict):
-#     """Convert beacons from scanner 'from_id' to coordinates from scanner 'to_id'."""
-
-#     coords = [b.coords for b in scanners[from_id].beacons.values()]
-#     return convert_coords(from_id, to_id, coords, conversions)
 
 @aoc_timer
 def part1(puzzle_input: list[Scanner]) -> int:
@@ -179,8 +164,6 @@ def part1(puzzle_input: list[Scanner]) -> int:
                 matching_ids = find_matching_beacons(s, t)
                 if len(matching_ids) >= 12:
                     matching_beacons[(s.id, t.id)] = matching_ids
-                    # print(
-                    #     f'Matching beacons found between {s.id} and {t.id}: {len(matching_ids)}')
 
     # generate conversions for each overlapping scanners
     # dictionary keys:      [from_id, to_id]
@@ -195,57 +178,23 @@ def part1(puzzle_input: list[Scanner]) -> int:
     # create a log of all scanner coordinates in s0 coordinates
     scanner_coordinates = dict()
 
-    # print('Conversion dictionary:')
-    # for k, v in conversions.items():
-    #     print(k, v)
-
-    # # convert coordinates of s4 via s1 to s0 reference
-    # # result should be: -20,-1133,1061
-    # print('S4 coordinates converted via s1 to s0:')
-    # s, _, _ = conversions[(4, 1)]
-    # r, rot, direction = conversions[(1, 0)]
-    # x = relative_coords(s, r, rot, direction)
-    # print(x)
-
-    # # convert coordinates of s3 via s1 to s0 reference
-    # # result should be: -92,-2380,-20
-    # print('S3 coordinates converted via s1 to s0:')
-    # s, _, _ = conversions[(3, 1)]
-    # r, rot, direction = conversions[(1, 0)]
-    # x = relative_coords(s, r, rot, direction)
-    # print(x)
-
-    # # convert coordinates of s2 via s4 to s1 and then to s0 reference
-    # # result should be: 1105,-1205,1229
-    # print('S2 coordinates converted via s4 to s1:')
-    # s, _, _ = conversions[(2, 4)]
-    # r, rot, direction = conversions[(4, 1)]
-    # x = relative_coords(s, r, rot, direction)
-    # print(x)
-    # print('S2 coordinates converted via s1 to s0:')
-    # # s, _, _ = conversions[(4, 2)]
-    # r, rot, direction = conversions[(1, 0)]
-    # x = relative_coords(x, r, rot, direction)
-    # print(x)
-
-    # # convert beacon coordinates into s0 coordinates
-    # # all s1 beacons into s0 coordinates
-    # print('Converting beacon coordinates from scanner 1 to scanner 0 coordinates:')
-    # to_id = 0
-    # from_id = 1
-    # x = convert_beacons(from_id, to_id, scanners, conversions)
-
-    # this is the correct conversion:
-    # To convert s4 coordinates (relate to s1) into s0 coordinates:
-    # take coords (s) from coversion[(1, 4)]
-    # take coords (r), rot, direction from conversion[(0, 1)]
-    # then run into relative_coords(r, s, rot, direction)
+    # How to convert coordinates from one system to another,
+    # based on the conversion dictionary:
     #
-    # s4_coords, _, _ = conversions[(1, 4)]
-    # s1_coords, rot, direction = conversions[(0, 1)]
-    # x = relative_coords(s1_coords, s4_coords, rot, direction)
+    # To convert s4 coordinates (in s1 coordinates) into s0 coordinates:
+    # take coords (s) from coversion[(4, 1)]
+    # take coords (r), rot, direction from conversion[(1, 0)]
+    # then run into relative_coords(s, r, rot, direction)
+    #
+    # s4_coords, _, _ = conversions[(4, 1)]
+    # s1_coords, rot, direction = conversions[(1, 0)]
+    # x = relative_coords(s4_coords, s1_coords, rot, direction)
+    #
+    # For a beacon, take the beacon coordinates and convert them first from
+    # their current reference (s4) into s1, then into s0.
 
-    # Starting from scanner 0, run a BFS until all beacons have been converted
+    # Starting from scanner 0, run a BFS across all conversion paths to convert all scanners and
+    # beacons to 0 coordinates
     q = [(0, [], (0, 0, 0))]
     seen = set()
     while q:
@@ -259,7 +208,7 @@ def part1(puzzle_input: list[Scanner]) -> int:
         s = [current_coords]
         for from_id, to_id in current_path:
             x = convert_coords(from_id, to_id, x, conversions)
-            # convert scanner coordinates itself - only if a conversion for the scanner to the next stage
+            # Part 2: convert scanner coordinates itself - only if a conversion for the scanner to the next stage
             # does not yet exist (e.g. for (1, 0), there is already a converted value in conversions)
             if (current_scanner, to_id) not in conversions:
                 s = convert_coords(from_id, to_id, s, conversions)
@@ -290,25 +239,13 @@ def part1(puzzle_input: list[Scanner]) -> int:
     return len(unique_beacons)
 
 
-# @aoc_timer
-def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
-
-    return 1
-
-
 if __name__ == '__main__':
     # read the puzzle input
     puzzle_input = load_input('input/19.txt')
-    # puzzle_input = load_input('testinput/19_1_2.txt')
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)
     print(f'Part 1: {p1}')
-
-    # Solve part 2 and print the answer
-    # p2 = part2(puzzle_input)
-    # print(f'Part 2: {p2}')
 
 # Part 1: Start: 12:14 End: 15:00 (next day - this was hard!)
 # Part 2: Start: 15:00 End: 15:23 (easy)
