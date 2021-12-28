@@ -19,5 +19,5 @@ class Test_AOC2021_19:
         assert part1(puzzle_input) == 79
 
     # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/19_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    #     puzzle_input = load_input('testinput/19_1_2.txt')
+    #     assert part2(puzzle_input) == 3621

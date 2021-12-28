@@ -3,7 +3,7 @@
 import re
 from itertools import product
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 ROTATION = {
     0: (0, 1, 2),
@@ -140,8 +140,6 @@ def relative_coords(from_coords: tuple[int], to_coords: tuple[int], rot: int, di
             to_coords[1] - dir_factor[1] * from_coords[rot_coords[1]],
             to_coords[2] - dir_factor[2] * from_coords[rot_coords[2]])
 
-    # @aoc_timer
-
 
 def convert_coords(from_id: int, to_id: int, coords: list[tuple[int]], conversions: dict):
     """Convert a list of (x, y, z) coordinates from coordinates relative to 'from' to 'to' reference.
@@ -165,7 +163,7 @@ def convert_coords(from_id: int, to_id: int, coords: list[tuple[int]], conversio
 #     coords = [b.coords for b in scanners[from_id].beacons.values()]
 #     return convert_coords(from_id, to_id, coords, conversions)
 
-
+@aoc_timer
 def part1(puzzle_input: list[Scanner]) -> int:
     """Solve part 1. Return the required output value."""
 
@@ -192,6 +190,9 @@ def part1(puzzle_input: list[Scanner]) -> int:
         t_coords, rot, direction = find_scanner_coords(
             scanners[s], scanners[t], matching_beacons[(s, t)])
         conversions[(t, s)] = (t_coords, rot, direction)
+
+    # create a log of all scanner coordinates in s0 coordinates
+    scanner_coordinates = dict()
 
     # print('Conversion dictionary:')
     # for k, v in conversions.items():
@@ -244,44 +245,49 @@ def part1(puzzle_input: list[Scanner]) -> int:
     # x = relative_coords(s1_coords, s4_coords, rot, direction)
 
     # Starting from scanner 0, run a BFS until all beacons have been converted
-    # 0) add scanner 0 to queue, with conversion required as path (list of (from, to) tuples)) (empty list for 0)
-    # 1) start BFS
-    # 2)    Pop scanner from queue
-    # 0)    convert beacons and add all beacons from scanner to unique_beacons (do all conversion steps included in path)
-    # 1)    add scanner 0 to seen list
-    # 2)    find all scanners having matching pairs with scanner (from conversion dictionary)
-    # 2a)       add to queue with path (from_next, to_current) added to the left side of path
-
-    # print('Start of BFS:')
-    q = [(0, [])]
+    q = [(0, [], (0, 0, 0))]
     seen = set()
     while q:
-        current_scanner, current_path = q.pop(0)
+        current_scanner, current_path, current_coords = q.pop(0)
         if current_scanner in seen:
             continue
 
-        # print(f'Processing beacons for scanner {current_scanner}')
         seen.add(current_scanner)
         # convert beacons along conversion path
         x = [b.coords for b in scanners[current_scanner].beacons.values()]
+        s = [current_coords]
         for from_id, to_id in current_path:
-            # print(f'Converting beacons from {from_id} to {to_id} coordinates.')
             x = convert_coords(from_id, to_id, x, conversions)
+            # convert scanner coordinates itself - only if a conversion for the scanner to the next stage
+            # does not yet exist (e.g. for (1, 0), there is already a converted value in conversions)
+            if (current_scanner, to_id) not in conversions:
+                s = convert_coords(from_id, to_id, s, conversions)
         for b in x:
             unique_beacons.add(b)
-
-        # print(f'Number of unique beacons: {len(unique_beacons)}')
-        # for c in sorted(unique_beacons):
-            # print(f'{c[0]},{c[1]},{c[2]}')
+        # add current scanner coordinates in s0 notation
+        scanner_coordinates[current_scanner] = s[0]
 
         for pair in [p for p in conversions if p[1] == current_scanner]:
             if pair[0] not in seen:
-                q.append((pair[0], [pair] + current_path))
-        # print()
+                q.append(
+                    (pair[0], [pair] + current_path, conversions[pair][0]))
 
-    # print('Unique beacons (in 0 coordinates):')
-    # for c in sorted(unique_beacons):
-    #     print(f'{c[0]},{c[1]},{c[2]}')
+    # Part 2, calculate manhattan distance for each pair of scanners
+    max_dist = 0
+    max_pair = None
+    for s in scanner_coordinates:
+        for t in scanner_coordinates:
+            if s != t:
+                d = (abs(scanner_coordinates[s][0] - scanner_coordinates[t][0])
+                     + abs(scanner_coordinates[s]
+                           [1] - scanner_coordinates[t][1])
+                     + abs(scanner_coordinates[s][2] - scanner_coordinates[t][2]))
+                if d > max_dist:
+                    max_dist = d
+                    max_pair = (s, t)
+
+    print(f'Part 2: Max distance: {max_dist}')
+    print(f'Pair: {max_pair}')
 
     return len(unique_beacons)
 
@@ -296,14 +302,20 @@ def part2(puzzle_input):
 if __name__ == '__main__':
     # read the puzzle input
     puzzle_input = load_input('input/19.txt')
+    # puzzle_input = load_input('testinput/19_1_2.txt')
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)
     print(f'Part 1: {p1}')
 
     # Solve part 2 and print the answer
-    p2 = part2(puzzle_input)
-    print(f'Part 2: {p2}')
+    # p2 = part2(puzzle_input)
+    # print(f'Part 2: {p2}')
 
-# Part 1: Start: 12:14 End:
-# Part 2: Start:  End:
+# Part 1: Start: 12:14 End: 15:00 (next day - this was hard!)
+# Part 2: Start: 15:00 End: 15:23 (easy)
+
+# Elapsed time to run part1: 3.50741 seconds.
+# Part 1: 390
+# Part 2: Max distance: 13327
+# Pair: (12, 9)
