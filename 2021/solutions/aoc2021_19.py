@@ -87,8 +87,8 @@ def find_matching_beacons(s: Scanner, t: Scanner):
     matching_ids = []
     for b in s.pattern:
         for c in t.pattern:
-            matches = sum(1 for n in s.pattern[b] if n in t.pattern[c])
-            if matches >= 11:
+            matches = set(s.pattern[b]) & set(t.pattern[c])
+            if len(matches) >= 8:
                 # print(
                 #     f'{matches}: {b} == {c} ({s.pattern[b]} == {t.pattern[c]})')
                 matching_ids.append((b, c))
