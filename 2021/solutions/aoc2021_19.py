@@ -1,7 +1,7 @@
 # Load any required modules. Most commonly used:
 
 import re
-from itertools import product
+from itertools import product, combinations
 # from collections import defaultdict
 from utils.aoctools import aoc_timer
 
@@ -158,12 +158,12 @@ def part1(puzzle_input: list[Scanner]) -> int:
 
     # find matching beacons between all scanners
     matching_beacons = dict()
-    for s in puzzle_input:
-        for t in puzzle_input:
-            if s.id != t.id:
-                matching_ids = find_matching_beacons(s, t)
-                if len(matching_ids) >= 12:
-                    matching_beacons[(s.id, t.id)] = matching_ids
+    for s, t in combinations(puzzle_input, 2):
+        matching_ids = find_matching_beacons(s, t)
+        if len(matching_ids) >= 12:
+            matching_beacons[(s.id, t.id)] = matching_ids
+            # add reverse list for the reverse pair (t, s)
+            matching_beacons[(t.id, s.id)] = [(t, s) for s, t in matching_ids]
 
     # generate conversions for each overlapping scanners
     # dictionary keys:      [from_id, to_id]
