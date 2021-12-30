@@ -26,7 +26,7 @@ def load_input(f_name):
     return (algo, image)
 
 
-def print_image(image: set[tuple[int]]):
+def print_image(image: set[tuple[int]], padding: int = 5):
     """Output a pixel representation of the image."""
 
     min_r, max_r, min_c, max_c = img_dimensions(image)
@@ -34,7 +34,7 @@ def print_image(image: set[tuple[int]]):
     for r in range(min_r, max_r + 1):
         line = ''
         for c in range(min_c, max_c + 1):
-            line += '#' if image.get((r, c), 0) == 1 else '.'
+            line += '#' if (r, c) in image else '.'
         print(line)
     print()
 
@@ -97,17 +97,18 @@ def part1(puzzle_input, cycles=2):
     # and what algo[9 * algo[0]] yields - which is what any infinite pixels get flipped to
     # on the next cycle.
 
-    # print(f'Original image: {lit_pixels(image)} pixels lit.')
-    # print(f'Dimensions: {img_dimensions(image)}')
+    # print('Original image:')
+    # print_image(image)
 
     infinity_generator = default_pixel(algo)
     for i in range(1, cycles + 1):
         # get next infinity character
         infpix = next(infinity_generator)
+        print(f'Cycle {i}, infinity pixel set to {infpix}.')
         # apply image algorithm
         new_image = set()
-        for r in range(min_r - i, max_r + i + 1):
-            for c in range(min_c - i, max_c + i + 1):
+        for r in range(min_r - 1, max_r + 2):
+            for c in range(min_c - 1, max_c + 2):
                 s = ''
                 for nr, nc in neighbors(r, c):
                     if min_r <= nr <= max_r and min_c <= nc <= max_c:
@@ -118,15 +119,23 @@ def part1(puzzle_input, cycles=2):
                 if algo[i] == 1:
                     new_image.add((r, c))
 
+        # extend frame by one on each side as image grows by 1 on each side during
+        # each enhancement
+        min_r -= 1
+        max_r += 1
+        min_c -= 1
+        max_c += 1
+
         image = new_image
-        # print(f'Algo pass {i}: {lit_pixels(image)} pixels lit.')
-        # print(f'Dimensions: {img_dimensions(image)}')
+        # print('Enhanced image:')
+        # print_image(image)
 
     return lit_pixels(image)
 
 
 if __name__ == '__main__':
     # read the puzzle input
+    # puzzle_input = load_input('testinput/20_1_1.txt')
     puzzle_input = load_input('input/20.txt')
 
     # Solve part 1 and print the answer
