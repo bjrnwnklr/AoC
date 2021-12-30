@@ -116,13 +116,13 @@ def part1(puzzle_input, cycles=2):
 
     algo, image = puzzle_input
 
-    # print(f'Original image: {lit_pixels(image)} pixels lit.')
-    # print(f'Dimensions: {img_dimensions(image)}')
+    print(f'Original image:')
+    print_image(image)
 
     for i in range(cycles):
         image = apply_algo(image, algo, i)
-        # print(f'Algo pass {i}: {lit_pixels(image)} pixels lit.')
-        # print(f'Dimensions: {img_dimensions(image)}')
+        print(f'Cycle {i}: {lit_pixels(image)} pixels lit.')
+        print_image(image)
 
     return lit_pixels(image)
 
