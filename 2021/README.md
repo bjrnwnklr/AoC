@@ -49,3 +49,32 @@ Tests are located in the `tests` subdirectory and should be used to test the exa
 [aoc/2021] > pytest tests/test_aoc2021_03.py
 [aoc/2021] > pytest -k "03"
 ```
+
+# Runtimes of each day's puzzles
+
+| Day | Part 1   | Part 2   |
+| --- | -------- | -------- |
+|  01 | 0.00011s | 0.00010s |
+|  02 | 0.00046s | 0.00053s |
+|  03 | 0.00111s | 0.24616s |
+|  04 | 0.03663s | 0.08512s | 
+|  05 | 0.00963s | 0.04935s | 
+|  06 | 0.26910s | 0.00005s | 
+|  07 | 0.17909s | 0.21780s | 
+|  08 | 0.00011s | 0.00569s | 
+|  09 | 0.01703s | 0.03075s | 
+|  10 | 0.00096s | 0.00162s | 
+|  11 | 0.01309s | 0.02497s | 
+|  12 | 0.02804s | 0.18777s | 
+|  13 | 0.00125s | 0.00110s | 
+|  14 | 0.00488s | 0.00184s | 
+|  15 | 0.02843s | 1.01795s | 
+|  16 | 0.00303s | 0.00339s | 
+|  17 | 0.04259s | 0.04227s | 
+|  18 | 0.59090s | 7.80827s | 
+|  19 |          | 0.54753s |
+|  20 | 0.07050s | 3.87139s |
+
+Notes:
+- Day 06, part 1 needs to be optimized to use the same algorithm as part 2 (which is highly optimized)
+- Day 19, part 2 runs both part 1 and 2 solutions at the same time. Runtime for part 1 is the same as part 2 as part 2 does not add a lot of overhead
