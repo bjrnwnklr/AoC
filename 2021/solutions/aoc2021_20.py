@@ -69,11 +69,11 @@ def default_pixel(algo):
     """Returns the default infinity pixel value for even cycles (default pixel dark) and
     for uneven cycles (default pixel lit).
     """
-    even = str(algo[int(
+    odd = str(algo[int(
         ''.join(str(algo[0]) * 9),
         base=2
     )])
-    odd = str(algo[0])
+    even = str(algo[0])
 
     cycle = 1
     while True:
@@ -96,15 +96,10 @@ def part1(puzzle_input, cycles=2):
     # alternate the default pixel in infinity between the algo[0] (for odd cycles)
     # and what algo[9 * algo[0]] yields - which is what any infinite pixels get flipped to
     # on the next cycle.
-
-    print('Original image:')
-    print_image(image)
-
     infinity_generator = default_pixel(algo)
     for i in range(1, cycles + 1):
         # get next infinity character
         infpix = next(infinity_generator)
-        print(f'Cycle {i}, infinity pixel set to {infpix}.')
         # apply image algorithm
         new_image = set()
         for r in range(min_r - 1, max_r + 2):
@@ -127,15 +122,12 @@ def part1(puzzle_input, cycles=2):
         max_c += 1
 
         image = new_image
-        print('Enhanced image:')
-        print_image(image)
 
     return lit_pixels(image)
 
 
 if __name__ == '__main__':
     # read the puzzle input
-    # puzzle_input = load_input('testinput/20_1_1.txt')
     puzzle_input = load_input('input/20.txt')
 
     # Solve part 1 and print the answer
