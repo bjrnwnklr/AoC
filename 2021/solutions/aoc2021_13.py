@@ -3,7 +3,7 @@
 import re
 import numpy as np
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def print_array(a: np.array) -> None:
@@ -38,7 +38,7 @@ def load_input(f_name):
     return puzzle_input, folds
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input, folds):
     """Solve part 1. Return the required output value."""
 
@@ -65,7 +65,7 @@ def part1(puzzle_input, folds):
     return tp_new.sum()
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input, folds):
     """Solve part 2. Return the required output value."""
 

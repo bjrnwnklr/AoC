@@ -2,6 +2,8 @@
 
 # import re
 # from collections import defaultdict
+from utils.aoctools import aoc_timer
+
 
 def load_input(f_name):
     """Loads the puzzle input from the specified file. Specify the relative path 
@@ -34,12 +36,14 @@ def calc_increase(inp, n=1):
     return sum(n1 < n2 for n1, n2 in zip(inp, inp[n:]))
 
 
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
     return calc_increase(puzzle_input)
 
 
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 

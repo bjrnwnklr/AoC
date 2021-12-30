@@ -2,6 +2,8 @@
 
 # import re
 # from collections import defaultdict
+from utils.aoctools import aoc_timer
+
 
 def load_input(f_name):
     """Loads the puzzle input from the specified file. 
@@ -49,6 +51,7 @@ class Submarine:
         return self.horizontal * self.depth
 
 
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     sub = Submarine()
@@ -58,6 +61,7 @@ def part1(puzzle_input):
     return sub.get_result()
 
 
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
     sub = Submarine()
