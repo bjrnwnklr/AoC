@@ -97,8 +97,8 @@ def part1(puzzle_input, cycles=2):
     # and what algo[9 * algo[0]] yields - which is what any infinite pixels get flipped to
     # on the next cycle.
 
-    # print('Original image:')
-    # print_image(image)
+    print('Original image:')
+    print_image(image)
 
     infinity_generator = default_pixel(algo)
     for i in range(1, cycles + 1):
@@ -127,8 +127,8 @@ def part1(puzzle_input, cycles=2):
         max_c += 1
 
         image = new_image
-        # print('Enhanced image:')
-        # print_image(image)
+        print('Enhanced image:')
+        print_image(image)
 
     return lit_pixels(image)
 
