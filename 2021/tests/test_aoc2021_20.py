@@ -20,10 +20,7 @@ class Test_AOC2021_20:
     def test_1_2(self):
         puzzle_input = load_input('input/20.txt')
         assert part1(puzzle_input) == 5400
-<<<<<<< HEAD
-=======
 
     def test_2_1(self):
         puzzle_input = load_input('input/20.txt')
         assert part1(puzzle_input, 50) == 18989
->>>>>>> 20-improvements
