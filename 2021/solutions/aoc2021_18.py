@@ -23,7 +23,7 @@ def load_input(f_name):
 
 def add(a, b):
     """Add two snailfish numbers a and b to each other and return the added number."""
-    return f'[{a},{b}]'
+    return ['['] + a + [','] + b + [']']
 
 
 def to_str(sn_list):
@@ -52,16 +52,13 @@ def tokenize(sn_string):
     return result
 
 
-def explode(sn_str):
+def explode(sn):
     """Process one explosion by parsing the tokens 
     - counting parantheses depth
     - if a depth >= 5 found, process explosion by searching left and right for
       integers to add to
     - Return a completed number, converted back to a string
     """
-    # Tokenize - convert from string to list of tokens as it is easier to process
-    sn = tokenize(sn_str)
-
     changed = False
 
     i = 0
@@ -99,14 +96,11 @@ def explode(sn_str):
         i += 1
 
     # convert resulting snailfish number back to a string as it is easier to compare to each other
-    return changed, to_str(sn)
+    return changed, sn
 
 
-def split_sn(sn_str):
+def split_sn(sn):
     """Perform one split operation on the snailfish number string."""
-    # Tokenize - convert from string to list of tokens as it is easier to process
-    sn = tokenize(sn_str)
-
     changed = False
 
     i = 0
@@ -130,7 +124,7 @@ def split_sn(sn_str):
         i += 1
 
     # convert resulting snailfish number back to a string as it is easier to compare to each other
-    return changed, to_str(sn)
+    return changed, sn
 
 
 def reduce(sn):
@@ -157,9 +151,9 @@ def reduce(sn):
 
 def add_all_numbers(puzzle_input):
     """Process all numbers in the input and add them up."""
-    current_number = puzzle_input.pop(0)
+    current_number = tokenize(puzzle_input.pop(0))
     while puzzle_input:
-        next_number = puzzle_input.pop(0)
+        next_number = tokenize(puzzle_input.pop(0))
         temp_number = add(current_number, next_number)
         current_number = reduce(temp_number)
 
@@ -182,7 +176,7 @@ def part1(puzzle_input):
 
     added_number = add_all_numbers(puzzle_input)
     # turn the resulting number into a python list
-    sn_list = eval(added_number)
+    sn_list = eval(to_str(added_number))
 
     return magnitude(sn_list)
 
@@ -193,7 +187,7 @@ def part2(puzzle_input):
     m_max = 0
     for p in permutations(puzzle_input, 2):
         permutation_pair = add_all_numbers(list(p))
-        m = magnitude(eval(permutation_pair))
+        m = magnitude(eval(to_str(permutation_pair)))
         if m > m_max:
             m_max = m
 
