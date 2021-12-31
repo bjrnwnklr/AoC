@@ -71,7 +71,7 @@ Tests are located in the `tests` subdirectory and should be used to test the exa
 |  15 | 0.02843s | 1.01795s | 
 |  16 | 0.00303s | 0.00339s | 
 |  17 | 0.04259s | 0.04227s | 
-|  18 | 0.59090s | 7.80827s | 
+|  18 | 0.12547s | 2.06122s | 
 |  19 |          | 0.54753s |
 |  20 | 0.07050s | 3.87139s |
 
