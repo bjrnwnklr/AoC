@@ -62,6 +62,8 @@ def explode(sn_str):
     # Tokenize - convert from string to list of tokens as it is easier to process
     sn = tokenize(sn_str)
 
+    changed = False
+
     i = 0
     depth = 0
     while i < len(sn):
@@ -90,6 +92,7 @@ def explode(sn_str):
                 sn = left + [0] + right
                 # print(f'Explode (post): {convert_snlist_to_str(sn)=}')
                 # print()
+                changed = True
                 break
             else:
                 i += 1
@@ -100,13 +103,15 @@ def explode(sn_str):
             i += 1
 
     # convert resulting snailfish number back to a string as it is easier to compare to each other
-    return to_str(sn)
+    return changed, to_str(sn)
 
 
 def split_sn(sn_str):
     """Perform one split operation on the snailfish number string."""
     # Tokenize - convert from string to list of tokens as it is easier to process
     sn = tokenize(sn_str)
+
+    changed = False
 
     i = 0
     while i < len(sn):
@@ -126,6 +131,7 @@ def split_sn(sn_str):
                 sn = left + ['[', left_num, ',', right_num, ']'] + right
                 # print(f'Split (pre):    {convert_snlist_to_str(sn)=}')
                 # print()
+                changed = True
                 break
             else:
                 i += 1
@@ -133,7 +139,7 @@ def split_sn(sn_str):
             i += 1
 
     # convert resulting snailfish number back to a string as it is easier to compare to each other
-    return to_str(sn)
+    return changed, to_str(sn)
 
 
 def reduce(sn):
@@ -145,25 +151,17 @@ def reduce(sn):
     - If any pair is nested inside four pairs, the leftmost such pair explodes.
     - If any regular number is 10 or greater, the leftmost such regular number splits.
     """
-    changed = True
-    sn_post_split = sn
-    while changed:
-        changed = False
+    exploded = splitted = True
+    while exploded or splitted:
         # Run explode as many times as required - until no further pairs to explode
-        sn_pre_explode = sn_post_split
-        sn_post_explode = explode(sn_pre_explode)
-        while sn_pre_explode != sn_post_explode:
-            changed = True
-            sn_pre_explode = sn_post_explode
-            sn_post_explode = explode((sn_pre_explode))
+        exploded = True
+        while exploded:
+            exploded, sn = explode(sn)
 
         # do a single split once no further explosions possibly
-        sn_pre_split = sn_post_explode
-        sn_post_split = split_sn(sn_pre_split)
-        if sn_pre_split != sn_post_split:
-            changed = True
+        splitted, sn = split_sn(sn)
 
-    return sn_post_split
+    return sn
 
 
 def add_all_numbers(puzzle_input):
