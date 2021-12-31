@@ -77,7 +77,6 @@ def explode(sn_str):
                 # snippets to the left and right of the numbers
                 left = sn[:i]
                 right = sn[i + 5:]
-                # print(f'Explode (pre):  {convert_snlist_to_str(sn)=}')
                 # look for the last integer in the left list
                 for j in range(len(left) - 1, -1, -1):
                     if isinstance(left[j], int):
@@ -90,17 +89,14 @@ def explode(sn_str):
                         break
                 # now put the left and right elements together with a 0 in the middle
                 sn = left + [0] + right
-                # print(f'Explode (post): {convert_snlist_to_str(sn)=}')
-                # print()
+
+                # processed one explosion, so return and rerun again
                 changed = True
                 break
-            else:
-                i += 1
         elif c == ']':
             depth -= 1
-            i += 1
-        else:
-            i += 1
+
+        i += 1
 
     # convert resulting snailfish number back to a string as it is easier to compare to each other
     return changed, to_str(sn)
@@ -116,27 +112,22 @@ def split_sn(sn_str):
     i = 0
     while i < len(sn):
         c = sn[i]
-        if isinstance(c, int):
-            if c >= 10:
-                # split
-                # snippets to the left and the right of the number to be split
-                left = sn[:i]
-                right = sn[i + 1:]
-                # left number gets rounded down, right number gets rounded up
-                left_num = math.floor(c / 2)
-                right_num = math.ceil(c / 2)
-                # print(f'Split (post):   {convert_snlist_to_str(sn)=}')
-                # replace the split number with the new pair and bracket in between the
-                # left and right snippets
-                sn = left + ['[', left_num, ',', right_num, ']'] + right
-                # print(f'Split (pre):    {convert_snlist_to_str(sn)=}')
-                # print()
-                changed = True
-                break
-            else:
-                i += 1
-        else:
-            i += 1
+        if isinstance(c, int) and c >= 10:
+            # split
+            # snippets to the left and the right of the number to be split
+            left = sn[:i]
+            right = sn[i + 1:]
+            # left number gets rounded down, right number gets rounded up
+            left_num = math.floor(c / 2)
+            right_num = math.ceil(c / 2)
+            # replace the split number with the new pair and bracket in between the
+            # left and right snippets
+            sn = left + ['[', left_num, ',', right_num, ']'] + right
+
+            changed = True
+            break
+
+        i += 1
 
     # convert resulting snailfish number back to a string as it is easier to compare to each other
     return changed, to_str(sn)
