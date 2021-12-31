@@ -4,6 +4,7 @@
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
 from itertools import product
+from collections import Counter
 
 
 def load_input(f_name):
@@ -65,11 +66,41 @@ def dirac_dice(n: int = 3):
     (3, 3, 1) 7
     (3, 3, 2) 8
     (3, 3, 3) 9
+
+    {6: 7, 5: 6, 7: 6, 4: 3, 8: 3, 3: 1, 9: 1}
     """
     return [
         sum(d) for d in product(range(1, 4), repeat=3)
     ]
 
+
+class Scorer:
+    def __init__(self, start, win) -> None:
+        self.start = start
+        self.win = win
+        self.register = dict()
+
+    def calc_score(self, rolls: tuple[int]) -> tuple[int]:
+        """Calculates the score given a starting position and sequence of sums of 3 dice rolls.
+
+        Returns a tuple with the score and the number of rolls required to reach the winning score.
+        -1 if the score was not reached with the sequence provided.
+        """
+        if rolls in self.register:
+            return self.register(rolls)
+        score = 0
+        pos = self.start
+        cycles = 0
+        winning_cycles = -1
+        for r in rolls:
+            pos = (pos + r - 1) % 10 + 1
+            score += pos
+            cycles += 1
+            if score >= self.win:
+                winning_cycles = cycles
+
+        self.register[rolls] = (score, winning_cycles)
+        return score, winning_cycles
 
 # @aoc_timer
 
@@ -117,29 +148,25 @@ def part2(puzzle_input):
     # i.e. if current p1 result is x, the outcome for all cases resulting in 3
     # as the next roll should be the same for this round
     #
-    print()
+
+    d = dirac_dice(3)
+    c = Counter(d)
+    print(c)
 
     p1 = puzzle_input[0]
-    p2 = puzzle_input[1]
-    s1 = s2 = 0
-    d = deterministic_dice(3)
-    cycles = 0
-    while s1 < 21 and s2 < 21:
-        n = next(d)
-        p1 = (p1 + n - 1) % 10 + 1
-        s1 += p1
-        # print(f'{n=} - {p1= }: {s1=}')
-        cycles += 3
-        if s1 >= 1000:
-            break
-        n = next(d)
-        p2 = (p2 + n - 1) % 10 + 1
-        s2 += p2
-        # print(f'{n=} - {p2=}: {s2=}')
-        cycles += 3
+    scorer = Scorer(p1, 21)
+    for i in range(1, 5):
+        for p in product(c, repeat=i):
+            score, cycles = scorer.calc_score(tuple(p))
+            print(f'Rolls: {i}: {p}. {score=}, {cycles=}')
 
-    print(f'{cycles=}, {s1=}, {s2=}')
-    return min(s1, s2) * cycles
+    # 1) Calculate winning cases for player 1:
+    # - by number of cycles required (e.g. 4) - how many scenarios (universes) does player 1 reach after
+    #   4 cycles?
+    # 2) Calculate winning cases for player 2:
+    # 3) Compare - if player 1 has 200 cases after 4 cycles, and player 2 has 300 after 4 cycles, player
+    #    1 wins 200 and player 2 wins 100
+
     return 1
 
 
