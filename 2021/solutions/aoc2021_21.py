@@ -117,7 +117,7 @@ def part1(puzzle_input):
 
 
 @cache
-def who_wins(p1: int, s1: int, p2: int, s2: int, turn: int, universes: int) -> tuple[int]:
+def who_wins(p1: int, s1: int, p2: int, s2: int, universes: int) -> tuple[int]:
     """Recursive function that returns how many times player one vs player two wins
     given a starting position, starting score for each player 
     and the number of universes this represents.
@@ -131,33 +131,22 @@ def who_wins(p1: int, s1: int, p2: int, s2: int, turn: int, universes: int) -> t
 
         # use fresh values for each round
         new_p1 = p1
-        new_p2 = p2
         new_s1 = s1
-        new_s2 = s2
 
         # calculate new position and scores for the player whose turn it is
-        # player1 = 0
-        # player2 = 1
-        if turn == 0:
-            new_p1 = score_round(new_p1, roll)
-            new_s1 += new_p1
-            # if player 1 wins this round, stop and add up number of won universes
-            if new_s1 >= 21:
-                w1 += freq * universes
-                continue
-        else:
-            new_p2 = score_round(new_p2, roll)
-            new_s2 += new_p2
-            # if player 2 wins this round, stop and add up number of won universes
-            if new_s2 >= 21:
-                w2 += freq * universes
-                continue
+        new_p1 = score_round(new_p1, roll)
+        new_s1 += new_p1
+        # if player wins this round, stop and add up number of won universes
+        if new_s1 >= 21:
+            w1 += freq * universes
+            continue
 
-        # nobody won this round so go to next turn
+        # nobody won this round so go to next turn. Swap around who is next in arguments.
         new_w1, new_w2 = who_wins(
-            new_p1, new_s1, new_p2, new_s2, (turn + 1) % 2, universes * freq)
-        w1 += new_w1
-        w2 += new_w2
+            p2, s2, new_p1, new_s1, universes * freq)
+        # since we swapped the players, reverse the winning scores to add the correct cases
+        w1 += new_w2
+        w2 += new_w1
 
     return w1, w2
 
@@ -170,7 +159,7 @@ def part2(puzzle_input):
     p2 = puzzle_input[1]
     s1 = s2 = 0
 
-    win1, win2 = who_wins(p1, s1, p2, s2, 0, 1)
+    win1, win2 = who_wins(p1, s1, p2, s2, 1)
 
     return max(win1, win2)
 
@@ -193,5 +182,5 @@ if __name__ == '__main__':
 # cycles=861, s1=1008, s2=641
 # Elapsed time to run part1: 0.00019 seconds.
 # Part 1: 551901
-# Elapsed time to run part2: 1.71017 seconds.
+# Elapsed time to run part2: 1.54390 seconds.
 # Part 2: 272847859601291
