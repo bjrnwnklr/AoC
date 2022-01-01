@@ -142,11 +142,11 @@ def who_wins(p1: int, s1: int, p2: int, s2: int) -> tuple[int]:
             continue
 
         # nobody won this round so go to next turn. Swap around who is next in arguments.
-        new_w1, new_w2 = who_wins(
+        new_w2, new_w1 = who_wins(
             p2, s2, new_p1, new_s1)
         # since we swapped the players, reverse the winning scores to add the correct cases
-        w1 += new_w2 * freq
-        w2 += new_w1 * freq
+        w1 += new_w1 * freq
+        w2 += new_w2 * freq
 
     return w1, w2
 
