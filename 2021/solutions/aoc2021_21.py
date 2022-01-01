@@ -5,6 +5,8 @@
 # from utils.aoctools import aoc_timer
 from itertools import product
 from collections import Counter
+from functools import reduce
+import operator
 
 
 def load_input(f_name):
@@ -74,33 +76,16 @@ def dirac_dice(n: int = 3):
     ]
 
 
-class Scorer:
-    def __init__(self, start, win) -> None:
-        self.start = start
-        self.win = win
-        self.register = dict()
+def score_round(p1: int, s1: int, p2: int, s2: int, rolls: tuple[int]) -> tuple[int]:
+    """Score one round of dice rolls for player 1 and player 2."""
+    result = []
+    for p, s, r in zip([p1, p2], [s1, s2], rolls):
+        p = (p + r - 1) % 10 + 1
+        s += p
+        result.extend([p, s])
 
-    def calc_score(self, rolls: tuple[int]) -> tuple[int]:
-        """Calculates the score given a starting position and sequence of sums of 3 dice rolls.
+    return result
 
-        Returns a tuple with the score and the number of rolls required to reach the winning score.
-        -1 if the score was not reached with the sequence provided.
-        """
-        if rolls in self.register:
-            return self.register(rolls)
-        score = 0
-        pos = self.start
-        cycles = 0
-        winning_cycles = -1
-        for r in rolls:
-            pos = (pos + r - 1) % 10 + 1
-            score += pos
-            cycles += 1
-            if score >= self.win:
-                winning_cycles = cycles
-
-        self.register[rolls] = (score, winning_cycles)
-        return score, winning_cycles
 
 # @aoc_timer
 
@@ -138,15 +123,7 @@ def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
     # TODO:
-    #
-    # Determine sum of player given:
-    # - starting pos
-    # - sum of dice rolls
-    #
-    # Since the results of the dirac dice are always 3, 4, 5, 6, 7, 8 or 9,
-    # we should be able to cache some of the results to cover similar cases.
-    # i.e. if current p1 result is x, the outcome for all cases resulting in 3
-    # as the next roll should be the same for this round
+    # 12676622843967107256
     #
 
     d = dirac_dice(3)
@@ -154,18 +131,38 @@ def part2(puzzle_input):
     print(c)
 
     p1 = puzzle_input[0]
-    scorer = Scorer(p1, 21)
-    for i in range(1, 5):
-        for p in product(c, repeat=i):
-            score, cycles = scorer.calc_score(tuple(p))
-            print(f'Rolls: {i}: {p}. {score=}, {cycles=}')
+    p2 = puzzle_input[1]
+    s1 = s2 = 0
+    win1 = win2 = 0
 
-    # 1) Calculate winning cases for player 1:
-    # - by number of cycles required (e.g. 4) - how many scenarios (universes) does player 1 reach after
-    #   4 cycles?
-    # 2) Calculate winning cases for player 2:
-    # 3) Compare - if player 1 has 200 cases after 4 cycles, and player 2 has 300 after 4 cycles, player
-    #    1 wins 200 and player 2 wins 100
+    # player 1 pos, player 1 score, player 2 pos, player 2 score, next pair of dice rolls (r1, r2)
+    # list of dice rolls for p1 / p2 so far)
+    q = [(p1, s1, p2, s2, [], [])]
+
+    while q:
+
+        p1, s1, p2, s2, cur_roll, cur_path = q.pop()
+        print(f'({p1=}, {s1=}, {p2=}, {s2=}, {cur_roll=}, {cur_path=})')
+        if cur_roll:
+            p1, s1, p2, s2 = score_round(
+                p1, s1, p2, s2, cur_roll)
+            cur_path.extend(cur_roll)
+            # check if any player won
+            if s1 >= 21:
+                # player 1 won
+                win1 += reduce(operator.mul, cur_path)
+                print(f'Player 1 won. {win1=}')
+                continue
+            if s2 >= 21:
+                # player 2 won
+                win2 += reduce(operator.mul, cur_path)
+                print(f'Player 2 won. {win2=}')
+                continue
+
+        for roll in product(c, repeat=2):
+            q.append((p1, s1, p2, s2, roll, cur_path[:]))
+
+    print(f'Player 1 winning: {win1}, player 2 winning: {win2}')
 
     return 1
 
