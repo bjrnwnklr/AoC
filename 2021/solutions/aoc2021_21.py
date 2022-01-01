@@ -7,7 +7,7 @@ from itertools import product
 from collections import Counter
 # from functools import reduce
 # import operator
-from functools import cache
+from functools import cache, lru_cache
 
 
 def load_input(f_name):
@@ -77,6 +77,10 @@ def dirac_dice(n: int = 3):
     ]
 
 
+# Global counter for dirac_dice
+c = Counter(dirac_dice(3))
+
+
 @cache
 def score_round(p: int, roll: int) -> int:
     """Score one round of dice rolls for any one player."""
@@ -112,8 +116,70 @@ def part1(puzzle_input):
     return min(s1, s2) * cycles
 
 
+@cache
+def who_wins(p1: int, s1: int, p2: int, s2: int, turn: int, universes: int) -> tuple[int]:
+    """Recursive function that returns how many times player one vs player two wins
+    given a starting position, starting score for each player 
+    and the number of universes this represents.
+    """
+    # if no winner, go through next iteration of scores by running each combination
+    # print(
+    #     f"Player {turn + 1}'s turn: {p1=}, {s1=}, {p2=}, {s2=}, {turn=}, {universes=}.")
+
+    w1 = w2 = 0
+    for roll in c:
+
+        cases = c[roll]
+        new_p1 = p1
+        new_p2 = p2
+        new_s1 = s1
+        new_s2 = s2
+
+        # calculate new position and scores for the player whose turn it is
+        # player1 = 0
+        # player2 = 1
+        if turn == 0:
+            new_p1 = score_round(new_p1, roll)
+            new_s1 += new_p1
+            if new_s1 >= 21:
+                w1 += cases * universes
+                # print(
+                #     f'Player 1 won with {new_s1=}, adding {cases * universes} wins. {w1=}')
+                continue
+        else:
+            new_p2 = score_round(new_p2, roll)
+            new_s2 += new_p2
+            if new_s2 >= 21:
+                w2 += cases * universes
+                # print(
+                #     f'Player 2 won with {new_s2=}, adding {cases * universes} wins. {w2=}')
+                continue
+
+        new_w1, new_w2 = who_wins(
+            new_p1, new_s1, new_p2, new_s2, (turn + 1) % 2, universes * cases)
+        w1 += new_w1
+        w2 += new_w2
+
+    # print(f'Returning {w1=}, {w2=}')
+    return w1, w2
+
+
 @aoc_timer
 def part2(puzzle_input):
+    """Solve part 2. Return the required output value."""
+
+    p1 = puzzle_input[0]
+    p2 = puzzle_input[1]
+    s1 = s2 = 0
+    win1 = win2 = 0
+
+    win1, win2 = who_wins(p1, s1, p2, s2, 0, 1)
+
+    return max(win1, win2)
+
+
+@aoc_timer
+def part2_incorrect(puzzle_input):
     """Solve part 2. Return the required output value."""
 
     # TODO:
@@ -129,7 +195,7 @@ def part2(puzzle_input):
     p2 = puzzle_input[1]
     s1 = s2 = 0
     win1 = win2 = 0
-    winning_score = 5
+    winning_score = 21
 
     # player 1 pos, player 1 score, player 2 pos, player 2 score, next pair of dice rolls (r1, r2)
     # list of dice rolls for p1 / p2 so far), universes covered
@@ -182,3 +248,9 @@ if __name__ == '__main__':
 
 # Part 1: Start: 17:39 End: 18:33
 # Part 2: Start: 18:34 End:
+
+# cycles=861, s1=1008, s2=641
+# Elapsed time to run part1: 0.00019 seconds.
+# Part 1: 551901
+# Elapsed time to run part2: 1.79995 seconds.
+# Part 2: 272847859601291
