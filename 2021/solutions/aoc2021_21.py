@@ -122,14 +122,14 @@ def who_wins(p1: int, s1: int, p2: int, s2: int, turn: int, universes: int) -> t
     given a starting position, starting score for each player 
     and the number of universes this represents.
     """
-    # if no winner, go through next iteration of scores by running each combination
-    # print(
-    #     f"Player {turn + 1}'s turn: {p1=}, {s1=}, {p2=}, {s2=}, {turn=}, {universes=}.")
 
+    # winning score counter
     w1 = w2 = 0
-    for roll in c:
 
-        cases = c[roll]
+    # go through each next round of 3 dice (results can only be 3-9)
+    for roll, freq in c.items():
+
+        # use fresh values for each round
         new_p1 = p1
         new_p2 = p2
         new_s1 = s1
@@ -141,26 +141,24 @@ def who_wins(p1: int, s1: int, p2: int, s2: int, turn: int, universes: int) -> t
         if turn == 0:
             new_p1 = score_round(new_p1, roll)
             new_s1 += new_p1
+            # if player 1 wins this round, stop and add up number of won universes
             if new_s1 >= 21:
-                w1 += cases * universes
-                # print(
-                #     f'Player 1 won with {new_s1=}, adding {cases * universes} wins. {w1=}')
+                w1 += freq * universes
                 continue
         else:
             new_p2 = score_round(new_p2, roll)
             new_s2 += new_p2
+            # if player 2 wins this round, stop and add up number of won universes
             if new_s2 >= 21:
-                w2 += cases * universes
-                # print(
-                #     f'Player 2 won with {new_s2=}, adding {cases * universes} wins. {w2=}')
+                w2 += freq * universes
                 continue
 
+        # nobody won this round so go to next turn
         new_w1, new_w2 = who_wins(
-            new_p1, new_s1, new_p2, new_s2, (turn + 1) % 2, universes * cases)
+            new_p1, new_s1, new_p2, new_s2, (turn + 1) % 2, universes * freq)
         w1 += new_w1
         w2 += new_w2
 
-    # print(f'Returning {w1=}, {w2=}')
     return w1, w2
 
 
@@ -171,67 +169,10 @@ def part2(puzzle_input):
     p1 = puzzle_input[0]
     p2 = puzzle_input[1]
     s1 = s2 = 0
-    win1 = win2 = 0
 
     win1, win2 = who_wins(p1, s1, p2, s2, 0, 1)
 
     return max(win1, win2)
-
-
-@aoc_timer
-def part2_incorrect(puzzle_input):
-    """Solve part 2. Return the required output value."""
-
-    # TODO:
-    # 12_676_622_843_967_107_256 (from incorrect attempt)
-    #         18_043_431_879_060
-    #        444_356_092_776_315 (from part 2 test case)
-
-    d = dirac_dice(3)
-    c = Counter(d)
-    print(c)
-
-    p1 = puzzle_input[0]
-    p2 = puzzle_input[1]
-    s1 = s2 = 0
-    win1 = win2 = 0
-    winning_score = 21
-
-    # player 1 pos, player 1 score, player 2 pos, player 2 score, next pair of dice rolls (r1, r2)
-    # list of dice rolls for p1 / p2 so far), universes covered
-    q = [(p1, s1, p2, s2, [], [], 1)]
-
-    while q:
-
-        p1, s1, p2, s2, cur_roll, cur_path, universes = q.pop()
-        # print(f'({p1=}, {s1=}, {p2=}, {s2=}, {cur_roll=}, {cur_path=}, {universes=})')
-        if cur_roll:
-            cur_path.extend(cur_roll)
-            universes *= c[cur_roll[0]] * c[cur_roll[1]]
-
-            p1 = score_round(p1, cur_roll[0])
-            s1 += p1
-            # check if any player won
-            if s1 >= winning_score:
-                # player 1 won
-                win1 += universes
-                # print(f'Player 1 won. {win1=}')
-                continue
-
-            p2 = score_round(p2, cur_roll[1])
-            s2 += p2
-            if s2 >= winning_score:
-                # player 2 won
-                win2 += universes
-                # print(f'Player 2 won. {win2=}')
-                continue
-
-        for roll in product(c, repeat=2):
-            q.append((p1, s1, p2, s2, roll, cur_path[:], universes))
-
-    print(f'Player 1 winning: {win1}, player 2 winning: {win2}')
-
-    return 1
 
 
 if __name__ == '__main__':
@@ -247,10 +188,10 @@ if __name__ == '__main__':
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 17:39 End: 18:33
-# Part 2: Start: 18:34 End:
+# Part 2: Start: 18:34 End: 17:39 (next day, stuck with slow results)
 
 # cycles=861, s1=1008, s2=641
 # Elapsed time to run part1: 0.00019 seconds.
 # Part 1: 551901
-# Elapsed time to run part2: 1.79995 seconds.
+# Elapsed time to run part2: 1.71017 seconds.
 # Part 2: 272847859601291
