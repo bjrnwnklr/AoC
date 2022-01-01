@@ -2,11 +2,12 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from itertools import product
 from collections import Counter
-from functools import reduce
-import operator
+# from functools import reduce
+# import operator
+from functools import cache
 
 
 def load_input(f_name):
@@ -76,20 +77,13 @@ def dirac_dice(n: int = 3):
     ]
 
 
-def score_round(p1: int, s1: int, p2: int, s2: int, rolls: tuple[int]) -> tuple[int]:
-    """Score one round of dice rolls for player 1 and player 2."""
-    result = []
-    for p, s, r in zip([p1, p2], [s1, s2], rolls):
-        p = (p + r - 1) % 10 + 1
-        s += p
-        result.extend([p, s])
-
-    return result
+@cache
+def score_round(p: int, roll: int) -> int:
+    """Score one round of dice rolls for any one player."""
+    return (p + roll - 1) % 10 + 1
 
 
-# @aoc_timer
-
-
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
@@ -118,13 +112,14 @@ def part1(puzzle_input):
     return min(s1, s2) * cycles
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
     # TODO:
-    # 12676622843967107256
-    #
+    # 12_676_622_843_967_107_256 (from incorrect attempt)
+    #         18_043_431_879_060
+    #        444_356_092_776_315 (from part 2 test case)
 
     d = dirac_dice(3)
     c = Counter(d)
@@ -134,33 +129,39 @@ def part2(puzzle_input):
     p2 = puzzle_input[1]
     s1 = s2 = 0
     win1 = win2 = 0
+    winning_score = 5
 
     # player 1 pos, player 1 score, player 2 pos, player 2 score, next pair of dice rolls (r1, r2)
-    # list of dice rolls for p1 / p2 so far)
-    q = [(p1, s1, p2, s2, [], [])]
+    # list of dice rolls for p1 / p2 so far), universes covered
+    q = [(p1, s1, p2, s2, [], [], 1)]
 
     while q:
 
-        p1, s1, p2, s2, cur_roll, cur_path = q.pop()
-        print(f'({p1=}, {s1=}, {p2=}, {s2=}, {cur_roll=}, {cur_path=})')
+        p1, s1, p2, s2, cur_roll, cur_path, universes = q.pop()
+        # print(f'({p1=}, {s1=}, {p2=}, {s2=}, {cur_roll=}, {cur_path=}, {universes=})')
         if cur_roll:
-            p1, s1, p2, s2 = score_round(
-                p1, s1, p2, s2, cur_roll)
             cur_path.extend(cur_roll)
+            universes *= c[cur_roll[0]] * c[cur_roll[1]]
+
+            p1 = score_round(p1, cur_roll[0])
+            s1 += p1
             # check if any player won
-            if s1 >= 21:
+            if s1 >= winning_score:
                 # player 1 won
-                win1 += reduce(operator.mul, cur_path)
-                print(f'Player 1 won. {win1=}')
+                win1 += universes
+                # print(f'Player 1 won. {win1=}')
                 continue
-            if s2 >= 21:
+
+            p2 = score_round(p2, cur_roll[1])
+            s2 += p2
+            if s2 >= winning_score:
                 # player 2 won
-                win2 += reduce(operator.mul, cur_path)
-                print(f'Player 2 won. {win2=}')
+                win2 += universes
+                # print(f'Player 2 won. {win2=}')
                 continue
 
         for roll in product(c, repeat=2):
-            q.append((p1, s1, p2, s2, roll, cur_path[:]))
+            q.append((p1, s1, p2, s2, roll, cur_path[:], universes))
 
     print(f'Player 1 winning: {win1}, player 2 winning: {win2}')
 
