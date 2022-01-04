@@ -75,6 +75,7 @@ Tests are located in the `tests` subdirectory and should be used to test the exa
 |  19 |          | 0.54753s |
 |  20 | 0.07050s | 3.87139s |
 |  21 | 0.00019s | 0.03530s |
+|  22 | 0.00159s | 1.09830s |
 
 Notes:
 - Day 06, part 1 needs to be optimized to use the same algorithm as part 2 (which is highly optimized)

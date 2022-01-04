@@ -63,13 +63,13 @@ class Test_AOC2021_22:
         puzzle_input = load_input('testinput/22_1_2.txt')
         assert part2(puzzle_input) == 39
 
-    # def test_2_3(self):
-    #     """Runs the part 2 solution on the puzzle 1 larger example input,
-    #     but without the last two lines which have coordinates > 50.
-    #     """
-    #     puzzle_input = load_input('testinput/22_2_2.txt')
-    #     assert part2(puzzle_input) == 590784
+    def test_2_3(self):
+        """Runs the part 2 solution on the puzzle 1 larger example input,
+        but without the last two lines which have coordinates > 50.
+        """
+        puzzle_input = load_input('testinput/22_2_2.txt')
+        assert part2(puzzle_input) == 590784
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/22_2_1.txt')
-    #     assert part2(puzzle_input) == 2758514936282235
+    def test_2_1(self):
+        puzzle_input = load_input('testinput/22_2_1.txt')
+        assert part2(puzzle_input) == 2758514936282235
