@@ -57,6 +57,23 @@ class Cube:
     min_z: int
     max_z: int
 
+    def volume(self: 'Cube') -> int:
+        """Returns the cubic volume of the cube."""
+        return (
+            (abs(self.max_x - self.min_x) + 1) *
+            (abs(self.max_y - self.min_y) + 1) *
+            (abs(self.max_z - self.min_z) + 1)
+        )
+
+    def get_cubes(self: 'Cube') -> set[tuple[int]]:
+        """Return a set of the cube coordinates contained within the cube."""
+        return {
+            (x, y, z)
+            for x, y, z in product(range(self.min_x, self.max_x + 1),
+                                   range(self.min_y, self.max_y + 1),
+                                   range(self.min_z, self.max_z + 1))
+        }
+
 
 def overlap(a: Cube, b: Cube) -> bool:
     """Determine if two cubes overlap."""
@@ -67,22 +84,70 @@ def overlap(a: Cube, b: Cube) -> bool:
     )
 
 
+def intersection(bg: Cube, fg: Cube) -> Cube:
+    """Return the Cube resulting from the intersection of two overlapping cubes.
+
+    To calculate the On/Off state, the cubes need to be in order of appearance - background and foreground.
+    The foreground state determines the resulting state of the cube.
+    """
+    assert overlap(bg, fg) == True
+
+    # sort values on each axis and take the two middle ones to determine the overlap
+    min_x, max_x = sorted([bg.min_x, bg.max_x, fg.min_x, fg.max_x])[1:3]
+    min_y, max_y = sorted([bg.min_y, bg.max_y, fg.min_y, fg.max_y])[1:3]
+    min_z, max_z = sorted([bg.min_z, bg.max_z, fg.min_z, fg.max_z])[1:3]
+
+    # the on or off state is determined by which
+    instr = fg.instr
+
+    return Cube(instr, min_x, max_x, min_y, max_y, min_z, max_z)
+
+
+def overlay(bg_cubes: list[Cube], fg: Cube) -> set[tuple[int]]:
+    """Return set of coordinates that will be impacted (turned on, off; or overlap) between the cubes in the
+    background and new foreground cube.
+    """
+    impacted_coords = set()
+    for c in bg_cubes:
+        if overlap(c, fg):
+            impacted_coords |= intersection(c, fg).get_cubes()
+
+    return impacted_coords
+
+
+def calc_new_on(on_cubes: list[Cube], fg: Cube) -> int:
+    """Calculate how many additional cubes get turned on by overlaying a new On cube in the foreground
+    with a list of On cubes in the background.
+    """
+    overlapping_coords = overlay(on_cubes, fg)
+    return fg.volume() - len(overlapping_coords)
+
+
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
     # find the min / max for each dimension of ON instructions
     cubes = [Cube(x, *y) for x, y in puzzle_input]
     on_cubes = []
+    off_cubes = []
+    off_coords = set()
+    count_on = 0
 
     while cubes:
         a = cubes.pop(0)
         if a.instr == 'on':
+            # for an On cube, we need to add the newly turned on cubes to the number of turned on cubes
+            count_on += calc_new_on(on_cubes, a)
             on_cubes.append(a)
+            # remove the On coords from the set of turned-off coordinates
+            off_coords -= overlay(off_cubes, a)
         else:
-            for b in on_cubes:
-                if overlap(a, b):
-                    print(f'Overlapping: {a=}, {b=}')
+            # for Off cube, we need to get coordinates that overlap with previously turned on coordinates
+            # and add them to the set of turned off coordinates
+            off_coords |= overlay(on_cubes, a)
+            off_cubes.append(a)
 
-    return 1
+    # final step: subtract the remaining Off cubes from the count of On cubes
+    return count_on - len(off_coords)
 
 
 if __name__ == '__main__':
