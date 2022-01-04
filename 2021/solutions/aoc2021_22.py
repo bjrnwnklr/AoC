@@ -109,8 +109,7 @@ def part2(puzzle_input):
     cubes = [Cube(x, *y) for x, y in puzzle_input]
     resulting_cubes = []
 
-    while cubes:
-        fg = cubes.pop(0)
+    for fg in cubes:
         # print(f'Processing cube {fg}.')
         new_cubes = [
             intersection(bg, fg)
