@@ -110,15 +110,22 @@ def part2(puzzle_input):
 
     while cubes:
         fg = cubes.pop(0)
+        # print(f'Processing cube {fg}.')
         new_cubes = [
-            resulting_cubes.append(intersection(bg, fg))
+            intersection(bg, fg)
             for bg in resulting_cubes
             if overlap(bg, fg)
         ]
-        resulting_cubes.append(fg)
         if new_cubes:
             resulting_cubes.extend(new_cubes)
 
+        # print(f'Found {len(new_cubes)} overlaps: {new_cubes}')
+
+        # Do not add Off cubes to the resulting cubes as only their intersections with other cubes are relevant.
+        if fg.instr == 'on':
+            resulting_cubes.append(fg)
+
+    # print(f'Resulting cubes: {len(resulting_cubes)}. {resulting_cubes}')
     on_cubes = sum(
         x.volume() if x.instr == 'on' else -x.volume() for x in resulting_cubes
     )
