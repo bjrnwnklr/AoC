@@ -1,7 +1,7 @@
 # Load any required modules. Most commonly used:
 
 # import re
-# from collections import defaultdict
+from collections import defaultdict
 # from utils.aoctools import aoc_timer
 from heapq import heappop, heappush
 import logging
@@ -282,7 +282,7 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
     # queue = state of the burrow (which includes the cost)
     q = [start]
     seen = set()
-    target_min_cost = 1_000_000
+    distances = defaultdict(lambda: 1e09)
     while q:
         cur_state = heappop(q)
         logging.debug(f'Dijkstra: {cur_state.state()}')
@@ -295,15 +295,17 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
 
         # if we found the target, we're done
         if cur_state.state()[1] == target.state()[1]:
-            if cur_state.cost < target_min_cost:
-                target_min_cost = cur_state.cost
             logging.info(
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
 
         for pid, inc_cost, move_loc in cur_state.possible_moves():
-            heappush(q, cur_state.move_copy(pid, inc_cost, move_loc))
+            next_move = cur_state.move_copy(pid, inc_cost, move_loc)
+            if next_move.state() not in seen and next_move.cost < distances[next_move.state()[1]]:
+                distances[next_move.state()[1]] = next_move.cost
+                heappush(q, next_move)
+                # heappush(q, cur_state.move_copy(pid, inc_cost, move_loc))
 
-    return target_min_cost
+    return distances[target.state()[1]]
 
 # @aoc_timer
 
