@@ -2,7 +2,7 @@
 
 # import re
 from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from heapq import heappop, heappush
 import logging
 
@@ -231,7 +231,8 @@ class Burrow:
         return self.state() == __o.state()
 
     def __lt__(self, __o: 'Burrow') -> bool:
-        return (-len(self.locked), self.cost) < (-len(__o.locked), __o.cost)
+        # return (-len(self.locked), self.cost) < (-len(__o.locked), __o.cost)
+        return self.cost < __o.cost
 
     def __repr__(self) -> str:
         result = f'Burrow. Cost: {self.cost}\n'
@@ -276,13 +277,12 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
 
     Return the cost of the path.
     """
-    # TODO: Add another (first) measure: how many are already locked in
-    # States where more are locked in should be prioritized.
 
     # queue = state of the burrow (which includes the cost)
     q = [start]
     seen = set()
     distances = defaultdict(lambda: 1e09)
+    paths = defaultdict(list)
     while q:
         cur_state = heappop(q)
         logging.debug(f'Dijkstra: {cur_state.state()}')
@@ -302,14 +302,15 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
             next_move = cur_state.move_copy(pid, inc_cost, move_loc)
             if next_move.state() not in seen and next_move.cost < distances[next_move.state()[1]]:
                 distances[next_move.state()[1]] = next_move.cost
+                paths[next_move.state()[1]] = paths[cur_state.state()
+                                                    [1]] + [next_move.state()[1]]
                 heappush(q, next_move)
-                # heappush(q, cur_state.move_copy(pid, inc_cost, move_loc))
 
+    logging.info(f'Target path: {paths[target.state()[1]]}')
     return distances[target.state()[1]]
 
-# @aoc_timer
 
-
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
@@ -332,7 +333,7 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     # read the puzzle input
     puzzle_input = load_input('input/23.txt')
@@ -347,3 +348,10 @@ if __name__ == '__main__':
 
 # Part 1: Start: 14:15 End:
 # Part 2: Start:  End:
+
+"""
+First attempt at part 1 with Dijkstra: 15542 - answer is too high:
+
+Elapsed time to run part1: 0.50177 seconds.
+Part 1: 15542
+"""
