@@ -41,20 +41,46 @@ class Burrow:
         row 1: 4 cols:      (1, 2), (1, 4), (1, 6), (1, 8)
         row 2: 4 cols:      (2, 2), (2, 4), (2, 6), (2, 8)
         """
+        # (r, c): A, B, C, D or .
         self.grid = {
             (0, c): '.'
             for c in range(11)
         }
         # dictionary pod_id: position (id is assigned sequentially per initial state)
-        self.pods = {}
-        self.types = {}
+        self.pods = {}          # pid: position
+        self.types = {}         # pid: type (A, B, C, D)
+        self.cost = 0           # cost to achieve current state from start state
+
+        # add pod locations to grid etc
         for i, pod in enumerate(pod_locations):
+            # calculate which room (row, column) each pod is initially in
             r = 1 if i < 4 else 2
             c = ((2 * i) % 8 + 2)
             self.grid[(r, c)] = pod
-            self.pods[i] = (r, c)
+            self.pods[i] = (r, c)  # pods are numbered sequentially
             self.types[i] = pod
-        self.cost = 0
+
+        # pids that are locked in position because they are in the correct room
+        self.locked = set()
+        for pid in self.pods:
+            self.lock(pid)
+
+    def lock(self, pid: int) -> None:
+        """Check if given pod should be locked in:
+        - if they are on row 2 and in the correct room
+        - if they are on row 1 and the pod in row 2 is also correct
+
+        If yes, add to self.locked.
+        """
+        # check if in the correct row
+        if pid not in self.locked and TARGET_ROOM[self.types[pid]] == self.pods[pid][1]:
+            match self.pods[pid]:
+                case (2, _):
+                    self.locked.add(pid)
+                case (1, c):
+                    other_pod = self.grid[(2, c)]
+                    if TARGET_ROOM[other_pod] == c:
+                        self.locked.add(pid)
 
     def state(self) -> tuple[int, str]:
         """Returns a tuple consisting of:
@@ -90,15 +116,24 @@ class Burrow:
             pod_type = self.types[pid]
             move_cost = COST[pod_type]
             curr_loc = self.pods[pid]
+            # first, check if the pod is already in the right position
+            # if it is, it is skipped from further moves
+            if pid in self.locked:
+                continue
+
             # check which hallway positions from current location are free
+            # If we reached the left wall (0,0), we will have to subtract 1 from left, which simulates
+            # the wall at (0, -1) as the last element checked
+            left = 0
             for left in range(curr_loc[1] - 1, -1, -1):
                 if self.grid[(0, left)] != '.':
                     break
-            # If we reached the left wall (0,0), we will have to subtract 1 from left, which simulates
-            # the wall at (0, -1) as the last element checked
+
             if left == 0:
                 left = -1
             left_range = range(left + 1, curr_loc[1])
+
+            right = 10
             for right in range(curr_loc[1] + 1, 11):
                 if self.grid[(0, right)] != '.':
                     break
@@ -162,13 +197,14 @@ class Burrow:
         instance, representing the new state after the move. Add the inc_cost to the current cost.
         """
         # create an empty burrow
-        logging.debug(f'Move_copy: {pid=}, {inc_cost=}, {target_location=}')
+        # logging.debug(f'Move_copy: {pid=}, {inc_cost=}, {target_location=}')
         b_copy = Burrow()
         # now copy the grid, pods and types dictionaries
         # copy is fine since the values of the dict are immutable tuples
         b_copy.grid = self.grid.copy()
         b_copy.pods = self.pods.copy()
         b_copy.types = self.types.copy()
+        b_copy.locked = self.locked.copy()
         b_copy.cost = self.cost
 
         # store the old position
@@ -182,6 +218,9 @@ class Burrow:
         # update the cost with the incremental cost
         b_copy.cost += inc_cost
 
+        # check if the pod is in the correc room and should be locked
+        b_copy.lock(pid)
+
         # return the new burrow instance
         return b_copy
 
@@ -189,7 +228,7 @@ class Burrow:
         return self.state() == __o.state()
 
     def __lt__(self, __o: 'Burrow') -> bool:
-        return self.cost < __o.cost
+        return (-len(self.locked), self.cost) < (-len(__o.locked), __o.cost)
 
     def __repr__(self) -> str:
         result = f'Burrow. Cost: {self.cost}\n'
@@ -234,10 +273,12 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
 
     Return the cost of the path.
     """
+    # TODO: Add another (first) measure: how many are already locked in
+    # States where more are locked in should be prioritized.
+
     # queue = state of the burrow (which includes the cost)
     q = [start]
     seen = set()
-    cur_cost = 0
     while q:
         cur_state = heappop(q)
         logging.debug(f'Dijkstra: {cur_state.state()}')
