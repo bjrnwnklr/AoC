@@ -1,1 +1,6 @@
-REPLACE ME WITH THE ACTUAL EXAMPLE!
+#############
+#...........#
+###B#C#B#D###
+  #A#D#C#A#
+  #########
+  
