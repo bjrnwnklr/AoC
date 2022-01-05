@@ -103,6 +103,59 @@ class Burrow:
 
         return movers
 
+    def possible_moves(self, id: int) -> list[tuple[tuple[int], int]]:
+        """Return a list of possible (target location, cost) tuples for a given pod."""
+        moves = []
+        curr_loc = self.pods[id]
+        # check which hallway positions from current location are free
+        for left in range(curr_loc[1] - 1, -1, -1):
+            if self.grid[left] != '.':
+                break
+        left_range = range(left + 1, curr_loc[1])
+        for right in range(curr_loc[1] + 1, 11):
+            if self.grid[right] != '.':
+                break
+        right_range = range(curr_loc + 1, right)
+        match curr_loc:
+            case (1, c):
+                # pod is in a room, move to the hallway
+                # Don't stop in front of any rooms (2, 4, 6, 8 columns)
+                for x in list(left_range) + list(right_range):
+                    if x not in [2, 4, 6, 8]:
+                        # calculate the cost - add 1 for the step into the hallway
+                        cost = abs(c - x) + 1
+                        moves.append(((0, x), cost))
+            case (2, c):
+                if self.grid[(1, c)] == '.':
+                    # pod is in a 2nd layer room, move to the hallway
+                    # Don't stop in front of any rooms (2, 4, 6, 8 columns)
+                    for x in list(left_range) + list(right_range):
+                        if x not in [2, 4, 6, 8]:
+                            # calculate the cost - add 2 for the step into the hallway
+                            cost = abs(c - x) + 2
+                            moves.append(((0, x), cost))
+            case (0, c):
+                # TODO: CONTINUE HERE!
+                # If a pod is in the hallway, check if a slot in the target room is available
+                # and if another pod is in there, if it is of the same kind. Then check if the path
+                # to the target room is free.
+                pod_type = self.pods[id]
+                target_col = self.target_room[pod_type]
+                # First, check if the target room is free
+                if ((self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == '.') or
+                        (self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == pod_type)):
+                    # calculate if the path to the target room is free
+                    if c < target_col:
+                        target_path = all(
+                            self.grid[(0, x)] == '.' for x in range(c + 1, target_col + 1))
+                    else:
+                        target_path = all(
+                            self.grid[(0, x)] == '.' for x in range(target_col, c))
+
+                    # Pod can only move if target room is free and the path is free.
+                    if target_path:
+                        movers.append(id)
+
     def __eq__(self, __o: 'Burrow') -> bool:
         return self.state() == __o.state()
 
