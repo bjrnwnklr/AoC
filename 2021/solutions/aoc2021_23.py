@@ -124,23 +124,19 @@ class Burrow:
             # check which hallway positions from current location are free
             # If we reached the left wall (0,0), we will have to subtract 1 from left, which simulates
             # the wall at (0, -1) as the last element checked
-            left = 0
+            left = -1
             for left in range(curr_loc[1] - 1, -1, -1):
                 if self.grid[(0, left)] != '.':
                     break
 
-            if left == 0:
-                left = -1
             left_range = range(left + 1, curr_loc[1])
 
-            right = 10
+            right = 11
             for right in range(curr_loc[1] + 1, 11):
                 if self.grid[(0, right)] != '.':
                     break
             # If we reached the right wall (0,10), we will have to add to right, which simulates
             # the wall at (0, 11) as the last element checked
-            if right == 10:
-                right = 11
             right_range = range(curr_loc[1] + 1, right)
             match curr_loc:
                 case (1, c):
@@ -221,6 +217,13 @@ class Burrow:
         # check if the pod is in the correc room and should be locked
         b_copy.lock(pid)
 
+        # check if any pods got lost:
+        s = b_copy.state()[1]
+        for x in TARGET_ROOM:
+            if s.count(x) != 2:
+                raise ValueError(
+                    f'State is missing pods: FROM: {self.state()}, MOVE {pid}, {old_pos} {target_location} TO {b_copy.state()}, {b_copy.grid}, {b_copy.pods}')
+
         # return the new burrow instance
         return b_copy
 
@@ -279,6 +282,7 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
     # queue = state of the burrow (which includes the cost)
     q = [start]
     seen = set()
+    target_min_cost = 1_000_000
     while q:
         cur_state = heappop(q)
         logging.debug(f'Dijkstra: {cur_state.state()}')
@@ -290,14 +294,16 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
         seen.add(cur_state.state())
 
         # if we found the target, we're done
-        if cur_state == target:
-            logging.info(f'Target reached, cost {cur_state.cost}.')
-            break
+        if cur_state.state()[1] == target.state()[1]:
+            if cur_state.cost < target_min_cost:
+                target_min_cost = cur_state.cost
+            logging.info(
+                f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
 
         for pid, inc_cost, move_loc in cur_state.possible_moves():
             heappush(q, cur_state.move_copy(pid, inc_cost, move_loc))
 
-    return cur_state.cost
+    return target_min_cost
 
 # @aoc_timer
 
