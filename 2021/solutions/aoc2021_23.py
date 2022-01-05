@@ -149,6 +149,7 @@ class Burrow:
                             moves.append((pid, cost, (0, x)))
                     # TODO: Add option to directly move to a new room (although that is covered
                     # by two consecutive moves, one into the hallway and another to the room)
+
                 case (2, c):
                     if self.grid[(1, c)] == '.':
                         # pod is in a 2nd layer room, move to the hallway
@@ -158,33 +159,47 @@ class Burrow:
                                 # calculate the cost - add 2 for the step into the hallway
                                 cost = (abs(c - x) + 2) * move_cost
                                 moves.append((pid, cost, (0, x)))
-                case (0, c):
-                    # If a pod is in the hallway, check if a slot in the target room is available
-                    # and if another pod is in there, if it is of the same kind. Then check if the path
-                    # to the target room is free.
-                    target_col = TARGET_ROOM[pod_type]
-                    # First, check if the target room is free
-                    if ((self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == '.') or
-                            (self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == pod_type)):
-                        # calculate if the path to the target room is free
-                        if c < target_col:
-                            target_path = all(
-                                self.grid[(0, x)] == '.' for x in range(c + 1, target_col + 1))
-                        else:
-                            target_path = all(
-                                self.grid[(0, x)] == '.' for x in range(target_col, c))
 
-                        # Pod can only move if target room is free and the path is free.
-                        if target_path:
-                            if self.grid[(2, target_col)] == '.':
-                                room_cost = 2
-                                row = 2
-                            else:
-                                room_cost = 1
-                                row = 1
-                            cost = (abs(c - target_col) +
-                                    room_cost) * move_cost
-                            moves.append((pid, cost, (row, target_col)))
+            # FOR ALL CASES; check if we can move directly to the correct room (from another room
+            # or hallway)
+            # Check if a slot in the target room is available and if another pod is in there,
+            # if it is of the same kind. Then check if the path to the target room is free.
+            target_col = TARGET_ROOM[pod_type]
+            # First, check if the target room is free
+            if ((self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == '.') or
+                    (self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == pod_type)):
+                # calculate if the path to the target room is free
+                c = curr_loc[1]
+                if c < target_col:
+                    target_path = all(
+                        self.grid[(0, x)] == '.' for x in range(c + 1, target_col + 1))
+                else:
+                    target_path = all(
+                        self.grid[(0, x)] == '.' for x in range(target_col, c))
+
+                # check where we are - hallway, room 1 or room 2:
+                match curr_loc:
+                    case (0, _):
+                        room_cost = 0
+                    case (1, _):
+                        room_cost = 1
+                    case (2, c):
+                        if self.grid[(1, c)] == '.':
+                            room_cost = 2
+                        else:
+                            room_cost = 0
+                            target_path = False
+                # Pod can only move if target room is free and the path is free.
+                if target_path:
+                    if self.grid[(2, target_col)] == '.':
+                        room_cost += 2
+                        row = 2
+                    else:
+                        room_cost += 1
+                        row = 1
+                    cost = (abs(c - target_col) +
+                            room_cost) * move_cost
+                    moves.append((pid, cost, (row, target_col)))
 
         return moves
 
@@ -231,8 +246,8 @@ class Burrow:
         return self.state() == __o.state()
 
     def __lt__(self, __o: 'Burrow') -> bool:
-        # return (-len(self.locked), self.cost) < (-len(__o.locked), __o.cost)
-        return self.cost < __o.cost
+        return (-len(self.locked), self.cost) < (-len(__o.locked), __o.cost)
+        # return self.cost < __o.cost
 
     def __repr__(self) -> str:
         result = f'Burrow. Cost: {self.cost}\n'
