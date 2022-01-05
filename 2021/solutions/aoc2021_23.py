@@ -124,20 +124,26 @@ class Burrow:
             # check which hallway positions from current location are free
             # If we reached the left wall (0,0), we will have to subtract 1 from left, which simulates
             # the wall at (0, -1) as the last element checked
-            left = -1
+            left_move = 0
             for left in range(curr_loc[1] - 1, -1, -1):
                 if self.grid[(0, left)] != '.':
+                    left_move = left + 1
                     break
+                if left == 0:
+                    left_move = 0
 
-            left_range = range(left + 1, curr_loc[1])
+            left_range = range(left_move, curr_loc[1])
 
-            right = 11
+            right_move = 11
             for right in range(curr_loc[1] + 1, 11):
                 if self.grid[(0, right)] != '.':
+                    right_move = right
                     break
+                if right == 10:
+                    right_move = 11
             # If we reached the right wall (0,10), we will have to add to right, which simulates
             # the wall at (0, 11) as the last element checked
-            right_range = range(curr_loc[1] + 1, right)
+            right_range = range(curr_loc[1] + 1, right_move)
             match curr_loc:
                 case (1, c):
                     # pod is in a room, move to the hallway
@@ -315,7 +321,7 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
 
         for pid, inc_cost, move_loc in cur_state.possible_moves():
             next_move = cur_state.move_copy(pid, inc_cost, move_loc)
-            if next_move.state() not in seen and next_move.cost < distances[next_move.state()[1]]:
+            if next_move.state() not in seen and next_move.cost <= distances[next_move.state()[1]]:
                 distances[next_move.state()[1]] = next_move.cost
                 paths[next_move.state()[1]] = paths[cur_state.state()
                                                     [1]] + [next_move.state()[1]]
@@ -369,4 +375,6 @@ First attempt at part 1 with Dijkstra: 15542 - answer is too high:
 
 Elapsed time to run part1: 0.50177 seconds.
 Part 1: 15542
+
+Correct solution is 15516 as per another solution.
 """
