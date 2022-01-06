@@ -100,7 +100,7 @@ class Burrow:
         result = ''.join(self.grid[(0, c)] for c in range(11))
         result += ''.join(self.grid[(1, c)] for c in range(2, 9, 2))
         result += ''.join(self.grid[(2, c)] for c in range(2, 9, 2))
-        return (self.cost, result)
+        return result
 
     def possible_moves(self) -> list[tuple[int, int, tuple[int]]]:
         """Return a list of possible moves as tuples (id, cost, target location,) for all pods.
@@ -255,7 +255,7 @@ class Burrow:
         b_copy.lock(pid)
 
         # check if any pods got lost:
-        s = b_copy.state()[1]
+        s = b_copy.state()
         for x in TARGET_ROOM:
             if s.count(x) != 2:
                 raise ValueError(
@@ -331,20 +331,20 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
         seen.add(cur_state.state())
 
         # if we found the target, we're done
-        if cur_state.state()[1] == target.state()[1]:
+        if cur_state.state() == target.state():
             logging.info(
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
 
         for pid, inc_cost, move_loc in cur_state.possible_moves():
             next_move = cur_state.move_copy(pid, inc_cost, move_loc)
-            if next_move.state() not in seen and next_move.cost < distances[next_move.state()[1]]:
-                distances[next_move.state()[1]] = next_move.cost
-                paths[next_move.state()[1]] = paths[cur_state.state()
-                                                    [1]] + [next_move.state()[1]]
+            if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
+                distances[next_move.state()] = next_move.cost
+                paths[next_move.state()] = paths[cur_state.state()] + \
+                    [next_move.state()]
                 heappush(q, next_move)
 
-    logging.info(f'Target path: {paths[target.state()[1]]}')
-    return distances[target.state()[1]]
+    logging.info(f'Target path: {paths[target.state()]}')
+    return distances[target.state()]
 
 
 @aoc_timer
