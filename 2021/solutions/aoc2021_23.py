@@ -132,13 +132,6 @@ class Burrow:
                 else:
                     left += 1
                     break
-            # left_move = 0
-            # for left in range(curr_loc[1] - 1, -1, -1):
-            #     if self.grid[(0, left)] != '.':
-            #         left_move = left + 1
-            #         break
-            #     if left == 0:
-            #         left_move = 0
 
             left_range = range(left, curr_loc[1])
 
@@ -150,13 +143,6 @@ class Burrow:
                 else:
                     right -= 1
                     break
-            # right_move = 11
-            # for right in range(curr_loc[1] + 1, 11):
-            #     if self.grid[(0, right)] != '.':
-            #         right_move = right
-            #         break
-            #     if right == 10:
-            #         right_move = 11
             # If we reached the right wall (0,10), we will have to add to right, which simulates
             # the wall at (0, 11) as the last element checked
             right_range = range(curr_loc[1] + 1, right)
@@ -169,8 +155,6 @@ class Burrow:
                             # calculate the cost - add 1 for the step into the hallway
                             cost = (abs(c - x) + 1) * move_cost
                             moves.append((pid, cost, (0, x)))
-                    # TODO: Add option to directly move to a new room (although that is covered
-                    # by two consecutive moves, one into the hallway and another to the room)
 
                 case (2, c):
                     if self.grid[(1, c)] == '.':
@@ -254,13 +238,6 @@ class Burrow:
         # check if the pod is in the correc room and should be locked
         b_copy.lock(pid)
 
-        # check if any pods got lost:
-        s = b_copy.state()
-        for x in TARGET_ROOM:
-            if s.count(x) != 2:
-                raise ValueError(
-                    f'State is missing pods: FROM: {self.state()}, MOVE {pid}, {old_pos} {target_location} TO {b_copy.state()}, {b_copy.grid}, {b_copy.pods}')
-
         # return the new burrow instance
         return b_copy
 
@@ -268,8 +245,8 @@ class Burrow:
         return self.state() == __o.state()
 
     def __lt__(self, __o: 'Burrow') -> bool:
-        return (-len(self.locked), self.cost) < (-len(__o.locked), __o.cost)
-        # return self.cost < __o.cost
+        # return (-len(self.locked), self.cost) < (-len(__o.locked), __o.cost)
+        return self.cost < __o.cost
 
     def __repr__(self) -> str:
         result = f'Burrow. Cost: {self.cost}\n'
@@ -334,6 +311,7 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
         if cur_state.state() == target.state():
             logging.info(
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
+            return distances[target.state()]
 
         for pid, inc_cost, move_loc in cur_state.possible_moves():
             next_move = cur_state.move_copy(pid, inc_cost, move_loc)
