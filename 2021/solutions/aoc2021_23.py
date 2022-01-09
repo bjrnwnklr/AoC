@@ -5,6 +5,7 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass
 from heapq import heappop, heappush
+import copy
 
 from utils.aoctools import aoc_timer
 
@@ -80,10 +81,10 @@ class Burrow:
                     # check if there is any other pod further down and of the same (correct) type
                     for op in self.pods.values():
                         if (op.pos[1] == c and          # same column
-                                op != p and             # not the same pod
-                                # in a row further down
-                                op.pos[0] > p.pos[0] and
-                                op.type == p.type       # same type as p
+                                    op != p and             # not the same pod
+                                    # in a row further down
+                                    op.pos[0] > p.pos[0] and
+                                    op.type == p.type       # same type as p
                                 ):
                             p.locked = True
 
@@ -116,6 +117,9 @@ class Burrow:
         steps = 0
         cost_factor = COST[p.type]
         other_pod_locations = {op.pos for op in self.pods.values() if op != p}
+        # first check if the actual target location is not occupied!
+        if target_loc in other_pod_locations:
+            return 0
         # check hallway by looking at each column location
         # sort the columns of the pod and target location so we can build a range for each location to check
         sorted_locations = sorted([p.pos, target_loc], key=lambda x: x[1])
@@ -130,7 +134,7 @@ class Burrow:
         match p.pos:
             case (1, _):
                 steps += 1
-            case (r, c):
+            case (r, c) if r > 1:
                 if any((nr, c) in other_pod_locations for nr in range(1, r)):
                     return 0
                 else:
@@ -139,7 +143,7 @@ class Burrow:
         match target_loc:
             case (1, _):
                 steps += 1
-            case (r, c):
+            case (r, c) if r > 1:
                 if any((nr, c) in other_pod_locations for nr in range(1, r)):
                     return 0
                 else:
@@ -160,7 +164,6 @@ class Burrow:
         """
         moves = []
         for p in self.pods.values():
-            curr_loc = p.pos
             # first, check if the pod is already in the right position
             # if it is, it is skipped from further moves
             if p.locked:
@@ -173,7 +176,7 @@ class Burrow:
             target_pos = None
             # check occupied slots in the target room
             occupied_slots = [
-                op for op in self.pods.values() if op.pos[1] == target_col]
+                op for op in self.pods.values() if op.pos[1] == target_col and op != p]
 
             match len(occupied_slots):
                 case 0:
@@ -187,7 +190,7 @@ class Burrow:
                     # none in row 2.
                     if op.pos[0] != 2:
                         raise AssertionError(
-                            f'Pod {op} not expected in location {op.pos}.')
+                            f'Pod {op} not expected in location {op.pos}.\n{self.pods=}\n{self.state()=}\n{p=}')
                     if op.type == p.type:
                         target_pos = (1, target_col)
                 case 2:
@@ -305,24 +308,21 @@ class Burrow:
         instance, representing the new state after the move. Add the inc_cost to the current cost.
         """
         # create an empty burrow
-        logging.debug(f'Move_copy: {p=}, {inc_cost=}, {target_location=}')
+        # logging.debug(f'Move_copy: {p=}, {inc_cost=}, {target_location=}')
         b_copy = Burrow()
         # now copy the grid, pods and types dictionaries
         # copy is fine since the values of the dict are immutable tuples
         # FIXME: Updating the location OVERWRITES THE POD INSTANCES INSTEAD OF COPYING THEM
         # We need to deep copy or copy the pods themselves :(
-        b_copy.pods = self.pods.copy()
-        b_copy.cost = self.cost
+        b_copy = copy.deepcopy(self)
 
         # update the new position with the pod
-        new_pod = p.copy()
-        new_pod.pos = target_location
-        b_copy.pods[p.pid] = new_pod
+        b_copy.pods[p.pid].pos = target_location
 
         # update the cost with the incremental cost
         b_copy.cost += inc_cost
 
-        # check if the pod is in the correc room and should be locked
+        # check if the pod is in the correct room and should be locked
         b_copy.lock(p)
 
         # return the new burrow instance
@@ -381,6 +381,11 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
 
         for p, inc_cost, move_loc in cur_state.possible_moves():
             next_move = cur_state.move_copy(p, inc_cost, move_loc)
+            # DEBUG STUFF: If we're missing an element, dump the data and throw and exception.
+            if next_move.state().count('.') > 11:
+                raise ValueError(
+                    f'Missing a pod! {next_move.state()}\n{next_move=}\n{next_move.pods=}\nLast move: {p=}, {inc_cost=}, {move_loc=}'
+                )
             if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
                 distances[next_move.state()] = next_move.cost
                 paths[next_move.state()] = paths[cur_state.state()] + \
