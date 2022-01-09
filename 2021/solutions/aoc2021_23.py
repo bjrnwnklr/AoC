@@ -59,8 +59,8 @@ class Burrow:
             self.pods[i] = Pod(pod, (r, c))  # pods are numbered sequentially
 
         # pids that are locked in position because they are in the correct room
-        for pid in self.pods:
-            self.lock(pid)
+        for p in self.pods.values():
+            self.lock(p)
 
     def lock(self, p: Pod) -> None:
         """Check if given pod should be locked in:
@@ -78,17 +78,15 @@ class Burrow:
                     # check if there is any other pod further down and of the same (correct) type
                     for op in self.pods.values():
                         if (op.pos[1] == c and          # same column
-                                op != p and             # not the same pod
-                                # in a row further down
-                                op.pos[0] > p.pos[0] and
-                                op.type == p.type       # same type as p
+                            op != p and             # not the same pod
+                            # in a row further down
+                                    op.pos[0] > p.pos[0] and
+                                    op.type == p.type       # same type as p
                             ):
                             p.locked = True
 
     def state(self) -> tuple[int, str]:
-        """Returns a tuple consisting of:
-        - current cost to reach this state, 
-        - string representation of the current state, which 
+        """Returns a string representation of the current state, which 
         can be used to compare to other burrow states.
 
         State is represented by strings with the following format:
@@ -98,12 +96,18 @@ class Burrow:
         Each character is either ['A', 'B', 'C', 'D'] or '.' for empty spaces.
 
         Example:
-        (1800, '...........ABCDABCD') - (cost, target state)
+        '...........ABCDABCD' - target state
         """
-        result = ''.join(self.grid[(0, c)] for c in range(11))
-        result += ''.join(self.grid[(1, c)] for c in range(2, 9, 2))
-        result += ''.join(self.grid[(2, c)] for c in range(2, 9, 2))
-        return result
+        result = [
+            '.'] * 19  # create a 11 + 4 + 4 list of dots, then add individual locations
+        for p in self.pods.values():
+            match p.pos:
+                case (0, c):
+                    result[c] = p.type
+                case (r, c):
+                    str_pos = 10 + (r - 1) * 4 + c // 2
+                    result[str_pos] = p.type
+        return ''.join(result)
 
     def possible_moves(self) -> list[tuple[int, int, tuple[int]]]:
         """Return a list of possible moves as tuples (id, cost, target location,) for all pods.
