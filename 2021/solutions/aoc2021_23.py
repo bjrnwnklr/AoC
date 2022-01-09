@@ -1,10 +1,12 @@
 # Load any required modules. Most commonly used:
 
 # import re
-from collections import defaultdict
-from utils.aoctools import aoc_timer
-from heapq import heappop, heappush
 import logging
+from collections import defaultdict
+from dataclasses import dataclass
+from heapq import heappop, heappush
+
+from utils.aoctools import aoc_timer
 
 COST = {
     'A': 1,
@@ -21,12 +23,16 @@ TARGET_ROOM = {
 }
 
 
+@dataclass
+class Pod:
+    type: str
+    pos: tuple[int]
+    locked: bool = False
+
+
 class Burrow:
     """Defines a state of the burrow at any given time.
     State is defined by the location of each amphipod.
-
-    TODO: Might have to add the incurred cost to the state to avoid comparing
-    cases where a different 'A' moved to the same location (crossover of cases).
     """
 
     def __init__(self, pod_locations: list[str] = []) -> None:
