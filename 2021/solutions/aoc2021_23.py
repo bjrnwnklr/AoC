@@ -25,6 +25,7 @@ TARGET_ROOM = {
 
 @dataclass
 class Pod:
+    pid: int
     type: str
     pos: tuple[int]
     locked: bool = False
@@ -56,7 +57,8 @@ class Burrow:
             # calculate which room (row, column) each pod is initially in
             r = (i // 4) + 1  # 1 if i < 4 else 2
             c = ((2 * i) % 8 + 2)
-            self.pods[i] = Pod(pod, (r, c))  # pods are numbered sequentially
+            # pods are numbered sequentially
+            self.pods[i] = Pod(i, pod, (r, c))
 
         # pids that are locked in position because they are in the correct room
         for p in self.pods.values():
@@ -78,11 +80,11 @@ class Burrow:
                     # check if there is any other pod further down and of the same (correct) type
                     for op in self.pods.values():
                         if (op.pos[1] == c and          # same column
-                                    op != p and             # not the same pod
-                                    # in a row further down
+                            op != p and             # not the same pod
+                            # in a row further down
                                     op.pos[0] > p.pos[0] and
                                     op.type == p.type       # same type as p
-                                ):
+                            ):
                             p.locked = True
 
     def state(self) -> tuple[int, str]:
@@ -297,7 +299,7 @@ class Burrow:
 
         return moves
 
-    def move_copy(self, pid: int, inc_cost: int, target_location: tuple[int]) -> 'Burrow':
+    def move_copy(self, p: Pod, inc_cost: int, target_location: tuple[int]) -> 'Burrow':
         """Move a pod to the specified target location and return a new burrow
         instance, representing the new state after the move. Add the inc_cost to the current cost.
         """
@@ -306,25 +308,17 @@ class Burrow:
         b_copy = Burrow()
         # now copy the grid, pods and types dictionaries
         # copy is fine since the values of the dict are immutable tuples
-        b_copy.grid = self.grid.copy()
         b_copy.pods = self.pods.copy()
-        b_copy.types = self.types.copy()
-        b_copy.locked = self.locked.copy()
         b_copy.cost = self.cost
 
-        # store the old position
-        old_pos = self.pods[pid]
         # update the new position with the pod
-        b_copy.pods[pid] = target_location
-        b_copy.grid[target_location] = self.types[pid]
-        # update the old position with a '.'
-        b_copy.grid[old_pos] = '.'
+        b_copy.pods[p.pid] = target_location
 
         # update the cost with the incremental cost
         b_copy.cost += inc_cost
 
         # check if the pod is in the correc room and should be locked
-        b_copy.lock(pid)
+        b_copy.lock(p)
 
         # return the new burrow instance
         return b_copy
