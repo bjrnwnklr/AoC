@@ -47,46 +47,43 @@ class Burrow:
         row 1: 4 cols:      (1, 2), (1, 4), (1, 6), (1, 8)
         row 2: 4 cols:      (2, 2), (2, 4), (2, 6), (2, 8)
         """
-        # (r, c): A, B, C, D or .
-        self.grid = {
-            (0, c): '.'
-            for c in range(11)
-        }
         # dictionary pod_id: position (id is assigned sequentially per initial state)
         self.pods = {}          # pid: position
-        self.types = {}         # pid: type (A, B, C, D)
         self.cost = 0           # cost to achieve current state from start state
 
         # add pod locations to grid etc
         for i, pod in enumerate(pod_locations):
             # calculate which room (row, column) each pod is initially in
-            r = 1 if i < 4 else 2
+            r = (i // 4) + 1  # 1 if i < 4 else 2
             c = ((2 * i) % 8 + 2)
-            self.grid[(r, c)] = pod
-            self.pods[i] = (r, c)  # pods are numbered sequentially
-            self.types[i] = pod
+            self.pods[i] = Pod(pod, (r, c))  # pods are numbered sequentially
 
         # pids that are locked in position because they are in the correct room
-        self.locked = set()
         for pid in self.pods:
             self.lock(pid)
 
-    def lock(self, pid: int) -> None:
+    def lock(self, p: Pod) -> None:
         """Check if given pod should be locked in:
         - if they are on row 2 and in the correct room
         - if they are on row 1 and the pod in row 2 is also correct
 
         If yes, add to self.locked.
         """
-        # check if in the correct row
-        if pid not in self.locked and TARGET_ROOM[self.types[pid]] == self.pods[pid][1]:
-            match self.pods[pid]:
+        # check if in the correct column and not locked already
+        if not p.locked and TARGET_ROOM[p.type] == p.pos[1]:
+            match p.pos:
                 case (2, _):
-                    self.locked.add(pid)
+                    p.locked = True
                 case (1, c):
-                    other_pod = self.grid[(2, c)]
-                    if TARGET_ROOM[other_pod] == c:
-                        self.locked.add(pid)
+                    # check if there is any other pod further down and of the same (correct) type
+                    for op in self.pods.values():
+                        if (op.pos[1] == c and          # same column
+                                op != p and             # not the same pod
+                                # in a row further down
+                                op.pos[0] > p.pos[0] and
+                                op.type == p.type       # same type as p
+                            ):
+                            p.locked = True
 
     def state(self) -> tuple[int, str]:
         """Returns a tuple consisting of:
