@@ -80,11 +80,11 @@ class Burrow:
                     # check if there is any other pod further down and of the same (correct) type
                     for op in self.pods.values():
                         if (op.pos[1] == c and          # same column
-                            op != p and             # not the same pod
-                            # in a row further down
-                                    op.pos[0] > p.pos[0] and
-                                    op.type == p.type       # same type as p
-                            ):
+                                op != p and             # not the same pod
+                                # in a row further down
+                                op.pos[0] > p.pos[0] and
+                                op.type == p.type       # same type as p
+                                ):
                             p.locked = True
 
     def state(self) -> tuple[int, str]:
@@ -118,13 +118,14 @@ class Burrow:
         other_pod_locations = {op.pos for op in self.pods.values() if op != p}
         # check hallway by looking at each column location
         # sort the columns of the pod and target location so we can build a range for each location to check
-        sorted_locations = sorted(p.pos, target_loc, key=lambda x: x[1])
-        hallway_path = range(sorted_locations[0], sorted_locations[1] + 1)
+        sorted_locations = sorted([p.pos, target_loc], key=lambda x: x[1])
+        hallway_path = range(
+            sorted_locations[0][0], sorted_locations[1][0] + 1)
         # if any other pod in between pod and target location, stop and return 0
         if any((0, c) in other_pod_locations for c in hallway_path):
             return 0
         else:
-            steps += sorted_locations[1] - sorted_locations[0]
+            steps += sorted_locations[1][0] - sorted_locations[0][0]
         # check room where pod is (if it is in a room)
         match p.pos:
             case (1, _):
@@ -205,7 +206,7 @@ class Burrow:
                     if c not in [2, 4, 6, 8]:
                         cost = self.moving_cost(p, (0, c))
                         if cost != 0:
-                            moves.append((p, cost, target_pos))
+                            moves.append((p, cost, (0, c)))
 
             # OLD CODE
 
@@ -304,15 +305,17 @@ class Burrow:
         instance, representing the new state after the move. Add the inc_cost to the current cost.
         """
         # create an empty burrow
-        # logging.debug(f'Move_copy: {pid=}, {inc_cost=}, {target_location=}')
+        logging.debug(f'Move_copy: {p=}, {inc_cost=}, {target_location=}')
         b_copy = Burrow()
         # now copy the grid, pods and types dictionaries
         # copy is fine since the values of the dict are immutable tuples
+        # FIXME: Updating the location OVERWRITES THE POD INSTANCES INSTEAD OF COPYING THEM
+        # We need to deep copy or copy the pods themselves :(
         b_copy.pods = self.pods.copy()
         b_copy.cost = self.cost
 
         # update the new position with the pod
-        b_copy.pods[p.pid] = target_location
+        b_copy.pods[p.pid].pos = target_location
 
         # update the cost with the incremental cost
         b_copy.cost += inc_cost
@@ -374,8 +377,8 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
             return distances[target.state()]
 
-        for pid, inc_cost, move_loc in cur_state.possible_moves():
-            next_move = cur_state.move_copy(pid, inc_cost, move_loc)
+        for p, inc_cost, move_loc in cur_state.possible_moves():
+            next_move = cur_state.move_copy(p, inc_cost, move_loc)
             if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
                 distances[next_move.state()] = next_move.cost
                 paths[next_move.state()] = paths[cur_state.state()] + \
