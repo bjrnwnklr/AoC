@@ -315,7 +315,9 @@ class Burrow:
         b_copy.cost = self.cost
 
         # update the new position with the pod
-        b_copy.pods[p.pid].pos = target_location
+        new_pod = p.copy()
+        new_pod.pos = target_location
+        b_copy.pods[p.pid] = new_pod
 
         # update the cost with the incremental cost
         b_copy.cost += inc_cost
