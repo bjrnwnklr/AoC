@@ -124,12 +124,12 @@ class Burrow:
         # sort the columns of the pod and target location so we can build a range for each location to check
         sorted_locations = sorted([p.pos, target_loc], key=lambda x: x[1])
         hallway_path = range(
-            sorted_locations[0][0], sorted_locations[1][0] + 1)
+            sorted_locations[0][1], sorted_locations[1][1] + 1)
         # if any other pod in between pod and target location, stop and return 0
         if any((0, c) in other_pod_locations for c in hallway_path):
             return 0
         else:
-            steps += sorted_locations[1][0] - sorted_locations[0][0]
+            steps += sorted_locations[1][1] - sorted_locations[0][1]
         # check room where pod is (if it is in a room)
         match p.pos:
             case (1, _):
@@ -377,6 +377,7 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
         if cur_state.state() == target.state():
             logging.info(
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
+            logging.info(f'Target path: {paths[target.state()]}')
             return distances[target.state()]
 
         for p, inc_cost, move_loc in cur_state.possible_moves():
@@ -417,7 +418,7 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     # read the puzzle input
     puzzle_input = load_input('input/23.txt')
