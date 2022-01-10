@@ -315,15 +315,15 @@ class Burrow:
         # FIXME: Updating the location OVERWRITES THE POD INSTANCES INSTEAD OF COPYING THEM
         # We need to deep copy or copy the pods themselves :(
         b_copy = copy.deepcopy(self)
-
+        new_p = b_copy.pods[p.pid]
         # update the new position with the pod
-        b_copy.pods[p.pid].pos = target_location
+        new_p.pos = target_location
 
         # update the cost with the incremental cost
         b_copy.cost += inc_cost
 
         # check if the pod is in the correct room and should be locked
-        b_copy.lock(p)
+        b_copy.lock(new_p)
 
         # return the new burrow instance
         return b_copy
