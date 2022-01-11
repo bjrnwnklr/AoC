@@ -39,3 +39,31 @@ INFO:root:Number of states processed: steps=90270
 Elapsed time to run part1: 55.59248 seconds.
 Part 1: 15516
 Part 2: 1
+
+1623 steps per second.
+
+Original solution uses less steps and is considerably faster:
+
+INFO:root:Target reached: ...........ABCDABCD, cost 15516.
+'A..........D.BCBADC', 
+'AA.........D.BCB.DC', 
+'AA.........D..CBBDC', 
+'AA...C.....D...BBDC', 
+'AA...C.D...D...BB.C', 
+'AA.....D...D...BBCC', 
+'AA...D.D.......BBCC', 
+'AA.B.D.D........BCC', 
+'A..B.D.D.......ABCC', 
+'...B.D.D...A...ABCC', 
+'.....D.D...AB..ABCC', 
+'.....D.D.C.AB..ABC.', 
+'.....D...C.AB..ABCD', 
+'.....D.....ABC.ABCD', 
+'...........ABCDABCD'
+
+INFO:root:Number of states processed: steps=24549
+Elapsed time to run part1: 3.30176 seconds.
+Part 1: 15516
+Part 2: 1
+
+7435 steps per second.
