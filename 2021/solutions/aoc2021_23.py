@@ -81,11 +81,11 @@ class Burrow:
                     # check if there is any other pod further down and of the same (correct) type
                     for op in self.pods.values():
                         if (op.pos[1] == c and          # same column
-                                    op != p and             # not the same pod
-                                    # in a row further down
+                            op != p and             # not the same pod
+                            # in a row further down
                                     op.pos[0] > p.pos[0] and
                                     op.type == p.type       # same type as p
-                                ):
+                            ):
                             p.locked = True
 
     def state(self) -> tuple[int, str]:
@@ -365,7 +365,7 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
     paths = defaultdict(list)
     while q:
         cur_state = heappop(q)
-        logging.debug(f'Dijkstra: {cur_state.state()}')
+        logging.debug(f'Dijkstra: {cur_state.cost=} {cur_state.state()}')
 
         # if already seen, discard
         if cur_state.state() in seen:
@@ -418,7 +418,7 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     # read the puzzle input
     puzzle_input = load_input('input/23.txt')
