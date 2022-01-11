@@ -81,11 +81,11 @@ class Burrow:
                     # check if there is any other pod further down and of the same (correct) type
                     for op in self.pods.values():
                         if (op.pos[1] == c and          # same column
-                            op != p and             # not the same pod
-                            # in a row further down
-                                    op.pos[0] > p.pos[0] and
-                                    op.type == p.type       # same type as p
-                            ):
+                                op != p and             # not the same pod
+                                # in a row further down
+                                op.pos[0] > p.pos[0] and
+                                op.type == p.type       # same type as p
+                                ):
                             p.locked = True
 
     def state(self) -> tuple[int, str]:
@@ -359,13 +359,16 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
     """
 
     # queue = state of the burrow (which includes the cost)
+    steps = 0
     q = [start]
     seen = set()
     distances = defaultdict(lambda: 1e09)
     paths = defaultdict(list)
     while q:
         cur_state = heappop(q)
-        logging.debug(f'Dijkstra: {cur_state.cost=} {cur_state.state()}')
+        steps += 1
+        logging.debug(
+            f'Dijkstra: {steps=} {cur_state.cost=} {cur_state.state()}')
 
         # if already seen, discard
         if cur_state.state() in seen:
@@ -378,6 +381,7 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
             logging.info(
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
             logging.info(f'Target path: {paths[target.state()]}')
+            logging.info(f'Number of states processed: {steps=}')
             return distances[target.state()]
 
         for p, inc_cost, move_loc in cur_state.possible_moves():

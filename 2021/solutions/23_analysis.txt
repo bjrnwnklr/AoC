@@ -17,18 +17,25 @@ INFO:root:Target reached: ...........ABCDABCD, cost 15516.
 '.....D.....ABC.ABCD', 
 '...........ABCDABCD'
 
-
-Incorrect solution in 2302-02 branch:
-
-INFO:root:Target reached: ...........ABCDABCD, cost 7286.
-'...C.......DAB.BADC', 
-'...C.C.....DAB.BAD.', 
-'...C.C......AB.BADD', <- Here is the error. D moving from (1, 2) to (2, 8) through C and C
-'B..C.C......AB..ADD', 
-'B..C.C.......B.AADD', 
-'B..C.C.....A.B.A.DD', 
-'B..C.C.....A...ABDD', 
-'...C.C.....AB..ABDD', 
-'...C.C.....AB.DAB.D', 
-'.....C.....AB.DABCD', 
+Correct but slow:
+INFO:root:Target reached: ...........ABCDABCD, cost 15516.
+'A..........D.BCBADC', 
+'AA.........D.BCB.DC', 
+'AA.........D..CBBDC', 
+'AA...C.....D...BBDC', 
+'AA...C.D...D...BB.C', 
+'AA.....D...D...BBCC', 
+'AA...D.D.......BBCC', 
+'AA.B.D.D........BCC', 
+'A..B.D.D.......ABCC', 
+'...B.D.D...A...ABCC', 
+'.....D.D...AB..ABCC', 
+'.....D.D.C.AB..ABC.', 
+'.....D...C.AB..ABCD', 
+'.....D.....ABC.ABCD', 
 '...........ABCDABCD'
+
+INFO:root:Number of states processed: steps=90270
+Elapsed time to run part1: 55.59248 seconds.
+Part 1: 15516
+Part 2: 1
