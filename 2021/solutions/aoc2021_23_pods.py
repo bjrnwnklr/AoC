@@ -85,7 +85,7 @@ class Burrow:
                                 # in a row further down
                                 op.pos[0] > p.pos[0] and
                                 op.type == p.type       # same type as p
-                                ):
+                            ):
                             p.locked = True
 
     def state(self) -> tuple[int, str]:
@@ -211,96 +211,6 @@ class Burrow:
                         if cost != 0:
                             moves.append((p, cost, (0, c)))
 
-            # OLD CODE
-
-            # # check which hallway positions from current location are free
-            # # If we reached the left wall (0,0), we will have to subtract 1 from left, which simulates
-            # # the wall at (0, -1) as the last element checked
-            # left = curr_loc[1]
-            # while left > 0:
-            #     left -= 1
-            #     if self.grid[(0, left)] == '.':
-            #         continue
-            #     else:
-            #         left += 1
-            #         break
-
-            # left_range = range(left, curr_loc[1])
-
-            # # If we reached the right wall (0,10), we will have to add to right, which simulates
-            # # the wall at (0, 11) as the last element checked
-            # right = curr_loc[1]
-            # while right < 10:
-            #     right += 1
-            #     if self.grid[(0, right)] == '.':
-            #         continue
-            #     else:
-            #         right -= 1
-            #         break
-
-            # right_range = range(curr_loc[1] + 1, right)
-
-            # match curr_loc:
-            #     case (1, c):
-            #         # pod is in a room, move to the hallway
-            #         # Don't stop in front of any rooms (2, 4, 6, 8 columns)
-            #         for x in list(left_range) + list(right_range):
-            #             if x not in [2, 4, 6, 8]:
-            #                 # calculate the cost - add 1 for the step into the hallway
-            #                 cost = (abs(c - x) + 1) * move_cost
-            #                 moves.append((p, cost, (0, x)))
-
-            #     case (2, c):
-            #         if self.grid[(1, c)] == '.':
-            #             # pod is in a 2nd layer room, move to the hallway
-            #             # Don't stop in front of any rooms (2, 4, 6, 8 columns)
-            #             for x in list(left_range) + list(right_range):
-            #                 if x not in [2, 4, 6, 8]:
-            #                     # calculate the cost - add 2 for the step into the hallway
-            #                     cost = (abs(c - x) + 2) * move_cost
-            #                     moves.append((p, cost, (0, x)))
-
-            # # FOR ALL CASES; check if we can move directly to the correct room (from another room
-            # # or hallway)
-            # # Check if a slot in the target room is available and if another pod is in there,
-            # # if it is of the same kind. Then check if the path to the target room is free.
-            # target_col = TARGET_ROOM[pod_type]
-            # # First, check if the target room is free
-            # if ((self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == '.') or
-            #         (self.grid[(1, target_col)] == '.' and self.grid[(2, target_col)] == pod_type)):
-            #     # calculate if the path to the target room is free
-            #     c = curr_loc[1]
-            #     if c < target_col:
-            #         target_path = all(
-            #             self.grid[(0, x)] == '.' for x in range(c + 1, target_col + 1))
-            #     else:
-            #         target_path = all(
-            #             self.grid[(0, x)] == '.' for x in range(target_col, c))
-
-            #     # check where we are - hallway, room 1 or room 2:
-            #     match curr_loc:
-            #         case (0, _):
-            #             room_cost = 0
-            #         case (1, _):
-            #             room_cost = 1
-            #         case (2, c):
-            #             if self.grid[(1, c)] == '.':
-            #                 room_cost = 2
-            #             else:
-            #                 room_cost = 0
-            #                 target_path = False
-            #     # Pod can only move if target room is free and the path is free.
-            #     if target_path:
-            #         if self.grid[(2, target_col)] == '.':
-            #             room_cost += 2
-            #             row = 2
-            #         else:
-            #             room_cost += 1
-            #             row = 1
-            #         cost = (abs(c - target_col) +
-            #                 room_cost) * move_cost
-            #         moves.append((p, cost, (row, target_col)))
-
         return moves
 
     def move_copy(self, p: Pod, inc_cost: int, target_location: tuple[int]) -> 'Burrow':
@@ -311,9 +221,6 @@ class Burrow:
         # logging.debug(f'Move_copy: {p=}, {inc_cost=}, {target_location=}')
         b_copy = Burrow()
         # now copy the grid, pods and types dictionaries
-        # copy is fine since the values of the dict are immutable tuples
-        # FIXME: Updating the location OVERWRITES THE POD INSTANCES INSTEAD OF COPYING THEM
-        # We need to deep copy or copy the pods themselves :(
         b_copy = copy.deepcopy(self)
         new_p = b_copy.pods[p.pid]
         # update the new position with the pod
