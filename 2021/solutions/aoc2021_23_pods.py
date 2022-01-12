@@ -31,6 +31,12 @@ class Pod:
     pos: tuple[int]
     locked: bool = False
 
+    def __copy__(self):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.__dict__.update(self.__dict__)
+        return result
+
 
 class Burrow:
     """Defines a state of the burrow at any given time.
@@ -221,7 +227,8 @@ class Burrow:
         # logging.debug(f'Move_copy: {p=}, {inc_cost=}, {target_location=}')
         b_copy = Burrow()
         # now copy the grid, pods and types dictionaries
-        b_copy = copy.deepcopy(self)
+        b_copy.pods = {i: copy.copy(p) for i, p in self.pods.items()}
+        b_copy.cost = self.cost
         new_p = b_copy.pods[p.pid]
         # update the new position with the pod
         new_p.pos = target_location

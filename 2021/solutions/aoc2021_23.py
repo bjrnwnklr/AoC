@@ -303,9 +303,12 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
     seen = set()
     distances = defaultdict(lambda: 1e09)
     paths = defaultdict(list)
+    steps = 0
     while q:
         cur_state = heappop(q)
-        logging.debug(f'Dijkstra: {cur_state.state()}')
+        steps += 1
+        logging.debug(
+            f'Dijkstra: {steps=} {cur_state.cost=} {cur_state.state()}')
 
         # if already seen, discard
         if cur_state.state() in seen:
@@ -317,6 +320,8 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
         if cur_state.state() == target.state():
             logging.info(
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
+            logging.info(f'Target path: {paths[target.state()]}')
+            logging.info(f'Number of states processed: {steps=}')
             return distances[target.state()]
 
         for pid, inc_cost, move_loc in cur_state.possible_moves():
