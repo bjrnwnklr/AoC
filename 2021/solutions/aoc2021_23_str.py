@@ -15,11 +15,18 @@ COST = {
     'D': 1000
 }
 
-TARGET_ROOM = {
-    'A': 2,
-    'B': 4,
-    'C': 6,
-    'D': 8
+
+HALLWAY = list(range(11))
+ROWS = {
+    1: list(range(11, 15)),
+    2: list(range(15, 19))
+}
+
+ROOMS = {
+    'A': [11, 15],
+    'B': [12, 16],
+    'C': [13, 17],
+    'D': [14, 18]
 }
 
 
@@ -39,59 +46,98 @@ def load_input(f_name):
     return puzzle_input
 
 
-def dijkstra(start: Burrow, target: Burrow) -> int:
-    """Run a Dijkstra search for the cheapest path from start to target.
-
-    Return the cost of the path.
+def to_string(puzzle_input: list[str]) -> str:
+    """Convert the puzzle input list (a list of 8 characters, representing the 4 rooms of the
+    puzzle) into a string with the format '............ABCDABCD', representing the hallway
+    and 4 rooms.
     """
+    return '.' * 11 + ''.join(puzzle_input)
 
-    # queue = state of the burrow (which includes the cost)
-    q = [start]
-    seen = set()
-    distances = defaultdict(lambda: 1e09)
-    paths = defaultdict(list)
-    steps = 0
-    while q:
-        cur_state = heappop(q)
-        steps += 1
-        logging.debug(
-            f'Dijkstra: {steps=} {cur_state.cost=} {cur_state.state()}')
 
-        # if already seen, discard
-        if cur_state.state() in seen:
-            continue
+def movers(burrow: str) -> list[int]:
+    """Analyze a burrow string representation and generate a list of pods (identified by their
+    position in the string) who can move."""
+    # find all characters and their positions
+    positions = [(pos, char)
+                 for pos, char in enumerate(burrow) if char in 'ABCD']
 
-        seen.add(cur_state.state())
+    results = []
+    for pos, char in positions:
+        match pos:
+            case pos if pos in HALLWAY:
+                # check if in a hallway - assume it can move
+                results.append((pos, char))
+            case pos if pos in ROWS[1]:
+                target_room = ROOMS[char]
+                if pos not in target_room:
+                    # if in the first row of a wrong room, we can move
+                    results.append((pos, char))
+                else:
+                    # if the pod is in the correct room, it still needs to move if the pod below is
+                    # not in the right room
+                    lower_pod = burrow[pos + 4]
+                    if (pos + 4) not in ROOMS[lower_pod]:
+                        results.append((pos, char))
+            case pos if pos in ROWS[2]:
+                target_room = ROOMS[char]
+                if pos not in target_room and burrow[pos - 4] == '.':
+                    results.append((pos, char))
 
-        # if we found the target, we're done
-        if cur_state.state() == target.state():
-            logging.info(
-                f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
-            logging.info(f'Target path: {paths[target.state()]}')
-            logging.info(f'Number of states processed: {steps=}')
-            return distances[target.state()]
+    return results
 
-        for pid, inc_cost, move_loc in cur_state.possible_moves():
-            next_move = cur_state.move_copy(pid, inc_cost, move_loc)
-            if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
-                distances[next_move.state()] = next_move.cost
-                paths[next_move.state()] = paths[cur_state.state()] + \
-                    [next_move.state()]
-                heappush(q, next_move)
+# def dijkstra(start: Burrow, target: Burrow) -> int:
+#     """Run a Dijkstra search for the cheapest path from start to target.
 
-    logging.info(f'Target path: {paths[target.state()]}')
-    return distances[target.state()]
+#     Return the cost of the path.
+#     """
+
+#     # queue = state of the burrow (which includes the cost)
+#     q = [start]
+#     seen = set()
+#     distances = defaultdict(lambda: 1e09)
+#     paths = defaultdict(list)
+#     steps = 0
+#     while q:
+#         cur_state = heappop(q)
+#         steps += 1
+#         logging.debug(
+#             f'Dijkstra: {steps=} {cur_state.cost=} {cur_state.state()}')
+
+#         # if already seen, discard
+#         if cur_state.state() in seen:
+#             continue
+
+#         seen.add(cur_state.state())
+
+#         # if we found the target, we're done
+#         if cur_state.state() == target.state():
+#             logging.info(
+#                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
+#             logging.info(f'Target path: {paths[target.state()]}')
+#             logging.info(f'Number of states processed: {steps=}')
+#             return distances[target.state()]
+
+#         for pid, inc_cost, move_loc in cur_state.possible_moves():
+#             next_move = cur_state.move_copy(pid, inc_cost, move_loc)
+#             if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
+#                 distances[next_move.state()] = next_move.cost
+#                 paths[next_move.state()] = paths[cur_state.state()] + \
+#                     [next_move.state()]
+#                 heappush(q, next_move)
+
+#     logging.info(f'Target path: {paths[target.state()]}')
+#     return distances[target.state()]
 
 
 @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
-    start = Burrow(puzzle_input)
-    target = Burrow(['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'])
+    # start = Burrow(puzzle_input)
+    # target = Burrow(['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'])
 
-    # run the dijkstra search to find the shortest path
-    cost = dijkstra(start, target)
+    # # run the dijkstra search to find the shortest path
+    # cost = dijkstra(start, target)
 
     return cost
 
