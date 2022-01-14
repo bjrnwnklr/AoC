@@ -65,6 +65,25 @@ class Test_AOC2021_23_STR:
         assert path_from_room_free('C....B..C..A..DA.BD', 17) == True
         assert path_from_room_free('C....B..C..A..DA.BD', 18) == False
 
+    def test_2_path_from_room_free(self):
+        """Test the path_from_room_free method for 'C....B..C..A..DA.BDABCDABCD'.
+        Expected results:
+        11: True -> Pod is on row 1
+        17: True -> Pod is on row 2, row 1 is free
+        18: False -> Row 1 is occupied 
+        20: True -> Pod is on row 2 but 1 and 2 are free
+        21: False -> Pod is on 2 but row 1 is occupied
+        22: False -> Pod is on 2 but row 1 and 2 are occupied
+        26: False -> Rows 1, 2, 3 are occupied
+        """
+        assert path_from_room_free('C....B..C..A..DA.BDABCDABCD', 11) == True
+        assert path_from_room_free('C....B..C..A..DA.BDABCDABCD', 17) == True
+        assert path_from_room_free('C....B..C..A..DA.BDABCDABCD', 18) == False
+        assert path_from_room_free('C....B..C..A..DA.BDABCDABCD', 20) == True
+        assert path_from_room_free('C....B..C..A..DA.BDABCDABCD', 21) == False
+        assert path_from_room_free('C....B..C..A..DA.BDABCDABCD', 22) == False
+        assert path_from_room_free('C....B..C..A..DA.BDABCDABCD', 26) == False
+
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/23_1_1.txt')
     #     assert part2(puzzle_input) == 1
