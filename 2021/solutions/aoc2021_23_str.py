@@ -68,6 +68,7 @@ def movers(burrow: str) -> list[int]:
             case pos if pos in HALLWAY:
                 # check if in a hallway - assume it can move
                 results.append((pos, char))
+            # TODO: Put in correct logic to deal with more than 2 rows - similar to target_room_free etc.
             case pos if pos in ROWS[1]:
                 target_room = ROOMS[char]
                 if pos not in target_room:
@@ -125,6 +126,24 @@ def path_from_room_free(burrow: str, pos_from: int) -> bool:
         return True
 
     return False
+
+
+def room_pos(pos: int) -> tuple[int, int]:
+    """Return the (row, column) tuple of a room, given it's index in a burrow string representation."""
+    if pos < 11:
+        # in hallway
+        return (0, pos)
+    else:
+        row = ((pos - 11) // 4) + 1
+        col = (((pos - 11) % 4) + 1) * 2
+        return (row, col)
+
+
+def hallway_free(burrow: str, pos_from: int, pos_to: int) -> bool:
+    """Return if the hallway between two positions is free."""
+    # get hallway position if pos_from is in a room
+    if pos_from > 10:
+        pass
 
 
 def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:
