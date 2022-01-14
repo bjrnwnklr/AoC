@@ -142,8 +142,9 @@ def room_pos(pos: int) -> tuple[int, int]:
 def hallway_free(burrow: str, pos_from: int, pos_to: int) -> bool:
     """Return if the hallway between two positions is free."""
     # get hallway position if pos_from is in a room
-    if pos_from > 10:
-        pass
+    col_from = room_pos(pos_from)[1]
+    col_to = room_pos(pos_to)[1]
+    return all(burrow[x] == '.' for x in range(min([col_from, col_to]) + 1, max([col_from, col_to])))
 
 
 def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:

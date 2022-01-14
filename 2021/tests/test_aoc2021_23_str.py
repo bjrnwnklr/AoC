@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_23_str import load_input, movers, part1, part2, path_from_room_free, room_pos, target_room_free, to_string
+from solutions.aoc2021_23_str import hallway_free, load_input, movers, part1, part2, path_from_room_free, room_pos, target_room_free, to_string
 
 
 class Test_AOC2021_23_STR:
@@ -104,6 +104,17 @@ class Test_AOC2021_23_STR:
         assert room_pos(16) == (2, 4)
         assert room_pos(21) == (3, 6)
         assert room_pos(23) == (4, 2)
+
+    def test_1_hallway_free(self):
+        """Test the hallway_free method with '.A...B......B.DACCD'.
+        Expected results:
+        (1, 2) = True
+        (1, 10) = False
+        (11, 15) = False
+        """
+        assert hallway_free('.A...B......B.DACCD', 1, 2) == True
+        assert hallway_free('.A...B......B.DACCD', 1, 10) == False
+        assert hallway_free('.A...B......B.DACCD', 11, 15) == False
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/23_1_1.txt')
