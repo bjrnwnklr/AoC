@@ -17,6 +17,7 @@ COST = {
 
 
 HALLWAY = list(range(11))
+
 ROWS = {
     1: list(range(11, 15)),
     2: list(range(15, 19))
@@ -85,6 +86,48 @@ def movers(burrow: str) -> list[int]:
 
     return results
 
+
+def target_room_free(burrow: str, pod_type: str) -> tuple[bool, int]:
+    """Return if the target room for a given pod type is free to move into, and if yes, 
+    which position can be moved into (deepest row that is free). 
+
+    Returns a tuple of (bool, int) = (True if room can be moved into, position that can be moved to).
+    """
+    target_room = ROOMS[pod_type]
+    # check if all positions are occupied
+    if all(burrow[x] != '.' for x in target_room):
+        return (False, -1)
+    # check if all positions are empty
+    if all(burrow[x] == '.' for x in target_room):
+        return (True, max(target_room))
+    # if not all rows are free, go from top down and check if occupied rows have correct pod type
+    i = 0
+    while i < len(target_room):
+        if burrow[target_room[i]] == '.':
+            i += 1
+        else:
+            # room is occupied, check if remaining slots are occupied by the correct pods
+            if all(burrow[x] == pod_type for x in target_room[i:]):
+                return (True, target_room[i - 1])
+            else:
+                return (False, -1)
+
+
+def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:
+    """Return all possible moves as a list of tuples (cost, position_to_move_to)
+    for a pod at a given position (pos_from) in the burrow.
+    """
+    # get the type of the pod
+    p_type = burrow[pos_from]
+
+    # check if the pod can move to the target room
+    # 1) where is the target room
+    target_room = ROOMS[p_type]
+    # 2) is the target room free (if both slots empty, or if slot 2 has the correct pod)
+
+    return [(0, 0)]
+
+
 # def dijkstra(start: Burrow, target: Burrow) -> int:
 #     """Run a Dijkstra search for the cheapest path from start to target.
 
@@ -139,7 +182,7 @@ def part1(puzzle_input):
     # # run the dijkstra search to find the shortest path
     # cost = dijkstra(start, target)
 
-    return cost
+    return 1
 
 
 # @aoc_timer
