@@ -113,6 +113,20 @@ def target_room_free(burrow: str, pod_type: str) -> tuple[bool, int]:
                 return (False, -1)
 
 
+def path_from_room_free(burrow: str, pos_from: int) -> bool:
+    """Return if the pod at given position can exit the room it is in."""
+    # check which row the pod is in
+    pod_row = (pos_from - 10) // 4
+    # if it is in the first row (0 indexed in this case), it can exit
+    if pod_row == 0:
+        return True
+    # otherwise, check that all rows above are free
+    if all(burrow[x] == '.' for x in (pos_from - i * 4 for i in range(1, pod_row + 1))):
+        return True
+
+    return False
+
+
 def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:
     """Return all possible moves as a list of tuples (cost, position_to_move_to)
     for a pod at a given position (pos_from) in the burrow.

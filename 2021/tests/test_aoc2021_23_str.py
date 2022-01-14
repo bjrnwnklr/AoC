@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_23_str import load_input, movers, part1, part2, target_room_free, to_string
+from solutions.aoc2021_23_str import load_input, movers, part1, part2, path_from_room_free, target_room_free, to_string
 
 
 class Test_AOC2021_23_STR:
@@ -53,6 +53,17 @@ class Test_AOC2021_23_STR:
         assert target_room_free('C.A..B..C.....DA.BD', 'B') == (True, 16)
         assert target_room_free('C.A..B..C.....DA.BD', 'C') == (False, -1)
         assert target_room_free('C.A..B..C.....DA.BD', 'D') == (False, -1)
+
+    def test_1_path_from_room_free(self):
+        """Test the path_from_room_free method for 'C....B..C..A..DA.BD'.
+        Expected results:
+        11: True -> Pod is on row 1
+        17: True -> Pod is on row 2, row 1 is free
+        18: False -> Row 1 is occupied 
+        """
+        assert path_from_room_free('C....B..C..A..DA.BD', 11) == True
+        assert path_from_room_free('C....B..C..A..DA.BD', 17) == True
+        assert path_from_room_free('C....B..C..A..DA.BD', 18) == False
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/23_1_1.txt')
