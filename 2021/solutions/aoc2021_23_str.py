@@ -207,59 +207,68 @@ def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:
     return results
 
 
-# def dijkstra(start: Burrow, target: Burrow) -> int:
-#     """Run a Dijkstra search for the cheapest path from start to target.
+def move_to(burrow: str, pos_from: int, pos_to: int) -> str:
+    """Perform a move of a pod from / to and return the new state of the burrow as a string."""
+    b = list(burrow)
+    b[pos_to], b[pos_from] = b[pos_from], b[pos_to]
+    return ''.join(b)
 
-#     Return the cost of the path.
-#     """
 
-#     # queue = state of the burrow (which includes the cost)
-#     q = [start]
-#     seen = set()
-#     distances = defaultdict(lambda: 1e09)
-#     paths = defaultdict(list)
-#     steps = 0
-#     while q:
-#         cur_state = heappop(q)
-#         steps += 1
-#         logging.debug(
-#             f'Dijkstra: {steps=} {cur_state.cost=} {cur_state.state()}')
+def dijkstra(start: str, target: str) -> int:
+    """Run a Dijkstra search for the cheapest path from start to target.
 
-#         # if already seen, discard
-#         if cur_state.state() in seen:
-#             continue
+    Return the cost of the path.
+    """
 
-#         seen.add(cur_state.state())
+    # queue = state of the burrow (which includes the cost)
+    q = [(0, start)]
+    seen = set()
+    distances = defaultdict(lambda: 1e09)
+    paths = defaultdict(list)
+    steps = 0
+    while q:
+        cur_cost, cur_state = heappop(q)
+        steps += 1
+        logging.debug(
+            f'Dijkstra: {steps=} {cur_cost=} {cur_state=}')
 
-#         # if we found the target, we're done
-#         if cur_state.state() == target.state():
-#             logging.info(
-#                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
-#             logging.info(f'Target path: {paths[target.state()]}')
-#             logging.info(f'Number of states processed: {steps=}')
-#             return distances[target.state()]
+        # if already seen, discard
+        if cur_state in seen:
+            continue
 
-#         for pid, inc_cost, move_loc in cur_state.possible_moves():
-#             next_move = cur_state.move_copy(pid, inc_cost, move_loc)
-#             if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
-#                 distances[next_move.state()] = next_move.cost
-#                 paths[next_move.state()] = paths[cur_state.state()] + \
-#                     [next_move.state()]
-#                 heappush(q, next_move)
+        seen.add(cur_state)
 
-#     logging.info(f'Target path: {paths[target.state()]}')
-#     return distances[target.state()]
+        # if we found the target, we're done
+        if cur_state == target:
+            logging.info(
+                f'Target reached: {cur_state}, cost {cur_cost}.')
+            logging.info(f'Target path: {paths[target]}')
+            logging.info(f'Number of states processed: {steps=}')
+            return distances[target]
+
+        # get a list of all possible movers
+        for p in movers(cur_state):
+            for inc_cost, move_loc in possible_moves(cur_state, p):
+                next_move = cur_state.move_copy(pid, inc_cost, move_loc)
+                if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
+                    distances[next_move.state()] = next_move.cost
+                    paths[next_move.state()] = paths[cur_state.state()] + \
+                        [next_move.state()]
+                    heappush(q, next_move)
+
+    logging.info(f'Target path: {paths[target]}')
+    return distances[target]
 
 
 @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
-    # start = Burrow(puzzle_input)
-    # target = Burrow(['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'])
+    start = to_string(puzzle_input)
+    target = to_string(['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'])
 
     # # run the dijkstra search to find the shortest path
-    # cost = dijkstra(start, target)
+    cost = dijkstra(start, target)
 
     return 1
 

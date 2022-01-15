@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_23_str import hallway_free, load_input, movers, part1, part2, path_from_room_free, path_length, possible_moves, room_pos, target_room_free, to_string
+from solutions.aoc2021_23_str import hallway_free, load_input, move_to, movers, part1, part2, path_from_room_free, path_length, possible_moves, room_pos, target_room_free, to_string
 
 
 class Test_AOC2021_23_STR:
@@ -174,6 +174,23 @@ class Test_AOC2021_23_STR:
         assert possible_moves(burrow, 16) == []
         assert possible_moves(burrow, 12) == [(20, 3)]
         assert possible_moves(burrow, 14) == [(2000, 7), (2000, 9), (3000, 10)]
+
+    def test_1_move_to(self):
+        """Test moving a pod from to and returning an updated burrow string.
+
+        '.A...B......B.DACCD'
+
+        Expected results:
+        (0, 1) = 'A....B......B.DACCD' -> bit of an odd case, as we are moving a Dot to A but should still work
+        (1, 0) = 'A....B......B.DACCD' -> Move of A to the left
+        (12, 10) = '.A...B....B...DACCD' -> Move from row 1 to hallway
+        (1, 11) = '.....B.....AB.DACCD' -> Move A into room 11
+        """
+        burrow = '.A...B......B.DACCD'
+        assert move_to(burrow, 0, 1) == 'A....B......B.DACCD'
+        assert move_to(burrow, 1, 0) == 'A....B......B.DACCD'
+        assert move_to(burrow, 12, 10) == '.A...B....B...DACCD'
+        assert move_to(burrow, 1, 11) == '.....B.....AB.DACCD'
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/23_1_1.txt')
