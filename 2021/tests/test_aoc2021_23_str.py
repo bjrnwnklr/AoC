@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2021_23_str import hallway_free, load_input, movers, part1, part2, path_from_room_free, room_pos, target_room_free, to_string
+from solutions.aoc2021_23_str import hallway_free, load_input, movers, part1, part2, path_from_room_free, path_length, possible_moves, room_pos, target_room_free, to_string
 
 
 class Test_AOC2021_23_STR:
@@ -131,6 +131,49 @@ class Test_AOC2021_23_STR:
         assert hallway_free('.A...B......B.DACCD', 15, 14) == False
         assert hallway_free('.A...B......B.DACCD', 15, 12) == True
         assert hallway_free('.A...B......B.DACCD', 15, 0) == False
+
+    def test_1_path_length(self):
+        """Test the path_length method.
+
+        Expected results:
+        (0, 0) = 0
+        (0, 10) = 10
+        (0, 11) = 3
+        (11, 0) = 3
+        (15, 11) = 1
+        (11, 12) = 4
+        (15, 16) = 6
+        """
+        assert path_length(0, 0) == 0
+        assert path_length(0, 10) == 10
+        assert path_length(0, 11) == 3
+        assert path_length(11, 0) == 3
+        assert path_length(15, 11) == 1
+        assert path_length(11, 12) == 4
+        assert path_length(15, 16) == 6
+
+    def test_1_possible_moves(self):
+        """Test the possible_moves method '.A...B......B.DACCD'.
+
+        #############
+        #.A...B.....#
+        ###.#B#.#D###
+          #A#C#C#D#
+          #########
+
+        Expected results:
+        1 (A): [(2, 11)] -> can only move to the target room for A
+        5 (B): [] -> no possible move as target room for B is occupied
+        16 (C): [] -> no possible move as exit from room is blocked
+        12 (B): [(20, 3)] -> should only be able to move to position 3
+        14 (D): [(2000, 7), (2000, 9), (3000, 10)] -> theoretically not able to move, but possible_moves does not check that.
+        """
+        burrow = '.A...B......B.DACCD'
+        assert possible_moves(burrow, 1) == [(2, 11)]
+        assert possible_moves(burrow, 5) == []
+        assert possible_moves(burrow, 16) == []
+        assert possible_moves(burrow, 12) == [(20, 3)]
+        assert possible_moves(burrow, 14) == [(2000, 7), (2000, 9), (3000, 10)]
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/23_1_1.txt')

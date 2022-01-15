@@ -119,6 +119,9 @@ def target_room_free(burrow: str, pod_type: str) -> tuple[bool, int]:
 
 def path_from_room_free(burrow: str, pos_from: int) -> bool:
     """Return if the pod at given position can exit the room it is in."""
+    # if the pod is in the hallway, the room is free by default
+    if pos_from < 11:
+        return True
     # check which row the pod is in
     pod_row = (pos_from - 10) // 4
     # if it is in the first row (0 indexed in this case), it can exit
@@ -150,19 +153,58 @@ def hallway_free(burrow: str, pos_from: int, pos_to: int) -> bool:
     return all(burrow[x] == '.' for x in range(min([col_from, col_to]) + 1, max([col_from, col_to])))
 
 
+def path_length(pos_from: int, pos_to: int) -> int:
+    """Calculate the number of steps required to get from pos_from to pos_to."""
+    f = room_pos(pos_from)
+    t = room_pos(pos_to)
+
+    # if not in the same room, the number of steps is:
+    #   row[f] + number of hallway steps between f and t + row[t]
+    # if in the same room, the number of steps is:
+    #   abs(row[f] - row[t])
+    if f[1] != t[1]:
+        return f[0] + abs(f[1] - t[1]) + t[0]
+    else:
+        return abs(f[0] - t[0])
+
+
+def path_cost(steps: int, p_type: str) -> int:
+    """Return the cost of moving a pod of the provided type by the number of steps."""
+    return steps * COST[p_type]
+
+
 def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:
     """Return all possible moves as a list of tuples (cost, position_to_move_to)
     for a pod at a given position (pos_from) in the burrow.
     """
-    # get the type of the pod
+    locations_to = []
+    # get the type of the pod and the location in (row, col) notation
     p_type = burrow[pos_from]
 
-    # check if the pod can move to the target room
-    # 1) where is the target room
-    target_room = ROOMS[p_type]
-    # 2) is the target room free (if both slots empty, or if slot 2 has the correct pod)
+    # Default case: the pod should move to the target room if possible, regardless if in
+    # the hallway or in a room.
+    # - check if the target room is free
+    # - check if the hallway path is clear and if the pod can move from the room
+    target_free, target_pos = target_room_free(burrow, p_type)
+    if target_free and hallway_free(burrow, pos_from, target_pos) and path_from_room_free(burrow, pos_from):
+        locations_to.append(target_pos)
 
-    return [(0, 0)]
+    # Otherwise, the pod can move to a hallway position if it is in a room and can move out of the room
+    if pos_from > 10 and path_from_room_free(burrow, pos_from):
+        for loc in range(11):
+            if (loc not in [2, 4, 6, 8] and
+                burrow[loc] == '.' and
+                    hallway_free(burrow, pos_from, loc)):
+                locations_to.append(loc)
+
+    # calculate the cost for each step
+    results = []
+    for pos_to in locations_to:
+        steps = path_length(pos_from, pos_to)
+        cost = path_cost(steps, p_type)
+        results.append((cost, pos_to))
+
+    return results
 
 
 # def dijkstra(start: Burrow, target: Burrow) -> int:
