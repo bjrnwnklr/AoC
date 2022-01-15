@@ -107,14 +107,27 @@ class Test_AOC2021_23_STR:
 
     def test_1_hallway_free(self):
         """Test the hallway_free method with '.A...B......B.DACCD'.
+
+        #############
+        #.A...B.....#
+        ###.#B#.#D###
+          #A#C#C#D#
+          #########
+
         Expected results:
         (1, 2) = True
         (1, 10) = False
-        (11, 15) = False
+        (11, 14) = False
+        (15, 14) = False
+        (15, 12) = True
+        (15, 0) = False
         """
         assert hallway_free('.A...B......B.DACCD', 1, 2) == True
         assert hallway_free('.A...B......B.DACCD', 1, 10) == False
-        assert hallway_free('.A...B......B.DACCD', 11, 15) == False
+        assert hallway_free('.A...B......B.DACCD', 11, 14) == False
+        assert hallway_free('.A...B......B.DACCD', 15, 14) == False
+        assert hallway_free('.A...B......B.DACCD', 15, 12) == True
+        assert hallway_free('.A...B......B.DACCD', 15, 0) == False
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/23_1_1.txt')
