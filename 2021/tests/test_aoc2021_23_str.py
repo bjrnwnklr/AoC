@@ -13,14 +13,6 @@ class Test_AOC2021_23_STR:
     Tests can then be run in the day's directory with `pytest`.
     """
 
-    # def test_1_1(self):
-    #     puzzle_input = load_input('testinput/23_1_1.txt')
-    #     assert part1(puzzle_input) == 12521
-
-    # def test_1_2(self):
-    #     puzzle_input = load_input('testinput/23_1_2.txt')
-    #     assert part1(puzzle_input) == 13336
-
     def test_1_state(self):
         """Test state for example 1_1 (BCBDADCA)"""
         puzzle_input = load_input('testinput/23_1_1.txt')
@@ -34,15 +26,14 @@ class Test_AOC2021_23_STR:
         """
         puzzle_input = load_input('testinput/23_1_1.txt')
         mo = movers(to_string(puzzle_input))
-        assert mo == [(11, 'B'), (12, 'C'), (13, 'B'),
-                      (14, 'D'), (16, 'D'), (18, 'A')]
+        assert mo == [11, 12, 13, 14, 16, 18]
 
     def test_2_movers(self):
         """Test the movers method for '.A...B......B.DACCD' Should return 
         A, B from the hallway, B from the first row of rooms to move.
         """
         mo = movers('.A...B......B.DACCD')
-        assert mo == [(1, 'A'), (5, 'B'), (12, 'B'), (16, 'C')]
+        assert mo == [1, 5, 12, 16]
 
     def test_1_target_room_free(self):
         """Test the target_room_free method for 'C.A..B..C.....DA.BD'.
@@ -191,6 +182,14 @@ class Test_AOC2021_23_STR:
         assert move_to(burrow, 1, 0) == 'A....B......B.DACCD'
         assert move_to(burrow, 12, 10) == '.A...B....B...DACCD'
         assert move_to(burrow, 1, 11) == '.....B.....AB.DACCD'
+
+    def test_1_1(self):
+        puzzle_input = load_input('testinput/23_1_1.txt')
+        assert part1(puzzle_input) == 12521
+
+    # def test_1_2(self):
+    #     puzzle_input = load_input('testinput/23_1_2.txt')
+    #     assert part1(puzzle_input) == 13336
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/23_1_1.txt')

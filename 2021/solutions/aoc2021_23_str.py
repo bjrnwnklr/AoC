@@ -68,14 +68,14 @@ def movers(burrow: str) -> list[int]:
         match pos:
             case (0, _):
                 # check if in a hallway - assume it can move
-                results.append((str_pos, char))
+                results.append(str_pos)
             case (r, c):
                 # if not in the hallway: if pod is in teh wrong room, it will have to move in any case
                 # path_from_room_free can then check if it can exit the room.
                 target_room = ROOMS[char]
                 if str_pos not in target_room:
                     # if not in the correct room the pod can possibly move
-                    results.append((str_pos, char))
+                    results.append(str_pos)
                 else:
                     # if the pod is in the correct room, it still needs to move if the pods below are
                     # not in the right room
@@ -85,7 +85,7 @@ def movers(burrow: str) -> list[int]:
                             # next pod down is of the same type, i.e. in the correct room
                             i += 1
                         else:
-                            results.append((str_pos, char))
+                            results.append(str_pos)
                             break
 
     return results
@@ -246,15 +246,16 @@ def dijkstra(start: str, target: str) -> int:
             logging.info(f'Number of states processed: {steps=}')
             return distances[target]
 
-        # get a list of all possible movers
+        # get a list of all possible movers...
         for p in movers(cur_state):
+            # ...and their possible moves
             for inc_cost, move_loc in possible_moves(cur_state, p):
-                next_move = cur_state.move_copy(pid, inc_cost, move_loc)
-                if next_move.state() not in seen and next_move.cost < distances[next_move.state()]:
-                    distances[next_move.state()] = next_move.cost
-                    paths[next_move.state()] = paths[cur_state.state()] + \
-                        [next_move.state()]
-                    heappush(q, next_move)
+                next_move = move_to(cur_state, p, move_loc)
+                next_cost = cur_cost + inc_cost
+                if next_move not in seen and next_cost < distances[next_move]:
+                    distances[next_move] = next_cost
+                    paths[next_move] = paths[cur_state] + [next_move]
+                    heappush(q, (next_cost, next_move))
 
     logging.info(f'Target path: {paths[target]}')
     return distances[target]
@@ -270,7 +271,7 @@ def part1(puzzle_input):
     # # run the dijkstra search to find the shortest path
     cost = dijkstra(start, target)
 
-    return 1
+    return cost
 
 
 # @aoc_timer
