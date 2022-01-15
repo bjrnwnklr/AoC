@@ -150,6 +150,10 @@ def hallway_free(burrow: str, pos_from: int, pos_to: int) -> bool:
     # get hallway position if pos_from is in a room
     col_from = room_pos(pos_from)[1]
     col_to = room_pos(pos_to)[1]
+    f = min([col_from, col_to]) + 1
+    t = max([col_from, col_to])
+    hallway = burrow[f:t]
+    return hallway == '.' * (t - f)
     return all(burrow[x] == '.' for x in range(min([col_from, col_to]) + 1, max([col_from, col_to])))
 
 
@@ -229,8 +233,8 @@ def dijkstra(start: str, target: str) -> int:
     while q:
         cur_cost, cur_state = heappop(q)
         steps += 1
-        logging.debug(
-            f'Dijkstra: {steps=} {cur_cost=} {cur_state=}')
+        # logging.debug(
+        #     f'Dijkstra: {steps=} {cur_cost=} {cur_state=}')
 
         # if already seen, discard
         if cur_state in seen:
@@ -240,10 +244,10 @@ def dijkstra(start: str, target: str) -> int:
 
         # if we found the target, we're done
         if cur_state == target:
-            logging.info(
-                f'Target reached: {cur_state}, cost {cur_cost}.')
-            logging.info(f'Target path: {paths[target]}')
-            logging.info(f'Number of states processed: {steps=}')
+            # logging.info(
+            #     f'Target reached: {cur_state}, cost {cur_cost}.')
+            # logging.info(f'Target path: {paths[target]}')
+            # logging.info(f'Number of states processed: {steps=}')
             return distances[target]
 
         # get a list of all possible movers...
@@ -257,7 +261,7 @@ def dijkstra(start: str, target: str) -> int:
                     paths[next_move] = paths[cur_state] + [next_move]
                     heappush(q, (next_cost, next_move))
 
-    logging.info(f'Target path: {paths[target]}')
+    # logging.info(f'Target path: {paths[target]}')
     return distances[target]
 
 
@@ -282,7 +286,7 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    # logging.basicConfig(level=logging.INFO)
 
     # read the puzzle input
     puzzle_input = load_input('input/23.txt')
