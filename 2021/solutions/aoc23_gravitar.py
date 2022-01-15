@@ -81,10 +81,14 @@ def solve(puzzle, part1=True):
     paths = defaultdict(list)
     queue, seen = [(0, puzzle)], {puzzle: 0}
     solution = '.'*11+'ABCD'*2 if part1 else '.'*11+'ABCD'*4
+    steps = 0
     while queue:
         cost, state = heappop(queue)
+        steps += 1
         if state == solution:
-            print(paths[state])
+            print(f'Target reached: {state}, cost {cost}.')
+            print(f'Target path: {paths[state]}')
+            print(f'Number of states processed: {steps=}')
             return cost
         for i1, i2 in possible_moves(state, part1):
             new_cost = cost + distances[(i1, i2)] * energy[state[i1]]

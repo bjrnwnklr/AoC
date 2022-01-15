@@ -98,23 +98,21 @@ def target_room_free(burrow: str, pod_type: str) -> tuple[bool, int]:
     Returns a tuple of (bool, int) = (True if room can be moved into, position that can be moved to).
     """
     target_room = ROOMS[pod_type]
-    # check if all positions are occupied
-    if all(burrow[x] != '.' for x in target_room):
-        return (False, -1)
-    # check if all positions are empty
-    if all(burrow[x] == '.' for x in target_room):
-        return (True, max(target_room))
-    # if not all rows are free, go from top down and check if occupied rows have correct pod type
+    # go through each row of the room until we find an occupied on, or arrive at the bottom
     i = 0
     while i < len(target_room):
+        # free room, move to next row
         if burrow[target_room[i]] == '.':
             i += 1
         else:
             # room is occupied, check if remaining slots are occupied by the correct pods
-            if all(burrow[x] == pod_type for x in target_room[i:]):
+            # Room is only free if we are deeper than the first row (if we get to here and
+            # are still on the first row, the room is completely full)
+            if all(burrow[x] == pod_type for x in target_room[i:]) and i > 0:
                 return (True, target_room[i - 1])
             else:
                 return (False, -1)
+    return (True, target_room[-1])
 
 
 def path_from_room_free(burrow: str, pos_from: int) -> bool:
@@ -123,12 +121,9 @@ def path_from_room_free(burrow: str, pos_from: int) -> bool:
     if pos_from < 11:
         return True
     # check which row the pod is in
-    pod_row = (pos_from - 10) // 4
-    # if it is in the first row (0 indexed in this case), it can exit
-    if pod_row == 0:
-        return True
-    # otherwise, check that all rows above are free
-    if all(burrow[x] == '.' for x in (pos_from - i * 4 for i in range(1, pod_row + 1))):
+    row, col = room_pos(pos_from)
+    # check that all rows above are free
+    if all(burrow[x] == '.' for x in (pos_from - i * 4 for i in range(1, row+1))):
         return True
 
     return False
@@ -154,7 +149,6 @@ def hallway_free(burrow: str, pos_from: int, pos_to: int) -> bool:
     t = max([col_from, col_to])
     hallway = burrow[f:t]
     return hallway == '.' * (t - f)
-    return all(burrow[x] == '.' for x in range(min([col_from, col_to]) + 1, max([col_from, col_to])))
 
 
 def path_length(pos_from: int, pos_to: int) -> int:
@@ -244,6 +238,9 @@ def dijkstra(start: str, target: str) -> int:
 
         # if we found the target, we're done
         if cur_state == target:
+            print(f'Target reached: {cur_state}, cost {cur_cost}.')
+            print(f'Target path: {paths[target]}')
+            print(f'Number of states processed: {steps=}')
             # logging.info(
             #     f'Target reached: {cur_state}, cost {cur_cost}.')
             # logging.info(f'Target path: {paths[target]}')
