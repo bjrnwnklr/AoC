@@ -59,31 +59,34 @@ def movers(burrow: str) -> list[int]:
     """Analyze a burrow string representation and generate a list of pods (identified by their
     position in the string) who can move."""
     # find all characters and their positions
-    positions = [(pos, char)
-                 for pos, char in enumerate(burrow) if char in 'ABCD']
+    positions = [(str_pos, char)
+                 for str_pos, char in enumerate(burrow) if char in 'ABCD']
 
     results = []
-    for pos, char in positions:
+    for str_pos, char in positions:
+        pos = room_pos(str_pos)
         match pos:
-            case pos if pos in HALLWAY:
+            case (0, _):
                 # check if in a hallway - assume it can move
-                results.append((pos, char))
-            # TODO: Put in correct logic to deal with more than 2 rows - similar to target_room_free etc.
-            case pos if pos in ROWS[1]:
+                results.append((str_pos, char))
+            case (r, c):
+                # if not in the hallway: if pod is in teh wrong room, it will have to move in any case
+                # path_from_room_free can then check if it can exit the room.
                 target_room = ROOMS[char]
-                if pos not in target_room:
-                    # if in the first row of a wrong room, we can move
-                    results.append((pos, char))
+                if str_pos not in target_room:
+                    # if not in the correct room the pod can possibly move
+                    results.append((str_pos, char))
                 else:
-                    # if the pod is in the correct room, it still needs to move if the pod below is
+                    # if the pod is in the correct room, it still needs to move if the pods below are
                     # not in the right room
-                    lower_pod = burrow[pos + 4]
-                    if (pos + 4) not in ROOMS[lower_pod]:
-                        results.append((pos, char))
-            case pos if pos in ROWS[2]:
-                target_room = ROOMS[char]
-                if pos not in target_room and burrow[pos - 4] == '.':
-                    results.append((pos, char))
+                    i = r
+                    while i < len(target_room):
+                        if burrow[target_room[i]] == char:
+                            # next pod down is of the same type, i.e. in the correct room
+                            i += 1
+                        else:
+                            results.append((str_pos, char))
+                            break
 
     return results
 

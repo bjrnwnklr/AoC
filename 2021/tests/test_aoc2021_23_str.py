@@ -28,18 +28,21 @@ class Test_AOC2021_23_STR:
 
     def test_1_movers(self):
         """Test the movers method for example 1_1. Should return 
-        B, C, B, D from the first row of rooms to move.
+        B, C, B, D from the first row of rooms to move, and
+        (16, D) and (18, A) from the 2nd row as they are in the wrong
+        room (even if there is a pod above them).
         """
         puzzle_input = load_input('testinput/23_1_1.txt')
         mo = movers(to_string(puzzle_input))
-        assert mo == [(11, 'B'), (12, 'C'), (13, 'B'), (14, 'D')]
+        assert mo == [(11, 'B'), (12, 'C'), (13, 'B'),
+                      (14, 'D'), (16, 'D'), (18, 'A')]
 
     def test_2_movers(self):
-        """Test the movers method for '..A..B......B.DACCD' Should return 
+        """Test the movers method for '.A...B......B.DACCD' Should return 
         A, B from the hallway, B from the first row of rooms to move.
         """
-        mo = movers('..A..B......B.DACCD')
-        assert mo == [(2, 'A'), (5, 'B'), (12, 'B')]
+        mo = movers('.A...B......B.DACCD')
+        assert mo == [(1, 'A'), (5, 'B'), (12, 'B'), (16, 'C')]
 
     def test_1_target_room_free(self):
         """Test the target_room_free method for 'C.A..B..C.....DA.BD'.
