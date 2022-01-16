@@ -328,4 +328,4 @@ if __name__ == '__main__':
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 14:15 End: 18:45 (16 January - solution was working a long time ago, but now optimized)
-# Part 2: Start: 19:03 End:
+# Part 2: Start: 19:03 End: 19:10
