@@ -147,8 +147,12 @@ def hallway_free(burrow: str, pos_from: int, pos_to: int) -> bool:
     # get hallway position if pos_from is in a room
     col_from = room_pos(pos_from)[1]
     col_to = room_pos(pos_to)[1]
-    f = min([col_from, col_to]) + 1
-    t = max([col_from, col_to])
+    if col_from < col_to:
+        f = col_from + 1
+        t = col_to
+    else:
+        f = col_to + 1
+        t = col_from
     hallway = burrow[f:t]
     return hallway == '.' * (t - f)
 
