@@ -375,19 +375,3 @@ if __name__ == '__main__':
 
 # Part 1: Start: 14:15 End:
 # Part 2: Start:  End:
-
-"""
-First attempt at part 1 with Dijkstra: 15542 - answer is too high:
-
-Elapsed time to run part1: 0.50177 seconds.
-Part 1: 15542
-
-Correct solution is 15516 as per another solution.
-
-INFO:root:Target reached: (19536, '...........ABCDABCD'), cost 19536.
-INFO:root:Target reached: (15516, '...........ABCDABCD'), cost 15516.
-INFO:root:Target path: ['A..........D.BCBADC', 'AA.........D.BCB.DC', 'AA.........D..CBBDC', 'AA.......C.D...BBDC', 'AA...C...C.D...BBD.', 'AA...C...C.D...BB.D', 'AA.......C.D...BBCD', 'AA.........D.C.BBCD', 'AA...........CDBBCD', 'AA..........BCD.BCD', 'A...........BCDABCD', '...........ABCDABCD']
-Elapsed time to run part1: 2.46506 seconds.
-Part 1: 15516
-Part 2: 1
-"""
