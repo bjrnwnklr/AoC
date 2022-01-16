@@ -5,6 +5,7 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass
 from heapq import heappop, heappush
+import functools
 
 from utils.aoctools import aoc_timer
 
@@ -129,6 +130,7 @@ def path_from_room_free(burrow: str, pos_from: int) -> bool:
     return False
 
 
+@functools.cache
 def room_pos(pos: int) -> tuple[int, int]:
     """Return the (row, column) tuple of a room, given it's index in a burrow string representation."""
     if pos < 11:
@@ -151,6 +153,7 @@ def hallway_free(burrow: str, pos_from: int, pos_to: int) -> bool:
     return hallway == '.' * (t - f)
 
 
+@functools.cache
 def path_length(pos_from: int, pos_to: int) -> int:
     """Calculate the number of steps required to get from pos_from to pos_to."""
     f = room_pos(pos_from)
