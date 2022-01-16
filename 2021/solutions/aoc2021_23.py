@@ -151,7 +151,7 @@ class Burrow:
                     break
             # If we reached the right wall (0,10), we will have to add to right, which simulates
             # the wall at (0, 11) as the last element checked
-            right_range = range(curr_loc[1] + 1, right)
+            right_range = range(curr_loc[1] + 1, right + 1)
             match curr_loc:
                 case (1, c):
                     # pod is in a room, move to the hallway
@@ -307,8 +307,8 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
     while q:
         cur_state = heappop(q)
         steps += 1
-        logging.debug(
-            f'Dijkstra: {steps=} {cur_state.cost=} {cur_state.state()}')
+        # logging.debug(
+        #     f'Dijkstra: {steps=} {cur_state.cost=} {cur_state.state()}')
 
         # if already seen, discard
         if cur_state.state() in seen:
@@ -318,10 +318,10 @@ def dijkstra(start: Burrow, target: Burrow) -> int:
 
         # if we found the target, we're done
         if cur_state.state() == target.state():
-            logging.info(
+            print(
                 f'Target reached: {cur_state.state()}, cost {cur_state.cost}.')
-            logging.info(f'Target path: {paths[target.state()]}')
-            logging.info(f'Number of states processed: {steps=}')
+            print(f'Target path: {paths[target.state()]}')
+            print(f'Number of states processed: {steps=}')
             return distances[target.state()]
 
         for pid, inc_cost, move_loc in cur_state.possible_moves():
@@ -359,7 +359,8 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    # logging.basicConfig(level=logging.DEBUG,
+    #                     filename="23_original.log", filemode='w')
 
     # read the puzzle input
     puzzle_input = load_input('input/23.txt')

@@ -123,7 +123,7 @@ def path_from_room_free(burrow: str, pos_from: int) -> bool:
     # check which row the pod is in
     row, col = room_pos(pos_from)
     # check that all rows above are free
-    if all(burrow[x] == '.' for x in (pos_from - i * 4 for i in range(1, row+1))):
+    if all(burrow[x] == '.' for x in (pos_from - i * 4 for i in range(1, row))):
         return True
 
     return False
@@ -283,7 +283,7 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    # logging.basicConfig(level=logging.INFO)
+    # logging.basicConfig(level=logging.DEBUG, filename="23_reduced_steps.log")
 
     # read the puzzle input
     puzzle_input = load_input('input/23.txt')
