@@ -235,7 +235,7 @@ def heuristic(burrow: str) -> int:
     return result
 
 
-def dijkstra(start: str, target: str) -> int:
+def astar(start: str, target: str) -> int:
     """Run a Dijkstra search for the cheapest path from start to target.
 
     Return the cost of the path.
@@ -243,46 +243,43 @@ def dijkstra(start: str, target: str) -> int:
 
     # queue = state of the burrow (which includes the cost)
     q = [(0, start)]
-    seen = set()
-    distances = defaultdict(lambda: 1e09)
+    cost_so_far = {start: 0}
     paths = defaultdict(list)
     steps = 0
     while q:
-        cur_cost, cur_state = heappop(q)
+        _, cur_state = heappop(q)
         steps += 1
         # logging.debug(
         #     f'Dijkstra: {steps=} {cur_cost=} {cur_state=}')
 
         # if already seen, discard
-        if cur_state in seen:
-            continue
-
-        seen.add(cur_state)
 
         # if we found the target, we're done
         if cur_state == target:
-            print(f'Target reached: {cur_state}, cost {cur_cost}.')
+            print(
+                f'Target reached: {cur_state}, cost {cost_so_far[cur_state]}.')
             print(f'Target path: {paths[target]}')
             print(f'Number of states processed: {steps=}')
             # logging.info(
             #     f'Target reached: {cur_state}, cost {cur_cost}.')
             # logging.info(f'Target path: {paths[target]}')
             # logging.info(f'Number of states processed: {steps=}')
-            return distances[target]
+            return cost_so_far[cur_state]
 
         # get a list of all possible movers...
         for p in movers(cur_state):
             # ...and their possible moves
             for inc_cost, move_loc in possible_moves(cur_state, p):
                 next_move = move_to(cur_state, p, move_loc)
-                next_cost = cur_cost + inc_cost
-                if next_move not in seen and next_cost < distances[next_move]:
-                    distances[next_move] = next_cost
+                next_cost = cost_so_far[cur_state] + inc_cost
+                if next_move not in cost_so_far or next_cost < cost_so_far[next_move]:
+                    cost_so_far[next_move] = next_cost
                     paths[next_move] = paths[cur_state] + [next_move]
-                    heappush(q, (next_cost, next_move))
+                    prio = next_cost + heuristic(next_move)
+                    heappush(q, (prio, next_move))
 
     # logging.info(f'Target path: {paths[target]}')
-    return distances[target]
+    return cost_so_far[target]
 
 
 @aoc_timer
@@ -293,7 +290,7 @@ def part1(puzzle_input):
     target = to_string(['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'])
 
     # # run the dijkstra search to find the shortest path
-    cost = dijkstra(start, target)
+    cost = astar(start, target)
 
     return cost
 
