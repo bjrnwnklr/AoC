@@ -109,7 +109,7 @@ def target_room_free(burrow: str, pod_type: str) -> tuple[bool, int]:
             # room is occupied, check if remaining slots are occupied by the correct pods
             # Room is only free if we are deeper than the first row (if we get to here and
             # are still on the first row, the room is completely full)
-            if all(burrow[x] == pod_type for x in target_room[i:]) and i > 0:
+            if i > 0 and all(burrow[x] == pod_type for x in target_room[i:]):
                 return (True, target_room[i - 1])
             else:
                 return (False, -1)
@@ -122,7 +122,7 @@ def path_from_room_free(burrow: str, pos_from: int) -> bool:
     if pos_from < 11:
         return True
     # check which row the pod is in
-    row, col = room_pos(pos_from)
+    row, _ = room_pos(pos_from)
     # check that all rows above are free
     if all(burrow[x] == '.' for x in (pos_from - i * 4 for i in range(1, row))):
         return True
@@ -196,9 +196,8 @@ def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:
     else:
         # Otherwise, the pod can move to a hallway position if it is in a room and can move out of the room
         if pos_from > 10 and path_from_room_free(burrow, pos_from):
-            for loc in range(11):
-                if (loc not in [2, 4, 6, 8] and
-                    burrow[loc] == '.' and
+            for loc in [0, 1, 3, 5, 7, 9, 10]:
+                if (burrow[loc] == '.' and
                         hallway_free(burrow, pos_from, loc)):
                     locations_to.append(loc)
 
