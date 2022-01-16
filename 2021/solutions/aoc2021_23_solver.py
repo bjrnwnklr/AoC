@@ -318,5 +318,5 @@ if __name__ == '__main__':
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
 
-# Part 1: Start: 14:15 End:
-# Part 2: Start:  End:
+# Part 1: Start: 14:15 End: 18:45 (16 January - solution was working a long time ago, but now optimized)
+# Part 2: Start: 18:46 End:
