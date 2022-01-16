@@ -71,7 +71,7 @@ def movers(burrow: str) -> list[int]:
                 # check if in a hallway - assume it can move
                 results.append(str_pos)
             case (r, c):
-                # if not in the hallway: if pod is in teh wrong room, it will have to move in any case
+                # if not in the hallway: if pod is in the wrong room, it will have to move in any case
                 # path_from_room_free can then check if it can exit the room.
                 target_room = ROOMS[char]
                 if str_pos not in target_room:
