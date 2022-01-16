@@ -250,7 +250,7 @@ def astar(start: str, target: str) -> int:
         _, cur_state = heappop(q)
         steps += 1
         # logging.debug(
-        #     f'Dijkstra: {steps=} {cur_cost=} {cur_state=}')
+        #     f'Dijkstra: {steps=} {cost_so_far[cur_state]=} {cur_state=}')
 
         # if already seen, discard
 
