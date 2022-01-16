@@ -189,14 +189,14 @@ def possible_moves(burrow: str, pos_from: int) -> list[tuple[int, int]]:
     target_free, target_pos = target_room_free(burrow, p_type)
     if target_free and hallway_free(burrow, pos_from, target_pos) and path_from_room_free(burrow, pos_from):
         locations_to.append(target_pos)
-
-    # Otherwise, the pod can move to a hallway position if it is in a room and can move out of the room
-    if pos_from > 10 and path_from_room_free(burrow, pos_from):
-        for loc in range(11):
-            if (loc not in [2, 4, 6, 8] and
-                burrow[loc] == '.' and
-                    hallway_free(burrow, pos_from, loc)):
-                locations_to.append(loc)
+    else:
+        # Otherwise, the pod can move to a hallway position if it is in a room and can move out of the room
+        if pos_from > 10 and path_from_room_free(burrow, pos_from):
+            for loc in range(11):
+                if (loc not in [2, 4, 6, 8] and
+                    burrow[loc] == '.' and
+                        hallway_free(burrow, pos_from, loc)):
+                    locations_to.append(loc)
 
     # calculate the cost for each step
     results = []
