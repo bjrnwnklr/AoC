@@ -268,7 +268,7 @@ def load_input(f_name):
     with open(f_name, 'r') as f:
         puzzle_input = []
         lines = f.readlines()
-        for line in lines[2:4]:
+        for line in lines[2:-1]:
             pods = list(line.strip().replace('#', ''))
             puzzle_input.extend(pods)
 
@@ -288,7 +288,8 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
     start = to_string(puzzle_input)
-    target = to_string(['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'])
+    target = to_string(list(['ABCD' * 2]))
+    # target = to_string(['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'])
 
     # # run the dijkstra search to find the shortest path
     solver = Solver(2)
@@ -297,11 +298,18 @@ def part1(puzzle_input):
     return cost
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    start = to_string(puzzle_input)
+    target = to_string(list(['ABCD' * 4]))
+
+    # # run the dijkstra search to find the shortest path
+    solver = Solver(4)
+    cost = solver.astar(start, target)
+
+    return cost
 
 
 if __name__ == '__main__':
@@ -314,9 +322,10 @@ if __name__ == '__main__':
     p1 = part1(puzzle_input)
     print(f'Part 1: {p1}')
 
+    puzzle_input = load_input('input/23_2.txt')
     # Solve part 2 and print the answer
     p2 = part2(puzzle_input)
     print(f'Part 2: {p2}')
 
 # Part 1: Start: 14:15 End: 18:45 (16 January - solution was working a long time ago, but now optimized)
-# Part 2: Start: 18:46 End:
+# Part 2: Start: 19:03 End:
