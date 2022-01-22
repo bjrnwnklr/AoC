@@ -14,9 +14,10 @@ class Test_AOC2021_24:
     """
 
     def test_1_1(self):
+        """Test if input can be read. Expected that one 1 is in variable w"""
         puzzle_input = load_input('testinput/24_1_1.txt')
         alu = ALU(puzzle_input)
-        alu.put_input(11111111111111)
+        alu.put_input(1)
         alu.run()
         assert alu.vars['w'] == 1
 
