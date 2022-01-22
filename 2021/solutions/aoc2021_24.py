@@ -39,7 +39,8 @@ class ALU:
         """Load an integer into the input_buffer by splitting it into individual numbers. Checks if
         input is in [1-9]."""
         inp_list = list(map(int, list(str(inp))))
-        assert all(x in range(1, 10) for x in inp_list)
+        if not all(x in range(1, 10) for x in inp_list):
+            raise ValueError(f'Input value not in [1-9]: {inp}.')
 
         self.input_buffer.extend(inp_list)
 

@@ -1,5 +1,6 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
+import pytest
 # load the required functions from the actual solution
 from solutions.aoc2021_24 import load_input, part1, part2, ALU
 
@@ -13,13 +14,27 @@ class Test_AOC2021_24:
     Tests can then be run in the day's directory with `pytest`.
     """
 
-    def test_1_1(self):
+    def test_1_input_1(self):
         """Test if input can be read. Expected that one 1 is in variable w"""
         puzzle_input = load_input('testinput/24_1_1.txt')
         alu = ALU(puzzle_input)
         alu.put_input(1)
         alu.run()
         assert alu.vars['w'] == 1
+
+    def test_1_input_2(self):
+        """Test if input can be read. Expected that ValueError is raised if no input in buffer."""
+        puzzle_input = load_input('testinput/24_1_1.txt')
+        alu = ALU(puzzle_input)
+        with pytest.raises(ValueError):
+            alu.run()
+
+    def test_1_input_3(self):
+        """Test if input can be read. Expected that ValueError is raised if 0 is provided in input."""
+        puzzle_input = load_input('testinput/24_1_1.txt')
+        alu = ALU(puzzle_input)
+        with pytest.raises(ValueError):
+            alu.put_input(0)
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/24_1_1.txt')
