@@ -18,7 +18,7 @@ class Test_AOC2021_24:
         """Test if input can be read. Expected that one 1 is in variable w"""
         puzzle_input = load_input('testinput/24_1_1.txt')
         alu = ALU(puzzle_input)
-        alu.put_input(1)
+        alu.put_input((1, ))
         alu.run()
         assert alu.vars['w'] == 1
 
@@ -34,7 +34,7 @@ class Test_AOC2021_24:
         puzzle_input = load_input('testinput/24_1_1.txt')
         alu = ALU(puzzle_input)
         with pytest.raises(ValueError):
-            alu.put_input(0)
+            alu.put_input((0, ))
 
     def test_1_run_1(self):
         """Test the 2nd example program:
@@ -48,7 +48,7 @@ class Test_AOC2021_24:
         inp = 39 -> z == 1
         """
         puzzle_input = load_input('testinput/24_1_2.txt')
-        for inp, res in zip([13, 11, 39], [1, 0, 1]):
+        for inp, res in zip([(1, 3), (1, 1), (3, 9)], [1, 0, 1]):
             alu = ALU(puzzle_input)
             alu.put_input(inp)
             alu.run()

@@ -5,6 +5,7 @@
 # from utils.aoctools import aoc_timer
 from decimal import DivisionByZero
 import logging
+from itertools import product
 
 
 class ALU:
@@ -37,13 +38,11 @@ class ALU:
         return result
 
     def put_input(self, inp: int) -> None:
-        """Load an integer into the input_buffer by splitting it into individual numbers. Checks if
-        input is in [1-9]."""
-        inp_list = list(map(int, list(str(inp))))
-        if not all(x in range(1, 10) for x in inp_list):
+        """Load a list of integers into the input buffer."""
+        if not all(x in range(1, 10) for x in inp):
             raise ValueError(f'Input value not in [1-9]: {inp}.')
 
-        self.input_buffer.extend(inp_list)
+        self.input_buffer.extend(inp)
 
     def get_val(self, b) -> int:
         """Return the value of b, which is either an int value, or the value stored in variable 'b'."""
@@ -103,9 +102,15 @@ def load_input(f_name):
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
-    alu = ALU(puzzle_input)
-    alu.put_input(11111111111111)
-    return 1
+    result = 0
+    for p in product(range(1, 10), repeat=14):
+        p_num = int(''.join(p))
+        alu = ALU(puzzle_input)
+        alu.put_input(p_num)
+        alu.run()
+        if alu.vars['z'] == 0:
+            result = p_num
+    return result
 
 
 # @aoc_timer
