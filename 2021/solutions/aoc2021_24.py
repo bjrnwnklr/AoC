@@ -3,6 +3,7 @@
 # import re
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
+from decimal import DivisionByZero
 import logging
 
 
@@ -27,8 +28,8 @@ class ALU:
                 result = ('inp', v)
             case [ic, a, b]:
                 assert ic in ['add', 'mul', 'div', 'mod', 'eql']
-                assert a in ['w', 'x', 'y', 'z']
-                if b in ['w', 'x', 'y', 'z']:
+                assert a in self.vars
+                if b in self.vars:
                     result = (ic, a, b)
                 else:
                     result = (ic, a, int(b))
@@ -44,12 +45,16 @@ class ALU:
 
         self.input_buffer.extend(inp_list)
 
+    def get_val(self, b) -> int:
+        """Return the value of b, which is either an int value, or the value stored in variable 'b'."""
+        return self.vars[b] if b in self.vars else int(b)
+
     def run(self) -> None:
         """Run an ALU program from top to bottom."""
         logging.debug(f'Running program of length {len(self.pgm)}.')
         for i, raw_instr in enumerate(self.pgm):
-            logging.debug(f'[{i:04}]: {raw_instr}')
-            instr = self.decode_instruction(raw_instr)
+            logging.debug(f'[{i:04}]: {raw_instr} - {self.vars}')
+            instr = raw_instr.split()
             match instr:
                 case ('inp', v):
                     if self.input_buffer:
@@ -58,15 +63,26 @@ class ALU:
                         raise ValueError(
                             f'Expected input, but input buffer is empty: {instr=}')
                 case ('add', a, b):
-                    pass
+                    b_val = self.get_val(b)
+                    self.vars[a] += b_val
                 case ('mul', a, b):
-                    pass
+                    b_val = self.get_val(b)
+                    self.vars[a] *= b_val
                 case ('div', a, b):
-                    pass
+                    b_val = self.get_val(b)
+                    if b_val == 0:
+                        raise DivisionByZero(
+                            f'Trying to divide by zero: {instr=}')
+                    self.vars[a] = self.vars[a] // b_val
                 case ('mod', a, b):
-                    pass
+                    b_val = self.get_val(b)
+                    if a < 0 or b_val <= 0:
+                        raise DivisionByZero(
+                            f'Modulo with zero value: {instr=}')
+                    self.vars[a] %= b_val
                 case ('eql', a, b):
-                    pass
+                    b_val = self.get_val(b)
+                    self.vars[a] = 1 if self.vars[a] == b_val else 0
 
 
 def load_input(f_name):

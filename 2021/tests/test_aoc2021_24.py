@@ -36,6 +36,24 @@ class Test_AOC2021_24:
         with pytest.raises(ValueError):
             alu.put_input(0)
 
+    def test_1_run_1(self):
+        """Test the 2nd example program:
+
+        Takes two input numbers, then sets z to 1 if the second input number is 
+        three times larger than the first input number, or sets z to 0 otherwise.
+
+        Expected outcomes:
+        inp = 13 -> z == 1
+        inp = 11 -> z == 0
+        inp = 39 -> z == 1
+        """
+        puzzle_input = load_input('testinput/24_1_2.txt')
+        for inp, res in zip([13, 11, 39], [1, 0, 1]):
+            alu = ALU(puzzle_input)
+            alu.put_input(inp)
+            alu.run()
+            assert alu.vars['z'] == res
+
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/24_1_1.txt')
     #     assert part2(puzzle_input) == 1
