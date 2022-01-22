@@ -75,7 +75,7 @@ class ALU:
                     self.vars[a] = self.vars[a] // b_val
                 case ('mod', a, b):
                     b_val = self.get_val(b)
-                    if a < 0 or b_val <= 0:
+                    if self.vars[a] < 0 or b_val <= 0:
                         raise DivisionByZero(
                             f'Modulo with zero value: {instr=}')
                     self.vars[a] %= b_val
@@ -104,12 +104,14 @@ def part1(puzzle_input):
 
     result = 0
     for p in product(range(1, 10), repeat=14):
-        p_num = int(''.join(p))
         alu = ALU(puzzle_input)
-        alu.put_input(p_num)
+        alu.put_input(p)
         alu.run()
         if alu.vars['z'] == 0:
-            result = p_num
+            logging.info(f'Valid model number: {p}.')
+            result = p
+        else:
+            logging.info(f'Invalid model number: {p}. {alu.vars=}')
     return result
 
 
