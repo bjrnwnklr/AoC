@@ -123,7 +123,8 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO,
+                        filename='24_valid_invalid.log', filemode='w')
 
     # read the puzzle input
     puzzle_input = load_input('input/24.txt')
