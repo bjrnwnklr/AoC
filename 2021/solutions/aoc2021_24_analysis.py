@@ -103,15 +103,23 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
     result = 0
-    for p in product(range(1, 10), repeat=14):
+    to_analyze = [
+        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 1),
+        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 3),
+        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1)
+    ]
+    # for p in product(range(1, 10), repeat=14):
+    for p in to_analyze:
+        logging.info(f'Analyzing input value {p}:')
         alu = ALU(puzzle_input)
         alu.put_input(p)
         alu.run()
         if alu.vars['z'] == 0:
             logging.info(f'Valid model number: {p}.')
             result = p
-        # else:
-        #     logging.info(f'Invalid model number: {p}. {alu.vars=}')
+        else:
+            logging.info(f'Invalid model number: {p}. {alu.vars=}')
     return result
 
 
@@ -123,8 +131,8 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        filename='24_valid.log', filemode='w')
+    logging.basicConfig(level=logging.DEBUG,
+                        filename='24_pattern_analysis.log', filemode='w')
 
     # read the puzzle input
     puzzle_input = load_input('input/24.txt')
