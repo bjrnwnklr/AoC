@@ -32,10 +32,15 @@ class ALU:
         """Return the value of b, which is either an int value, or the value stored in variable 'b'."""
         return self.vars[b] if b in self.vars else b
 
-    def run(self) -> None:
-        """Run an ALU program from top to bottom."""
-        logging.debug(f'Running program of length {len(self.pgm)}.')
-        for i, instr in enumerate(self.pgm):
+    def run(self, start: int = 0, stop: int = None) -> None:
+        """Run an ALU program from top to bottom.
+
+        `start` and `stop` can be used to run only the lines between `start` and `stop` (including `start` and `stop`).
+        """
+        if stop == None:
+            stop = len(self.pgm)
+        logging.debug(f'Running program segment [{start}:{stop + 1}].')
+        for i, instr in enumerate(self.pgm[start:stop + 1], start):
             logging.debug(f'[{i:04}]: {instr} - {self.vars}')
             match instr:
                 case ('inp', v):

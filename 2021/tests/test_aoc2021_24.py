@@ -58,6 +58,20 @@ class Test_AOC2021_24:
             alu.run()
             assert alu.vars['z'] == res
 
+    def test_1_run_2(self):
+        """Test running only a segment of a program, namely lines 0 and 1 of the 2nd example program.
+
+        Expected outcome:
+        (1, 1) -> z == 1, x == 1
+        """
+        puzzle_input = load_input('testinput/24_1_2.txt')
+        pgm = pre_process_pgm(puzzle_input)
+        alu = ALU(pgm)
+        alu.put_input((1, 1))
+        alu.run(0, 1)
+        assert alu.vars['z'] == 1
+        assert alu.vars['x'] == 1
+
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/24_1_1.txt')
     #     assert part2(puzzle_input) == 1
