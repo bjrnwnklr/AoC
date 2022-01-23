@@ -2,7 +2,7 @@
 
 import pytest
 # load the required functions from the actual solution
-from solutions.aoc2021_24 import load_input, part1, part2, ALU
+from solutions.aoc2021_24 import load_input, part1, part2, ALU, pre_process_pgm
 
 
 class Test_AOC2021_24:
@@ -17,7 +17,8 @@ class Test_AOC2021_24:
     def test_1_input_1(self):
         """Test if input can be read. Expected that one 1 is in variable w"""
         puzzle_input = load_input('testinput/24_1_1.txt')
-        alu = ALU(puzzle_input)
+        pgm = pre_process_pgm(puzzle_input)
+        alu = ALU(pgm)
         alu.put_input((1, ))
         alu.run()
         assert alu.vars['w'] == 1
@@ -25,14 +26,16 @@ class Test_AOC2021_24:
     def test_1_input_2(self):
         """Test if input can be read. Expected that ValueError is raised if no input in buffer."""
         puzzle_input = load_input('testinput/24_1_1.txt')
-        alu = ALU(puzzle_input)
+        pgm = pre_process_pgm(puzzle_input)
+        alu = ALU(pgm)
         with pytest.raises(ValueError):
             alu.run()
 
     def test_1_input_3(self):
         """Test if input can be read. Expected that ValueError is raised if 0 is provided in input."""
         puzzle_input = load_input('testinput/24_1_1.txt')
-        alu = ALU(puzzle_input)
+        pgm = pre_process_pgm(puzzle_input)
+        alu = ALU(pgm)
         with pytest.raises(ValueError):
             alu.put_input((0, ))
 
@@ -49,7 +52,8 @@ class Test_AOC2021_24:
         """
         puzzle_input = load_input('testinput/24_1_2.txt')
         for inp, res in zip([(1, 3), (1, 1), (3, 9)], [1, 0, 1]):
-            alu = ALU(puzzle_input)
+            pgm = pre_process_pgm(puzzle_input)
+            alu = ALU(pgm)
             alu.put_input(inp)
             alu.run()
             assert alu.vars['z'] == res
