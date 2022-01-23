@@ -108,13 +108,25 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     pgm = pre_process_pgm(puzzle_input)
 
+    # run only lines 0-17 (first segment processing the first digit)
+    start = 108
+    stop = 125
+
+    # load variables with this starting value:
+    # (1, 6, 9, 9, 5, 9)
+    # {'w': 9, 'x': 0, 'y': 0, 'z': 99756}
+    load_vars = {'w': 9, 'x': 0, 'y': 0, 'z': 99756}
+
     result = 0
-    for p in product(range(9, 0, -1), repeat=14):
+    for p in range(1, 10):
+        # for p in range(1, 10):
         alu = ALU(pgm)
-        alu.put_input(p)
-        alu.run()
+        for k, v in load_vars.items():
+            alu.vars[k] = v
+        alu.put_input((p, ))
+        alu.run(start, stop)
         if alu.vars['z'] == 0:
-            logging.info(f'Valid model number: {p}.')
+            logging.info(f'Valid model number: {p}. {alu.vars=}')
             result = p
         else:
             logging.info(f'Invalid model number: {p}. {alu.vars=}')
@@ -129,10 +141,10 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    # logging.basicConfig(level=logging.INFO)
 
-    # logging.basicConfig(level=logging.INFO,
-    #                     filename='24_valid_invalid_reverse.log', filemode='w')
+    logging.basicConfig(level=logging.INFO,
+                        filename='24_segments.log', filemode='w')
 
     # read the puzzle input
     puzzle_input = load_input('input/24.txt')
