@@ -289,24 +289,24 @@ DEBUG:root:[0233]: add z y - {'w': 1, 'x': 1, 'y': 15, 'z': 65004368}
 ```
 
 ```log
-DEBUG:root:[0234]: inp w - {'w': 1, 'x': 1, 'y': 15, 'z': 65004383}
-DEBUG:root:[0235]: mul x 0 - {'w': 1, 'x': 1, 'y': 15, 'z': 65004383}
-DEBUG:root:[0236]: add x z - {'w': 1, 'x': 0, 'y': 15, 'z': 65004383}
-DEBUG:root:[0237]: mod x 26 - {'w': 1, 'x': 65004383, 'y': 15, 'z': 65004383}
-DEBUG:root:[0238]: div z 26 - {'w': 1, 'x': 15, 'y': 15, 'z': 65004383}
-DEBUG:root:[0239]: add x -5 - {'w': 1, 'x': 15, 'y': 15, 'z': 2500168}
-DEBUG:root:[0240]: eql x w - {'w': 1, 'x': 10, 'y': 15, 'z': 2500168}
-DEBUG:root:[0241]: eql x 0 - {'w': 1, 'x': 0, 'y': 15, 'z': 2500168}
+DEBUG:root:[0234]: inp w - {'w': 1, 'x': 1, 'y': 15, 'z': 65004383}     <- read last input number and store in w. z and y have values
+DEBUG:root:[0235]: mul x 0 - {'w': 1, 'x': 1, 'y': 15, 'z': 65004383}   <- set x to 0
+DEBUG:root:[0236]: add x z - {'w': 1, 'x': 0, 'y': 15, 'z': 65004383}   <- copy z to x
+DEBUG:root:[0237]: mod x 26 - {'w': 1, 'x': 65004383, 'y': 15, 'z': 65004383} <- mod x by 26, store in x
+DEBUG:root:[0238]: div z 26 - {'w': 1, 'x': 15, 'y': 15, 'z': 65004383} <- divide z by 26 - z is now z // 26 with the remainder in x. x would be 0 if z can be divided by 26
+DEBUG:root:[0239]: add x -5 - {'w': 1, 'x': 15, 'y': 15, 'z': 2500168}  <- subtract 5 from x
+DEBUG:root:[0240]: eql x w - {'w': 1, 'x': 10, 'y': 15, 'z': 2500168}   <- if x == w, set x to 1, so for the result to be 0, !! x == w is required here. !!
+DEBUG:root:[0241]: eql x 0 - {'w': 1, 'x': 0, 'y': 15, 'z': 2500168}    <- if x == 0, set it to 1; if x != 0, it is set to 0!!!!
 DEBUG:root:[0242]: mul y 0 - {'w': 1, 'x': 1, 'y': 15, 'z': 2500168}
 DEBUG:root:[0243]: add y 25 - {'w': 1, 'x': 1, 'y': 0, 'z': 2500168}
 DEBUG:root:[0244]: mul y x - {'w': 1, 'x': 1, 'y': 25, 'z': 2500168}
 DEBUG:root:[0245]: add y 1 - {'w': 1, 'x': 1, 'y': 25, 'z': 2500168}
-DEBUG:root:[0246]: mul z y - {'w': 1, 'x': 1, 'y': 26, 'z': 2500168}
-DEBUG:root:[0247]: mul y 0 - {'w': 1, 'x': 1, 'y': 26, 'z': 65004368}
-DEBUG:root:[0248]: add y w - {'w': 1, 'x': 1, 'y': 0, 'z': 65004368}
-DEBUG:root:[0249]: add y 14 - {'w': 1, 'x': 1, 'y': 1, 'z': 65004368}
-DEBUG:root:[0250]: mul y x - {'w': 1, 'x': 1, 'y': 15, 'z': 65004368}
-DEBUG:root:[0251]: add z y - {'w': 1, 'x': 1, 'y': 15, 'z': 65004368}
+DEBUG:root:[0246]: mul z y - {'w': 1, 'x': 1, 'y': 26, 'z': 2500168}    <-
+DEBUG:root:[0247]: mul y 0 - {'w': 1, 'x': 1, 'y': 26, 'z': 65004368}   <- y is set to 0 so w can be moved to y
+DEBUG:root:[0248]: add y w - {'w': 1, 'x': 1, 'y': 0, 'z': 65004368}    <- w is always 1..9 so y is > 0
+DEBUG:root:[0249]: add y 14 - {'w': 1, 'x': 1, 'y': 1, 'z': 65004368}   <- y won't be 0 as we add 14
+DEBUG:root:[0250]: mul y x - {'w': 1, 'x': 1, 'y': 15, 'z': 65004368}   <- x must be 0
+DEBUG:root:[0251]: add z y - {'w': 1, 'x': 1, 'y': 15, 'z': 65004368}   <- !! z must be 0, y must be 0 !!
 ```
 
 ```log

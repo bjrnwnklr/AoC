@@ -21,22 +21,6 @@ class ALU:
         }
         self.input_buffer = []
 
-    def decode_instruction(self, instr: str) -> tuple[str, int]:
-        """Decodes a string instruction and returns a tuple containing the instruction
-        and values/variables, e.g. 'inp x' -> ('inp', 'x')."""
-        match instr.split():
-            case ['inp', v]:
-                result = ('inp', v)
-            case [ic, a, b]:
-                assert ic in ['add', 'mul', 'div', 'mod', 'eql']
-                assert a in self.vars
-                if b in self.vars:
-                    result = (ic, a, b)
-                else:
-                    result = (ic, a, int(b))
-
-        return result
-
     def put_input(self, inp: int) -> None:
         """Load a list of integers into the input buffer."""
         if not all(x in range(1, 10) for x in inp):
@@ -46,14 +30,13 @@ class ALU:
 
     def get_val(self, b) -> int:
         """Return the value of b, which is either an int value, or the value stored in variable 'b'."""
-        return self.vars[b] if b in self.vars else int(b)
+        return self.vars[b] if b in self.vars else b
 
     def run(self) -> None:
         """Run an ALU program from top to bottom."""
         logging.debug(f'Running program of length {len(self.pgm)}.')
-        for i, raw_instr in enumerate(self.pgm):
-            logging.debug(f'[{i:04}]: {raw_instr} - {self.vars}')
-            instr = raw_instr.split()
+        for i, instr in enumerate(self.pgm):
+            logging.debug(f'[{i:04}]: {instr} - {self.vars}')
             match instr:
                 case ('inp', v):
                     if self.input_buffer:
@@ -84,6 +67,23 @@ class ALU:
                     self.vars[a] = 1 if self.vars[a] == b_val else 0
 
 
+def pre_process_pgm(raw_pgm: list[str]):
+    """Pre process a program by splitting each line into parts and converting any numbers to int."""
+    pgm = []
+    for raw_instr in raw_pgm:
+        instr = raw_instr.split()
+        match instr:
+            case ('inp', v):
+                pgm.append(('inp', v))
+            case (c, a, b):
+                if b in ['w', 'x', 'y', 'z']:
+                    pgm.append((c, a, b))
+                else:
+                    pgm.append((c, a, int(b)))
+
+    return pgm
+
+
 def load_input(f_name):
     """Loads the puzzle input from the specified file. 
 
@@ -101,18 +101,11 @@ def load_input(f_name):
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    pgm = pre_process_pgm(puzzle_input)
 
     result = 0
-    to_analyze = [
-        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 1),
-        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 3),
-        (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1)
-    ]
-    # for p in product(range(1, 10), repeat=14):
-    for p in to_analyze:
-        logging.info(f'Analyzing input value {p}:')
-        alu = ALU(puzzle_input)
+    for p in product(range(9, 0, -1), repeat=14):
+        alu = ALU(pgm)
         alu.put_input(p)
         alu.run()
         if alu.vars['z'] == 0:
@@ -131,8 +124,10 @@ def part2(puzzle_input):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG,
-                        filename='24_pattern_analysis.log', filemode='w')
+    logging.basicConfig(level=logging.INFO)
+
+    # logging.basicConfig(level=logging.INFO,
+    #                     filename='24_valid_invalid_reverse.log', filemode='w')
 
     # read the puzzle input
     puzzle_input = load_input('input/24.txt')
