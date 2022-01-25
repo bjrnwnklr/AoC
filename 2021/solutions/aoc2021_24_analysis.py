@@ -1,7 +1,7 @@
 # Load any required modules. Most commonly used:
 
 # import re
-# from collections import defaultdict
+from collections import defaultdict
 # from utils.aoctools import aoc_timer
 from decimal import DivisionByZero
 import logging
@@ -108,28 +108,34 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     pgm = pre_process_pgm(puzzle_input)
 
-    # run only lines 0-17 (first segment processing the first digit)
-    start = 108
-    stop = 125
-
-    # load variables with this starting value:
-    # (1, 6, 9, 9, 5, 9)
-    # {'w': 9, 'x': 0, 'y': 0, 'z': 99756}
-    load_vars = {'w': 9, 'x': 0, 'y': 0, 'z': 99756}
-
+    segment = 0
     result = 0
-    for p in range(1, 10):
-        # for p in range(1, 10):
-        alu = ALU(pgm)
-        for k, v in load_vars.items():
-            alu.vars[k] = v
-        alu.put_input((p, ))
-        alu.run(start, stop)
-        if alu.vars['z'] == 0:
-            logging.info(f'Valid model number: {p}. {alu.vars=}')
-            result = p
-        else:
-            logging.info(f'Invalid model number: {p}. {alu.vars=}')
+    # dict[(segment: int, z: int)] = inputnumber: int
+    segment_output = defaultdict(int)
+    segment_output[(-1, 0)] = 0
+    while segment < 9:
+        start = segment * 18
+        stop = start + 17
+        to_process = [x for x in segment_output if x[0] == segment - 1]
+        for s, old_z in to_process:
+            for p in range(1, 10):
+                alu = ALU(pgm)
+                alu.vars['z'] = old_z
+                new_input = segment_output[(s, old_z)] * 10 + p
+                alu.put_input((p, ))
+                alu.run(start, stop)
+                segment_output[(segment, alu.vars['z'])] = new_input
+                # if alu.vars['z'] == 0:
+                #     logging.info(
+                #         f'Valid model number: {new_input}. {alu.vars=}')
+                #     result = new_input
+                # else:
+                #     logging.info(
+                #         f'Invalid model number: {new_input}. {alu.vars=}')
+        logging.info(
+            f'Segment {segment} processed. {len([1 for x in segment_output if x[0] == segment])} unique z values.')
+        segment += 1
+
     return result
 
 
