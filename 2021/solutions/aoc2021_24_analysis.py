@@ -113,9 +113,10 @@ def part1(puzzle_input):
     # dict[(segment: int, z: int)] = inputnumber: int
     segment_output = defaultdict(int)
     segment_output[(-1, 0)] = 0
-    while segment < 9:
+    while segment < 14:
         start = segment * 18
         stop = start + 17
+        reduce = True if segment in [5, 7, 8, 10, 11, 12, 13] else False
         to_process = [x for x in segment_output if x[0] == segment - 1]
         for s, old_z in to_process:
             for p in range(1, 10):
@@ -124,11 +125,12 @@ def part1(puzzle_input):
                 new_input = segment_output[(s, old_z)] * 10 + p
                 alu.put_input((p, ))
                 alu.run(start, stop)
-                segment_output[(segment, alu.vars['z'])] = new_input
-                # if alu.vars['z'] == 0:
-                #     logging.info(
-                #         f'Valid model number: {new_input}. {alu.vars=}')
-                #     result = new_input
+                if not reduce or alu.vars['y'] == 0:
+                    segment_output[(segment, alu.vars['z'])] = new_input
+                if alu.vars['z'] == 0:
+                    logging.info(
+                        f'Valid model number: {new_input}. {alu.vars=}')
+                    result = new_input
                 # else:
                 #     logging.info(
                 #         f'Invalid model number: {new_input}. {alu.vars=}')
