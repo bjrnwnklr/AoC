@@ -2,7 +2,7 @@
 
 # import re
 from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from decimal import DivisionByZero
 import logging
 from itertools import product
@@ -103,9 +103,12 @@ def load_input(f_name):
     return puzzle_input
 
 
-# @aoc_timer
-def part1(puzzle_input):
-    """Solve part 1. Return the required output value."""
+def solve(puzzle_input, part2=False):
+    """Solve the puzzle by running through the program and analysing segment output.
+
+    `part2` parameter defines if the solution is run for part 1 (highest number) or part 2 (lowest
+    number).
+    """
     pgm = pre_process_pgm(puzzle_input)
 
     segment = 0
@@ -119,7 +122,8 @@ def part1(puzzle_input):
         reduce = True if segment in [5, 7, 8, 10, 11, 12, 13] else False
         to_process = [x for x in segment_output if x[0] == segment - 1]
         for s, old_z in to_process:
-            for p in range(1, 10):
+            r = range(9, 0, -1) if part2 else range(1, 10)
+            for p in r:
                 alu = ALU(pgm)
                 alu.vars['z'] = old_z
                 new_input = segment_output[(s, old_z)] * 10 + p
@@ -141,18 +145,23 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
+def part1(puzzle_input):
+    """Solve part 1. Return the required output value."""
+    return solve(puzzle_input, False)
+
+
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
-
-    return 1
+    return solve(puzzle_input, True)
 
 
 if __name__ == '__main__':
-    # logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO)
 
-    logging.basicConfig(level=logging.INFO,
-                        filename='24_segments.log', filemode='w')
+    # logging.basicConfig(level=logging.INFO,
+    #                     filename='24_segments.log', filemode='w')
 
     # read the puzzle input
     puzzle_input = load_input('input/24.txt')
