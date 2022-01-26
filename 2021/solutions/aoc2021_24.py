@@ -113,33 +113,32 @@ def solve(puzzle_input, part2=False):
 
     segment = 0
     result = 0
-    # dict[(segment: int, z: int)] = inputnumber: int
-    segment_output = defaultdict(int)
-    segment_output[(-1, 0)] = 0
+    # dict[segment: int] = defaultdict[z]: inputnumber: int
+    segment_output = {-1: {0: 0}}
+
     while segment < 14:
+        current_segment = defaultdict(int)
+        prior_segment = segment_output[segment - 1]
         start = segment * 18
         stop = start + 17
         reduce = True if segment in [5, 7, 8, 10, 11, 12, 13] else False
-        to_process = [x for x in segment_output if x[0] == segment - 1]
-        for s, old_z in to_process:
+        for old_z in prior_segment:
             r = range(9, 0, -1) if part2 else range(1, 10)
             for p in r:
                 alu = ALU(pgm)
                 alu.vars['z'] = old_z
-                new_input = segment_output[(s, old_z)] * 10 + p
+                new_input = prior_segment[old_z] * 10 + p
                 alu.put_input((p, ))
                 alu.run(start, stop)
                 if not reduce or alu.vars['y'] == 0:
-                    segment_output[(segment, alu.vars['z'])] = new_input
+                    current_segment[alu.vars['z']] = new_input
                 if alu.vars['z'] == 0:
                     logging.info(
                         f'Valid model number: {new_input}. {alu.vars=}')
                     result = new_input
-                # else:
-                #     logging.info(
-                #         f'Invalid model number: {new_input}. {alu.vars=}')
         logging.info(
-            f'Segment {segment} processed. {len([1 for x in segment_output if x[0] == segment])} unique z values.')
+            f'Segment {segment} processed. {len(current_segment)} unique z values.')
+        segment_output[segment] = current_segment
         segment += 1
 
     return result
