@@ -103,6 +103,39 @@ def load_input(f_name):
     return puzzle_input
 
 
+def segment(seg: int, w_val: int, z_val: int) -> int:
+    """Process a segment of the ALU code.
+
+    - inp w
+    - mul x 0
+    - add x z
+    - mod x 26
+    * div z 1
+    * add x 12
+    - eql x w
+    - eql x 0 # this line reverses the results of eql x w, so basically not(eql x w)
+    - mul y 0
+    * add y 25
+    - mul y x
+    * add y 1
+    - mul z y
+    - mul y 0
+    - add y w
+    * add y 4
+    - mul y x
+    - add z y
+    """
+    x = (z_val % 26) + 12       # 12 should be parameter - this changes by segment
+    z = z_val // 1              # 1 should be a parameter - this is 26 in some segments
+    x = 1 if x != w_val else 0
+    y = (x * 25) + 1            # 25 is parameter, 1 is parameter
+    z *= y
+    y = (w_val + 4) * x         # 4 is parameter
+    z += y
+
+    return z
+
+
 def solve(puzzle_input, part2=False):
     """Solve the puzzle by running through the program and analysing segment output.
 
