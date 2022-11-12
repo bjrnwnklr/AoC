@@ -1,7 +1,8 @@
+wheel
+pytest
+black
+flake8
 jupyter
 numpy
 pandas
 requests
-pytest
-pylint
-autopep8
