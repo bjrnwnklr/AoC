@@ -24,7 +24,7 @@ Use curl:
 
 ```shell
 $ curl https://adventofcode.com/2022/day/<DAY - no leading zeros!>/input --cookie "session=SESSION" > input/<day - with leading zeros!>.txt
-$ curl https://adventofcode.com/2022/day/3/input --cookie "session=SESSION" > input/03.txt
+$ curl https://adventofcode.com/2022/day/3/input -A "bjoern@bjoern-winkler.de via curl" --cookie "session=SESSION" > input/03.txt
 ```
 
 Session cookie can be found by:
