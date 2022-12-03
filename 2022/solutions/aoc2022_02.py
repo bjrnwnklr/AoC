@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -34,7 +34,7 @@ def translate_rps(line, part=1):
     return (d[l], d[r])
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
     A, X = Rock     1
@@ -76,7 +76,7 @@ def part1(puzzle_input):
     return score
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value.
 
@@ -91,11 +91,12 @@ def part2(puzzle_input):
         score += r
         match r:
             case 0:
-                # loss, add 2 to l
+                # loss, add 2 to l, adjust so we get
+                # 3 instead of 0
                 result = ((l + 1) % 3) + 1
                 score += result
             case 3:
-                # draw, just add
+                # draw, just add left value
                 score += l
             case 6:
                 # win, add 1 to l
