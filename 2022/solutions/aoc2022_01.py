@@ -22,8 +22,16 @@ def load_input(f_name):
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    max_calories = 0
+    calories = 0
+    for line in puzzle_input:
+        if line:
+            calories += int(line.strip())
+        else:
+            max_calories = max(calories, max_calories)
+            calories = 0
 
-    return 1
+    return max_calories
 
 
 # @aoc_timer
@@ -45,5 +53,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 16:00 End: 16:09
+# Part 2: Start: 16:10 End:
