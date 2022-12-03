@@ -19,8 +19,8 @@ def load_input(f_name):
     return puzzle_input
 
 
-RPS = {"A": 1, "B": 2, "C": 3, "X": 1, "Y": 2, "Z": 3}
-RPS2 = {"A": 1, "B": 2, "C": 3, "X": 0, "Y": 3, "Z": 6}
+RPS = {"A": 0, "B": 1, "C": 2, "X": 0, "Y": 1, "Z": 2}
+RPS2 = {"A": 0, "B": 1, "C": 2, "X": 0, "Y": 3, "Z": 6}
 
 
 def translate_rps(line, part=1):
@@ -37,30 +37,30 @@ def translate_rps(line, part=1):
 @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
-    A, X = Rock     1
-    B, Y = Paper    2
-    C, Z = Scissors 3
+    A, X = Rock     0
+    B, Y = Paper    1
+    C, Z = Scissors 2
 
     Lose:
-    A Z (Rock Scissors) 1 3 = -2 = 1 (-2 % 3 == 1)
-    B X (Paper Rock) 2 1 = 1
-    C Y (Scissors Paper) 3 2 = 1
+    A Z (Rock Scissors) 0 2 = -2 = 1 (-2 % 3 == 1)
+    B X (Paper Rock) 1 0 = 1
+    C Y (Scissors Paper) 2 1 = 1
 
     Draw:
-    A X 1 1 = 0
-    B Y 2 2 = 0
-    C Z 3 3 = 0
+    A X 0 0 = 0
+    B Y 1 1 = 0
+    C Z 2 2 = 0
 
     Win:
-    C X (Scissors Rock) 3 1 = 2
-    A Y (Rock Paper)    1 2 = -1 = 2 (-1 % 3 == 1)
-    B Z (Paper Scissors) 2 3 = -1 = 2
+    C X (Scissors Rock) 2 0 = 2
+    A Y (Rock Paper)    0 1 = -1 = 2 (-1 % 3 == 1)
+    B Z (Paper Scissors) 1 2 = -1 = 2
     """
     score = 0
     for line in puzzle_input:
         l, r = translate_rps(line)
         # score always includes value of my selected shape
-        score += r
+        score += r + 1
         result = (l - r) % 3
         match result:
             case 0:
@@ -89,19 +89,20 @@ def part2(puzzle_input):
         l, r = translate_rps(line, 2)
         # add win / draw / loss to score
         score += r
+        result = 0
         match r:
             case 0:
                 # loss, add 2 to l, adjust so we get
                 # 3 instead of 0
-                result = ((l + 1) % 3) + 1
-                score += result
+                result = (l - 1) % 3
             case 3:
                 # draw, just add left value
-                score += l
+                result = l
             case 6:
                 # win, add 1 to l
-                result = (l % 3) + 1
-                score += result
+                result = (l + 1) % 3
+
+        score += result + 1
 
     return score
 
