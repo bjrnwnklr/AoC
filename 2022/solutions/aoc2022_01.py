@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -19,7 +19,7 @@ def load_input(f_name):
     return puzzle_input
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     max_calories = 0
@@ -34,7 +34,7 @@ def part1(puzzle_input):
     return max_calories
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
     calories_list = []
