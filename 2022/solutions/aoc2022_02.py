@@ -19,11 +19,56 @@ def load_input(f_name):
     return puzzle_input
 
 
+RPS = {"A": 1, "B": 2, "C": 3, "X": 1, "Y": 2, "Z": 3}
+
+
+def translate_rps(line):
+    """Translates an input line 'A Y' into numbers
+    (1, 2)"""
+    l, r = line.split()
+    return (RPS[l], RPS[r])
+
+
 # @aoc_timer
 def part1(puzzle_input):
-    """Solve part 1. Return the required output value."""
+    """Solve part 1. Return the required output value.
+    A, X = Rock     1
+    B, Y = Paper    2
+    C, Z = Scissors 3
 
-    return 1
+    Lose:
+    A Z (Rock Scissors) 1 3 = -2 = 1 (-2 % 3 == 1)
+    B X (Paper Rock) 2 1 = 1
+    C Y (Scissors Paper) 3 2 = 1
+
+    Draw:
+    A X 1 1 = 0
+    B Y 2 2 = 0
+    C Z 3 3 = 0
+
+    Win:
+    C X (Scissors Rock) 3 1 = 2
+    A Y (Rock Paper)    1 2 = -1 = 2 (-1 % 3 == 1)
+    B Z (Paper Scissors) 2 3 = -1 = 2
+    """
+    score = 0
+    for line in puzzle_input:
+        l, r = translate_rps(line)
+        # score always includes value of my selected shape
+        score += r
+        result = (l - r) % 3
+        match result:
+            case 0:
+                # draw
+                score += 3
+            case 1:
+                # elf wins
+                pass
+            case 2:
+                # you win
+                score += 6
+
+    return score
 
 
 # @aoc_timer
@@ -45,5 +90,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 17:38 End: 18:02
+# Part 2: Start: 18:03 End:
