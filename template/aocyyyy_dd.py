@@ -11,10 +11,26 @@ def load_input(f_name):
     Specify the relative path if loading files from a subdirectory,
     e.g. for loading test inputs, specify `testinput/01_1_1.txt`.
     """
+    # return input as list of text lines
     with open(f_name, "r") as f:
         puzzle_input = []
         for line in f.readlines():
             puzzle_input.append(line.strip())
+
+    # Extract ints from the input
+    #
+    # signed ints
+    # regex = re.compile(r"(-?\d+)")
+    #
+    # unsigned ints
+    # regex = re.compile(r"(\d+)")
+    #
+    # with open(f_name, "r") as f:
+    #     puzzle_input = []
+    #     for line in f.readlines():
+    #         matches = regex.findall(line.strip())
+    #         if matches:
+    #             puzzle_input.append(list(map(int, matches)))
 
     return puzzle_input
 
