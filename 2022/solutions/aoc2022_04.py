@@ -3,7 +3,7 @@
 import re
 
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -23,7 +23,7 @@ def load_input(f_name):
     return puzzle_input
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
 
@@ -38,7 +38,7 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value.
 
@@ -67,3 +67,8 @@ if __name__ == "__main__":
 
 # Part 1: Start: 14:55 End: 15:06
 # Part 2: Start: 15:07 End: 15:17
+
+# Elapsed time to run part1: 0.00008 seconds.
+# Part 1: 562
+# Elapsed time to run part2: 0.00010 seconds.
+# Part 2: 924
