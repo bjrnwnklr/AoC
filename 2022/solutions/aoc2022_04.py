@@ -12,11 +12,11 @@ def load_input(f_name):
     Specify the relative path if loading files from a subdirectory,
     e.g. for loading test inputs, specify `testinput/01_1_1.txt`.
     """
-    regex = r"(\d+)"
+    regex = re.compile(r"(\d+)")
     with open(f_name, "r") as f:
         puzzle_input = []
         for line in f.readlines():
-            matches = re.findall(regex, line.strip())
+            matches = regex.findall(line.strip())
             if matches:
                 puzzle_input.append(list(map(int, matches)))
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 # Part 1: Start: 14:55 End: 15:06
 # Part 2: Start: 15:07 End: 15:17
 
-# Elapsed time to run part1: 0.00008 seconds.
+# Elapsed time to run part1: 0.00007 seconds.
 # Part 1: 562
-# Elapsed time to run part2: 0.00010 seconds.
+# Elapsed time to run part2: 0.00006 seconds.
 # Part 2: 924
