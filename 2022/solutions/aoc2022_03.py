@@ -39,15 +39,11 @@ def part1(puzzle_input):
         intersect = l & r
 
         # calculate value
-        # ord('A') == 65
-        # ord('a') == 97
-        # lower case = ord(c) - 96
-        # upper case = ord(C) - 38
         for c in intersect:
             if c.islower():
-                result += ord(c) - 96
+                result += ord(c) - ord("a") + 1
             else:
-                result += ord(c) - 38
+                result += ord(c) - ord("A") + 27
 
     return result
 
@@ -71,15 +67,11 @@ def part2(puzzle_input):
         intersect = r1 & r2 & r3
 
         # calculate value
-        # ord('A') == 65
-        # ord('a') == 97
-        # lower case = ord(c) - 96
-        # upper case = ord(C) - 38
         for c in intersect:
             if c.islower():
-                result += ord(c) - 96
+                result += ord(c) - ord("a") + 1
             else:
-                result += ord(c) - 38
+                result += ord(c) - ord("A") + 27
 
     return result
 
