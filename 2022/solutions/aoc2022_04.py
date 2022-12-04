@@ -47,7 +47,10 @@ def part2(puzzle_input):
     result = 0
     for line in puzzle_input:
         l1, r1, l2, r2 = line
-        if (l1 <= l2 <= r1) or (l1 <= r2 <= r1) or (l2 <= l1 <= r2) or (l2 <= r1 <= r2):
+        # 1 and 2 do not overlap if one ends before the other starts, or the other way around
+        #           l1 .. r1
+        #  l2..r2             l2..r2
+        if not (r1 < l2 or l1 > r2):
             result += 1
 
     return result
