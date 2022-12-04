@@ -12,11 +12,7 @@ def load_input(f_name):
     e.g. for loading test inputs, specify `testinput/01_1_1.txt`.
     """
     with open(f_name, "r") as f:
-        puzzle_input = []
-        for line in f.readlines():
-            puzzle_input.append(line.strip())
-
-    return puzzle_input
+        return f.read()
 
 
 @aoc_timer
@@ -24,12 +20,15 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     max_calories = 0
     calories = 0
-    for line in puzzle_input:
-        if line:
+
+    blocks = puzzle_input.split("\n\n")
+
+    for block in blocks:
+        for line in block.strip().split("\n"):
             calories += int(line.strip())
-        else:
-            max_calories = max(calories, max_calories)
-            calories = 0
+
+        max_calories = max(calories, max_calories)
+        calories = 0
 
     return max_calories
 
@@ -39,12 +38,15 @@ def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
     calories_list = []
     calories = 0
-    for line in puzzle_input:
-        if line:
+
+    blocks = puzzle_input.split("\n\n")
+
+    for block in blocks:
+        for line in block.strip().split("\n"):
             calories += int(line.strip())
-        else:
-            calories_list.append(calories)
-            calories = 0
+
+        calories_list.append(calories)
+        calories = 0
 
     return sum(sorted(calories_list, reverse=True)[:3])
 
@@ -63,3 +65,8 @@ if __name__ == "__main__":
 
 # Part 1: Start: 16:00 End: 16:09
 # Part 2: Start: 16:10 End: 16:13
+
+# Elapsed time to run part1: 0.00040 seconds.
+# Part 1: 66616
+# Elapsed time to run part2: 0.00039 seconds.
+# Part 2: 199172
