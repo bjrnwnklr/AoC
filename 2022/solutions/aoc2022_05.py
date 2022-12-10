@@ -4,7 +4,7 @@ import re
 
 from collections import deque
 
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -51,7 +51,7 @@ def load_input(f_name):
     return (stacks, instructions)
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     stacks, instructions = puzzle_input
@@ -70,11 +70,28 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    stacks, instructions = puzzle_input
 
-    return 1
+    # move crates
+    for count, s_from, s_to in instructions:
+        temp_stack = deque([])
+        for _ in range(count):
+            # pop element from s_from
+            crate = stacks[s_from - 1].popleft()
+            # push crate into temp_stack
+            temp_stack.append(crate)
+        # reverse the temp stack and then extendleft to the
+        # stack (extendleft does individual appends, so needs
+        # to be first reversed)
+        temp_stack.reverse()
+        stacks[s_to - 1].extendleft(temp_stack)
+
+    # get top crates
+    result = "".join([s[0] for s in stacks])
+    return result
 
 
 if __name__ == "__main__":
@@ -85,9 +102,15 @@ if __name__ == "__main__":
     p1 = part1(puzzle_input)
     print(f"Part 1: {p1}")
 
+    puzzle_input = load_input("input/05.txt")
     # Solve part 2 and print the answer
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 15:08 End: 15:55
-# Part 2: Start: 15:56 End:
+# Part 2: Start: 15:56 End: 16:14
+
+# Elapsed time to run part1: 0.00060 seconds.
+# Part 1: RNZLFZSJH
+# Elapsed time to run part2: 0.00075 seconds.
+# Part 2: CNSFCGJSM

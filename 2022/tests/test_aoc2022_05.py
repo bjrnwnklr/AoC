@@ -18,6 +18,6 @@ class Test_AOC2022_05:
         puzzle_input = load_input("testinput/05_1_1.txt")
         assert part1(puzzle_input) == "CMZ"
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/05_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_1(self):
+        puzzle_input = load_input("testinput/05_1_1.txt")
+        assert part2(puzzle_input) == "MCD"
