@@ -17,29 +17,20 @@ def load_input(f_name):
         for line in f.readlines():
             puzzle_input.append(line.strip())
 
-    # Extract ints from the input
-    #
-    # signed ints
-    # regex = re.compile(r"(-?\d+)")
-    #
-    # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
-
-    return puzzle_input
+    return puzzle_input[0]
 
 
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
-
-    return 1
+    # turn windows of 4 into a set and check length of set
+    # if set has length 4, the window is a marker
+    for i in range(4, len(puzzle_input)):
+        window = puzzle_input[i - 4 : i]
+        s = set(window)
+        if len(s) == 4:
+            return i
+    return -1
 
 
 # @aoc_timer
@@ -61,5 +52,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 19:19 End: 19:30
+# Part 2: Start: 19:31 End:
