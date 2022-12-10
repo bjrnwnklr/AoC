@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -20,7 +20,7 @@ def load_input(f_name):
     return puzzle_input[0]
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     # turn windows of 4 into a set and check length of set
@@ -33,11 +33,17 @@ def part1(puzzle_input):
     return -1
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
-
-    return 1
+    # turn windows of 14 into a set and check length of set
+    # if set has length 14, the window is a marker
+    for i in range(14, len(puzzle_input)):
+        window = puzzle_input[i - 14 : i]
+        s = set(window)
+        if len(s) == 14:
+            return i
+    return -1
 
 
 if __name__ == "__main__":
@@ -53,4 +59,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 19:19 End: 19:30
-# Part 2: Start: 19:31 End:
+# Part 2: Start: 19:31 End: 19:33
+
+# Elapsed time to run part1: 0.00046 seconds.
+# Part 1: 1210
+# Elapsed time to run part2: 0.00271 seconds.
+# Part 2: 3476
