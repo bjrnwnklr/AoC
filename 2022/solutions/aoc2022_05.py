@@ -1,7 +1,9 @@
 # Load any required modules. Most commonly used:
 
-# import re
-# from collections import defaultdict
+import re
+
+from collections import deque
+
 # from utils.aoctools import aoc_timer
 
 
@@ -13,33 +15,59 @@ def load_input(f_name):
     """
     # return input as list of text lines
     with open(f_name, "r") as f:
-        puzzle_input = []
-        for line in f.readlines():
-            puzzle_input.append(line.strip())
+        # split input into two parts
+        # - stacks
+        # - instructions
+        s, i = f.read().split("\n\n")
 
-    # Extract ints from the input
-    #
-    # signed ints
-    # regex = re.compile(r"(-?\d+)")
-    #
-    # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
+        rows = []
+        # parse the stacks
+        for line in s.split("\n"):
+            # each segment is 4 characters: [L]_
+            num_stacks = (len(line) // 4) + 1
+            # find each crate at (stack * 4) + 1 (2nd position)
+            rows.append([line[(stack * 4) + 1] for stack in range(num_stacks)])
 
-    return puzzle_input
+        # create stacks by going through the crates and adding
+        # them to each stack
+        # determine number of stacks and set up stacks
+        stacks = [deque([]) for _ in range(len(rows[-1]))]
+
+        # fill stacks - left = top, right = bottom
+        for row in rows[:-1]:
+            for col, crate in enumerate(row):
+                if crate != " ":
+                    stacks[col].append(crate)
+
+        # find all numbers in the instructions
+        regex = re.compile(r"(\d+)")
+
+        instructions = []
+        for line in i.split("\n"):
+            matches = regex.findall(line.strip())
+            if matches:
+                instructions.append(list(map(int, matches)))
+
+    return (stacks, instructions)
 
 
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    stacks, instructions = puzzle_input
 
-    return 1
+    # move crates
+    for count, s_from, s_to in instructions:
+        for _ in range(count):
+            # pop element from s_from
+            crate = stacks[s_from - 1].popleft()
+            # push element into s_to
+            stacks[s_to - 1].appendleft(crate)
+
+    # get top crates
+    result = "".join([s[0] for s in stacks])
+
+    return result
 
 
 # @aoc_timer
@@ -61,5 +89,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 15:08 End: 15:55
+# Part 2: Start: 15:56 End:
