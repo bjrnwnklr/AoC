@@ -3,6 +3,7 @@
 # import re
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
+from dataclasses import dataclass
 
 
 def load_input(f_name):
@@ -35,9 +36,37 @@ def load_input(f_name):
     return puzzle_input
 
 
+@dataclass
+class Rope:
+    head: tuple(int) = (0, 0)
+    tail: tuple(int) = (0, 0)
+
+    def is_tail_move(self) -> bool:
+        """Calculate if tail moves.
+        Tail moves if head is not adjacent to tail.
+        """
+        return (self.head[0] - 1 <= self.tail[0] <= self.head[0] + 1) and (
+            self.head[1] - 1 <= self.tail[1] <= self.head[1] + 1
+        )
+
+
+def move(rope: Rope, dir, count):
+    """Move the provided rope into direction dir by count steps."""
+    # TODO: Create move logic for moving the head / tail
+    pass
+
+
 # @aoc_timer
 def part1(puzzle_input):
-    """Solve part 1. Return the required output value."""
+    """Solve part 1. Return the required output value.
+
+    How many positions does the tail of the rope visit at least once?
+    This includes the starting position
+    """
+    tail_visits = set()
+    head = (0, 0)
+    tail = (0, 0)
+    print(f"bla   ")
 
     return 1
 
@@ -61,5 +90,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
+# Part 1: Start: 18:42 End:
 # Part 2: Start:  End:
