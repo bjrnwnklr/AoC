@@ -1,7 +1,5 @@
 # Load any required modules. Most commonly used:
 
-# import re
-from collections import defaultdict
 from utils.aoctools import aoc_timer
 
 
@@ -55,7 +53,6 @@ def create_dir_tree(puzzle_input):
                 assert d in curr_node.children
 
                 curr_node = curr_node.children[d]
-                (f'Changing to dir {d}. Current node: {curr_node.name}')
             case ['$', 'ls']:
                 # we don't need to do anything, wait for file name
                 pass
@@ -64,13 +61,10 @@ def create_dir_tree(puzzle_input):
                 assert d not in curr_node.children
 
                 # add to children of current node
-                new_dir = Node(d, curr_node)
-                curr_node.children[d] = new_dir
-                (f'New directory {d}. Current node: {curr_node.name}')
-            case [size, name]:
+                curr_node.children[d] = Node(d, curr_node)
+            case [size, _]:
                 # found a file with size and name
                 curr_node.inc_size(int(size))
-                (f'File {name} found with size {size}. Current node: {curr_node.name}')
 
     return root
 
@@ -78,7 +72,6 @@ def add_up(node: Node, threshold: int = 100_000) -> int:
     """Sums up the total sizes of each node if <= threshold, recursively"""
     
     inc = node.total_size if node.total_size <= threshold else 0
-    (f'Adding {node.name} size: {node.total_size}, inc: {inc}')
     return inc + sum(add_up(n) for n in node.children.values())
 
 def find_space(node: Node, size: int, dirs: list) -> int:
@@ -86,10 +79,8 @@ def find_space(node: Node, size: int, dirs: list) -> int:
     frees up space of size, recursively."""
     if node.total_size >= size:
         dirs.append(node.total_size)
-        (f'DIRS: {dirs}')
-    if node.children:
-        for c in node.children.values():
-            find_space(c, size, dirs)
+    for c in node.children.values():
+        find_space(c, size, dirs)
 
 
 @aoc_timer
@@ -127,8 +118,7 @@ def part2(puzzle_input):
     # find how much space is required
     total_disk = 70_000_000
     required_space = 30_000_000
-    used_space = root.total_size
-    unused_space = total_disk - used_space
+    unused_space = total_disk - root.total_size
     to_delete_space = required_space - unused_space
     if to_delete_space > 0:
         dirs = []
