@@ -2,7 +2,7 @@
 
 # import re
 from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -16,21 +16,6 @@ def load_input(f_name):
         puzzle_input = []
         for line in f.readlines():
             puzzle_input.append(line.strip())
-
-    # Extract ints from the input
-    #
-    # signed ints
-    # regex = re.compile(r"(-?\d+)")
-    #
-    # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
 
     return puzzle_input
 
@@ -65,13 +50,12 @@ def create_dir_tree(puzzle_input):
             case ['$', 'cd', '..']:
                 # go up one directory
                 curr_node = curr_node.parent
-                print(f'Going up one dir. Current node: {curr_node.name}')
             case ['$', 'cd', d]:
                 # change to child directory
                 assert d in curr_node.children
 
                 curr_node = curr_node.children[d]
-                print(f'Changing to dir {d}. Current node: {curr_node.name}')
+                (f'Changing to dir {d}. Current node: {curr_node.name}')
             case ['$', 'ls']:
                 # we don't need to do anything, wait for file name
                 pass
@@ -82,11 +66,11 @@ def create_dir_tree(puzzle_input):
                 # add to children of current node
                 new_dir = Node(d, curr_node)
                 curr_node.children[d] = new_dir
-                print(f'New directory {d}. Current node: {curr_node.name}')
+                (f'New directory {d}. Current node: {curr_node.name}')
             case [size, name]:
                 # found a file with size and name
                 curr_node.inc_size(int(size))
-                print(f'File {name} found with size {size}. Current node: {curr_node.name}')
+                (f'File {name} found with size {size}. Current node: {curr_node.name}')
 
     return root
 
@@ -94,7 +78,7 @@ def add_up(node: Node, threshold: int = 100_000) -> int:
     """Sums up the total sizes of each node if <= threshold, recursively"""
     
     inc = node.total_size if node.total_size <= threshold else 0
-    print(f'Adding {node.name} size: {node.total_size}, inc: {inc}')
+    (f'Adding {node.name} size: {node.total_size}, inc: {inc}')
     return inc + sum(add_up(n) for n in node.children.values())
 
 def find_space(node: Node, size: int, dirs: list) -> int:
@@ -102,13 +86,13 @@ def find_space(node: Node, size: int, dirs: list) -> int:
     frees up space of size, recursively."""
     if node.total_size >= size:
         dirs.append(node.total_size)
-        print(f'DIRS: {dirs}')
+        (f'DIRS: {dirs}')
     if node.children:
         for c in node.children.values():
             find_space(c, size, dirs)
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
     
@@ -123,12 +107,11 @@ def part1(puzzle_input):
     root = create_dir_tree(puzzle_input)
     # find all directories with total_size <= 100_000
     result = add_up(root)
-    print(f'Result: {result}')
 
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value.
     
@@ -148,7 +131,7 @@ def part2(puzzle_input):
     unused_space = total_disk - used_space
     to_delete_space = required_space - unused_space
     if to_delete_space > 0:
-        print(f'not enough space on disk. Find {to_delete_space} to delete')
+        (f'not enough space on disk. Find {to_delete_space} to delete')
         dirs = []
         find_space(root, to_delete_space, dirs)
 
@@ -169,3 +152,8 @@ if __name__ == "__main__":
 
 # Part 1: Start: 14:23 End: 15:45
 # Part 2: Start: 15:46 End: 16:09
+
+# Elapsed time to run part1: 0.00090 seconds.
+# Part 1: 1989474
+# Elapsed time to run part2: 0.00084 seconds.
+# Part 2: 1111607
