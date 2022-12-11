@@ -131,7 +131,6 @@ def part2(puzzle_input):
     unused_space = total_disk - used_space
     to_delete_space = required_space - unused_space
     if to_delete_space > 0:
-        (f'not enough space on disk. Find {to_delete_space} to delete')
         dirs = []
         find_space(root, to_delete_space, dirs)
 
