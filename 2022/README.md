@@ -63,7 +63,7 @@ Tests are located in the `tests` subdirectory and should be used to test the exa
 | 05  | 0.00060 | 0.00075 |
 | 06  | 0.00046 | 0.00271 |
 | 07  | 0.00090 | 0.00084 |
-| 08  |         |         |
+| 08  | 0.05325 | 0.04276 |
 | 09  |         |         |
 | 10  |         |         |
 | 11  |         |         |

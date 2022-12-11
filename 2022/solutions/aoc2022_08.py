@@ -1,8 +1,6 @@
 # Load any required modules. Most commonly used:
 
-# import re
-# from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -38,7 +36,41 @@ def visible(grid, r, c) -> bool:
     return any(max(side) < height for side in [left, right, top, bottom])
 
 
-# @aoc_timer
+def scenic_score(grid, r, c) -> int:
+    """Return the scenic score of a given tree
+
+    Scenic score for trees at the edge is always 0 as the score on the edge
+    is 0."""
+    # row and column of the tree
+    row = grid[r]
+    col = [line[c] for line in grid]
+
+    # height of the tree
+    height = grid[r][c]
+    # segments of row and col to left, right, top, bottom of tree
+    left = row[:c]
+    right = row[c + 1 :]
+    top = col[:r]
+    bottom = col[r + 1 :]
+
+    score = 1
+    # calculate the score by stepping through each element of the
+    # row or column until an equal or taller tree is found
+    # left and top can be done the same way by just reversing the list
+    for side in [left[::-1], right, top[::-1], bottom]:
+        vis = 0
+        for t in side:
+            # we can always see the next tree
+            vis += 1
+            # if that tree is equal or higher, further view is blocked
+            if t >= height:
+                break
+        score *= vis
+
+    return score
+
+
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     # count trees on the side
@@ -57,11 +89,19 @@ def part1(puzzle_input):
     return count_visible
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    height = len(puzzle_input)
+    width = len(puzzle_input[0])
 
-    return 1
+    # count all visible trees in the middle
+    score = 0
+    for r in range(1, height - 1):
+        for c in range(1, width - 1):
+            score = max(score, scenic_score(puzzle_input, r, c))
+
+    return score
 
 
 if __name__ == "__main__":
@@ -77,4 +117,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 17:42 End: 18:04
-# Part 2: Start: 18:05 End:
+# Part 2: Start: 18:05 End: 18:22
+
+# Elapsed time to run part1: 0.05325 seconds.
+# Part 1: 1870
+# Elapsed time to run part2: 0.04276 seconds.
+# Part 2: 517440
