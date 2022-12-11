@@ -51,25 +51,9 @@ class Node:
         if self.parent:
             self.parent.inc_size(s)
 
-def add_up(node: Node, threshold: int = 100_000) -> int:
-    """Sums up the total sizes of each node if <= threshold, recursively"""
-    
-    inc = node.total_size if node.total_size <= threshold else 0
-    print(f'Adding {node.name} size: {node.total_size}, inc: {inc}')
-    return inc + sum(add_up(n) for n in node.children.values())
-
-
-# @aoc_timer
-def part1(puzzle_input):
-    """Solve part 1. Return the required output value.
-    
-    Find all directories with size <= 100_000; what is
-    the sum of the total sizes of those directories?
-
-    Directories contained in other directories count
-    multiple times.
-    """
-    # create root node and store in tree
+def create_dir_tree(puzzle_input):
+    """Parse the puzzle input and create a directory tree"""
+        # create root node and store in tree
     curr_node = Node('/', None)
     root = curr_node
 
@@ -104,6 +88,39 @@ def part1(puzzle_input):
                 curr_node.inc_size(int(size))
                 print(f'File {name} found with size {size}. Current node: {curr_node.name}')
 
+    return root
+
+def add_up(node: Node, threshold: int = 100_000) -> int:
+    """Sums up the total sizes of each node if <= threshold, recursively"""
+    
+    inc = node.total_size if node.total_size <= threshold else 0
+    print(f'Adding {node.name} size: {node.total_size}, inc: {inc}')
+    return inc + sum(add_up(n) for n in node.children.values())
+
+def find_space(node: Node, size: int, dirs: list) -> int:
+    """Find all directories in the node structure that 
+    frees up space of size, recursively."""
+    if node.total_size >= size:
+        dirs.append(node.total_size)
+        print(f'DIRS: {dirs}')
+    if node.children:
+        for c in node.children.values():
+            find_space(c, size, dirs)
+
+
+# @aoc_timer
+def part1(puzzle_input):
+    """Solve part 1. Return the required output value.
+    
+    Find all directories with size <= 100_000; what is
+    the sum of the total sizes of those directories?
+
+    Directories contained in other directories count
+    multiple times.
+    """
+
+    # create the tree structure
+    root = create_dir_tree(puzzle_input)
     # find all directories with total_size <= 100_000
     result = add_up(root)
     print(f'Result: {result}')
@@ -113,9 +130,29 @@ def part1(puzzle_input):
 
 # @aoc_timer
 def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
+    """Solve part 2. Return the required output value.
+    
+    Find the smallest directory that, if deleted, would free up enough space 
+    on the filesystem to run the update. What is the total size of that directory?
 
-    return 1
+    Total disk space 70_000_000
+    Need unused space 30_000_000
+    """
+    # create the tree structure
+    root = create_dir_tree(puzzle_input)
+
+    # find how much space is required
+    total_disk = 70_000_000
+    required_space = 30_000_000
+    used_space = root.total_size
+    unused_space = total_disk - used_space
+    to_delete_space = required_space - unused_space
+    if to_delete_space > 0:
+        print(f'not enough space on disk. Find {to_delete_space} to delete')
+        dirs = []
+        find_space(root, to_delete_space, dirs)
+
+    return min(dirs)
 
 
 if __name__ == "__main__":
@@ -131,4 +168,4 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 14:23 End: 15:45
-# Part 2: Start: 15:46 End:
+# Part 2: Start: 15:46 End: 16:09
