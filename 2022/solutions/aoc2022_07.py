@@ -69,34 +69,35 @@ def part1(puzzle_input):
     Directories contained in other directories count
     multiple times.
     """
-    # store Node elements for each directory
-    dir_tree = {}
     # create root node and store in tree
     curr_node = Node('/', None)
-    dir_tree['/'] = curr_node
+    root = curr_node
 
     for line in puzzle_input:
         match line.split():
-            case ['$', 'cd', d] if d == '..':
+            case ['$', 'cd', '/']:
+                # go to root node
+                curr_node = root
+            case ['$', 'cd', '..']:
                 # go up one directory
                 curr_node = curr_node.parent
                 print(f'Going up one dir. Current node: {curr_node.name}')
             case ['$', 'cd', d]:
-                # add dir to curr_dir list
-                curr_node = dir_tree[d]
+                # change to child directory
+                assert d in curr_node.children
+
+                curr_node = curr_node.children[d]
                 print(f'Changing to dir {d}. Current node: {curr_node.name}')
             case ['$', 'ls']:
                 # we don't need to do anything, wait for file name
                 pass
             case ['dir', d]:
                 # found a directory, create a new node with current node as parent
-                # check that we do not try to create a dir that already exists
-                assert d not in dir_tree
-                
+                assert d not in curr_node.children
+
                 # add to children of current node
                 new_dir = Node(d, curr_node)
                 curr_node.children[d] = new_dir
-                dir_tree[d] = new_dir
                 print(f'New directory {d}. Current node: {curr_node.name}')
             case [size, name]:
                 # found a file with size and name
@@ -104,8 +105,7 @@ def part1(puzzle_input):
                 print(f'File {name} found with size {size}. Current node: {curr_node.name}')
 
     # find all directories with total_size <= 100_000
-    print(dir_tree['/'])
-    result = add_up(dir_tree['/'])
+    result = add_up(root)
     print(f'Result: {result}')
 
     return result
@@ -130,5 +130,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start: 14:23 End:
-# Part 2: Start:  End:
+# Part 1: Start: 14:23 End: 15:45
+# Part 2: Start: 15:46 End:
