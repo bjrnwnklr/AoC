@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from dataclasses import dataclass
 
 
@@ -53,12 +53,8 @@ def distance(head, tail):
     return (head.x - tail.x, head.y - tail.y)
 
 
-def one_move(direction, head, tail):
-    """Move both head and tail by one step into direction."""
-    # move the head
-    move(DIRECTIONS[direction], head)
-    # print(f"\tHead: {head}")
-
+def move_tail(head, tail):
+    """Move tail by one step into direction."""
     # determine if tail needs to move
     # - if distance in x or y is > 2, tail needs to move
     # - tail moves by (sign(delta.x), sign(delta.y)),
@@ -69,10 +65,9 @@ def one_move(direction, head, tail):
     if abs(d[0]) > 1 or abs(d[1]) > 1:
         # move tail
         move((sign(d[0]), sign(d[1])), tail)
-        # print(f"\tTail moved: {tail}")
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
 
@@ -84,20 +79,36 @@ def part1(puzzle_input):
     tail = Knot()
 
     for direction, steps in puzzle_input:
-        # print(f"Motion: {direction=}, {steps=}")
         for _ in range(steps):
-            one_move(direction, head, tail)
+            move(DIRECTIONS[direction], head)
+            move_tail(head, tail)
             tail_visits.add((tail.x, tail.y))
-            # print(f"\t{tail_visits=}")
 
     return len(tail_visits)
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
+    """Solve part 2. Return the required output value.
 
-    return 1
+    Rope is now 10 knots long (head, 8 middle, tail)
+
+    How many positions does the tail of the rope visit at least once?
+    This includes the starting position
+    """
+    tail_visits = set()
+    knots = [Knot() for _ in range(10)]
+
+    for direction, steps in puzzle_input:
+        for _ in range(steps):
+            # move head - always moves
+            move(DIRECTIONS[direction], knots[0])
+            for i in range(9):
+                # move the other knots
+                move_tail(knots[i], knots[i + 1])
+            tail_visits.add((knots[9].x, knots[9].y))
+
+    return len(tail_visits)
 
 
 if __name__ == "__main__":
@@ -113,4 +124,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 18:42 End: 19:08
-# Part 2: Start: 19:09 End:
+# Part 2: Start: 19:09 End: 19:29
+
+# Elapsed time to run part1: 0.01072 seconds.
+# Part 1: 6081
+# Elapsed time to run part2: 0.04979 seconds.
+# Part 2: 2487
