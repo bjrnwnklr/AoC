@@ -100,7 +100,6 @@ def part2(puzzle_input):
     print()
 
     for line in puzzle_input:
-        # print(f'[{cpu.cycle}] {line} ({cpu})')
         match line.split():
             case ["noop"]:
                 # draw
