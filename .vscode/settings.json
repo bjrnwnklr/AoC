@@ -8,5 +8,8 @@
     "python.linting.flake8Enabled": true,
     "python.formatting.provider": "black",
     "editor.defaultFormatter": null,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "[markdown]": {
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+    }
 }
