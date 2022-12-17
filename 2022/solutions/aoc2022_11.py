@@ -7,7 +7,9 @@ import logging
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler('2022_11_2_divmod.log')
+logger.addHandler(fh)
 
 
 def load_input(f_name):
@@ -134,8 +136,8 @@ def inspect_2(monkey, monkeys):
         # for part 2, take the item % other_monkey.divisible as that 
         # produces the same result (divisibles are all primes, likely some
         # number theory theorem with modulo arithmetic)      
-        item = (item % monkeys[other_monkey].divisible) 
-        logger.debug(f'\tAdjusting item level down to {item}.')
+        item = item % monkeys[other_monkey].divisible
+        # logger.debug(f'\tAdjusting item level down to {item}.')
 
         monkeys[other_monkey].items.append(item)
         logger.debug(f"\tItem with worry level {item} is thrown to monkey {other_monkey}.")
