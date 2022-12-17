@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 def load_input(f_name):
@@ -105,6 +105,44 @@ def inspect(monkey, monkeys):
     else:
         logger.debug(f'\tMonkey {monkey.number} has no items.')
 
+def inspect_2(monkey, monkeys):
+    """Inspect an item by executing operation on value"""
+    logger.debug(f"Monkey {monkey.number}:")
+    if monkey.items:
+        item = monkey.items.pop(0)
+
+        logger.debug(f"\tMonkey inspects an item with a worry level of {item}.")
+        match monkey.operation:
+            case "*":
+                item *= monkey.factor
+                logger.debug(f"\t\tWorry level is multiplied by {monkey.factor} to {item}.")
+            case "+":
+                item += monkey.factor
+                logger.debug(f"\t\tWorry level increases by {monkey.factor} to {item}.")
+            case '^':
+                item *= item 
+                logger.debug(f"\t\tWorry level is multiplied by self to {item}.")
+
+        # item = item // 3
+        # logger.debug(
+            # f"\t\tMonkey gets bored with item. Worry level is divided by 3 to {item}."
+        # )
+
+        if item % monkey.divisible == 0:
+            logger.debug(f"\t\tCurrent worry level is divisible by {monkey.divisible}.")
+            other_monkey = monkey.test_t
+        else:
+            logger.debug(f"\t\tCurrent worry level is not divisible by {monkey.divisible}.")
+            other_monkey = monkey.test_f
+
+        monkeys[other_monkey].items.append(item)
+        logger.debug(f"\tItem with worry level {item} is thrown to monkey {other_monkey}.")
+
+        # increase monkey inspect count
+        monkey.inspected += 1
+    else:
+        logger.debug(f'\tMonkey {monkey.number} has no items.')
+
 
 # @aoc_timer
 def part1(puzzle_input):
@@ -139,8 +177,16 @@ def part1(puzzle_input):
 # @aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    for i in range(3):
+        for j in range(len(puzzle_input)):
+            monkey = puzzle_input[j]
+            while monkey.items:
+                inspect_2(monkey, puzzle_input)
 
-    return 1
+    # calculate two most active monkeys
+    m1, m2 = sorted(puzzle_input, key=lambda x: puzzle_input[x].inspected, reverse=True)[:2]
+
+    return puzzle_input[m1].inspected * puzzle_input[m2].inspected
 
 
 if __name__ == "__main__":
@@ -152,6 +198,7 @@ if __name__ == "__main__":
     print(f"Part 1: {p1}")
 
     # Solve part 2 and print the answer
+    puzzle_input = load_input("input/11.txt")
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
