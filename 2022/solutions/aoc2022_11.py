@@ -126,15 +126,15 @@ def inspect_2(monkey, monkeys):
         if item % monkey.divisible == 0:
             logger.debug(f"\t\tCurrent worry level is divisible by {monkey.divisible}.")
             other_monkey = monkey.test_t
-            item = monkeys[other_monkey].divisible
         else:
             logger.debug(f"\t\tCurrent worry level is not divisible by {monkey.divisible}.")
             other_monkey = monkey.test_f
-            item = item % monkeys[other_monkey].divisible
+
 
         # for part 2, take the item % other_monkey.divisible as that 
         # produces the same result (divisibles are all primes, likely some
         # number theory theorem with modulo arithmetic)      
+        item = (item % monkeys[other_monkey].divisible) 
         logger.debug(f'\tAdjusting item level down to {item}.')
 
         monkeys[other_monkey].items.append(item)
@@ -179,13 +179,13 @@ def part1(puzzle_input):
 # @aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
-    for i in range(10_000):
+    for i in range(20):
         for j in range(len(puzzle_input)):
             monkey = puzzle_input[j]
             while monkey.items:
                 inspect_2(monkey, puzzle_input)
 
-        if (i + 1) % 1000 == 0:
+        if (i + 1) % 1 == 0:
             logger.info(f'-- After round {i + 1} --')
             for m in puzzle_input:
                 monkey = puzzle_input[m]
