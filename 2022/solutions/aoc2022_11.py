@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def load_input(f_name):
@@ -123,17 +123,19 @@ def inspect_2(monkey, monkeys):
                 item *= item 
                 logger.debug(f"\t\tWorry level is multiplied by self to {item}.")
 
-        # item = item // 3
-        # logger.debug(
-            # f"\t\tMonkey gets bored with item. Worry level is divided by 3 to {item}."
-        # )
-
         if item % monkey.divisible == 0:
             logger.debug(f"\t\tCurrent worry level is divisible by {monkey.divisible}.")
             other_monkey = monkey.test_t
+            item = monkeys[other_monkey].divisible
         else:
             logger.debug(f"\t\tCurrent worry level is not divisible by {monkey.divisible}.")
             other_monkey = monkey.test_f
+            item = item % monkeys[other_monkey].divisible
+
+        # for part 2, take the item % other_monkey.divisible as that 
+        # produces the same result (divisibles are all primes, likely some
+        # number theory theorem with modulo arithmetic)      
+        logger.debug(f'\tAdjusting item level down to {item}.')
 
         monkeys[other_monkey].items.append(item)
         logger.debug(f"\tItem with worry level {item} is thrown to monkey {other_monkey}.")
@@ -177,11 +179,17 @@ def part1(puzzle_input):
 # @aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
-    for i in range(3):
+    for i in range(10_000):
         for j in range(len(puzzle_input)):
             monkey = puzzle_input[j]
             while monkey.items:
                 inspect_2(monkey, puzzle_input)
+
+        if (i + 1) % 1000 == 0:
+            logger.info(f'-- After round {i + 1} --')
+            for m in puzzle_input:
+                monkey = puzzle_input[m]
+                logger.info(f'Monkey {monkey.number} inspected items {monkey.inspected} times')
 
     # calculate two most active monkeys
     m1, m2 = sorted(puzzle_input, key=lambda x: puzzle_input[x].inspected, reverse=True)[:2]
