@@ -2,14 +2,14 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 import logging
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler('2022_11_2_divmod.log')
-logger.addHandler(fh)
+logger.setLevel(logging.INFO)
+# fh = logging.FileHandler('2022_11_2_simple_nomod.log')
+# logger.addHandler(fh)
 
 
 def load_input(f_name):
@@ -107,7 +107,7 @@ def inspect(monkey, monkeys):
     else:
         logger.debug(f'\tMonkey {monkey.number} has no items.')
 
-def inspect_2(monkey, monkeys):
+def inspect_2(monkey, monkeys, common_divisor):
     """Inspect an item by executing operation on value"""
     logger.debug(f"Monkey {monkey.number}:")
     if monkey.items:
@@ -132,11 +132,13 @@ def inspect_2(monkey, monkeys):
             logger.debug(f"\t\tCurrent worry level is not divisible by {monkey.divisible}.")
             other_monkey = monkey.test_f
 
+        # log the modulo
+        logger.debug(f'\t\tItem {item} % {monkey.divisible} = {item % monkey.divisible}')
 
         # for part 2, take the item % other_monkey.divisible as that 
         # produces the same result (divisibles are all primes, likely some
         # number theory theorem with modulo arithmetic)      
-        item = item % monkeys[other_monkey].divisible
+        item = item % common_divisor
         # logger.debug(f'\tAdjusting item level down to {item}.')
 
         monkeys[other_monkey].items.append(item)
@@ -148,7 +150,7 @@ def inspect_2(monkey, monkeys):
         logger.debug(f'\tMonkey {monkey.number} has no items.')
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
     Figure out which monkeys to chase by counting how many items
@@ -178,20 +180,27 @@ def part1(puzzle_input):
     return puzzle_input[m1].inspected * puzzle_input[m2].inspected
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
-    for i in range(20):
+    # calculate common divisor - all monkey divisors multiplied
+    common_divisor = 1
+    for m in puzzle_input:
+        common_divisor *= puzzle_input[m].divisible
+
+    logger.debug(f'{common_divisor=}')
+
+    for i in range(10_000):
         for j in range(len(puzzle_input)):
             monkey = puzzle_input[j]
             while monkey.items:
-                inspect_2(monkey, puzzle_input)
+                inspect_2(monkey, puzzle_input, common_divisor)
 
-        if (i + 1) % 1 == 0:
-            logger.info(f'-- After round {i + 1} --')
-            for m in puzzle_input:
-                monkey = puzzle_input[m]
-                logger.info(f'Monkey {monkey.number} inspected items {monkey.inspected} times')
+        # if (i + 1) % 1 == 0:
+        #     logger.info(f'-- After round {i + 1} --')
+        #     for m in puzzle_input:
+        #         monkey = puzzle_input[m]
+        #         logger.info(f'Monkey {monkey.number} inspected items {monkey.inspected} times')
 
     # calculate two most active monkeys
     m1, m2 = sorted(puzzle_input, key=lambda x: puzzle_input[x].inspected, reverse=True)[:2]
@@ -213,4 +222,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 17:06 End: 18:16
-# Part 2: Start: 18:17 End:
+# Part 2: Start: 18:17 End: 14:00 (next day)
+
+# Elapsed time to run part1: 0.00422 seconds.
+# Part 1: 119715
+# Elapsed time to run part2: 2.01239 seconds.
+# Part 2: 18085004878
