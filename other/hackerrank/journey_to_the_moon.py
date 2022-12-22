@@ -35,20 +35,15 @@ def journeyToMoon(n, astronaut):
 
         country += 1
 
-    combos = set()
-    for c, astros in groups.items():
-        others = []
-        for d, b in groups.items():
-            if c != d:
-                others.extend(b)
-        for a in astros:
-            for o in others:
-                combos.add(tuple(sorted([a, o])))
+    lengths = [len(d) for d in groups.values()]
+    result = 0
+    while lengths:
+        l = lengths.pop()
+        for other in lengths:
+            result += l * other
 
     print(f"{groups=}")
-    print(f"{combos=}")
-    print(f"Result: {len(combos)}")
-    return len(combos)
+    return result
 
 
 if __name__ == "__main__":
@@ -79,3 +74,36 @@ if __name__ == "__main__":
 
     # test case 7
     # 11082889
+
+    print("Test case 7")
+    with open("journey_test_7.txt") as f:
+        first_multiple_input = f.readline().rstrip().split()
+
+        n = int(first_multiple_input[0])
+
+        p = int(first_multiple_input[1])
+
+        astronaut = []
+
+        for _ in range(p):
+            astronaut.append(list(map(int, f.readline().rstrip().split())))
+
+    result = journeyToMoon(n, astronaut)
+    assert result == 11082889
+
+    # test case 11
+    print("Test case 11")
+    with open("journey_test_11.txt") as f:
+        first_multiple_input = f.readline().rstrip().split()
+
+        n = int(first_multiple_input[0])
+
+        p = int(first_multiple_input[1])
+
+        astronaut = []
+
+        for _ in range(p):
+            astronaut.append(list(map(int, f.readline().rstrip().split())))
+
+    result = journeyToMoon(n, astronaut)
+    assert result == 4999949998
