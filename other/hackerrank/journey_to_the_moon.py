@@ -2,42 +2,52 @@
 
 
 def journeyToMoon(n, astronaut):
-    # create a queue of astronauts
     print(f"{astronaut=}")
     astros = list(range(n))
-    astro_countries = {}
-    country = 0
+
+    # create a bidirectional graph of astronauts
+    # same country = same graph
+    graph = {a: [] for a in astros}
     for a, b in astronaut:
-        if a not in astro_countries and b not in astro_countries:
-            astro_countries[a] = country
-            astro_countries[b] = country
-            country += 1
+        graph[a].append(b)
+        graph[b].append(a)
+
+    print(f"{graph=}")
+    seen = set()
+    groups = {}
+    country = 0
+    for node in graph:
+        if node in seen:
             continue
 
-        if a in astro_countries:
-            astro_countries[b] = astro_countries[a]
-        elif b in astro_countries:
-            astro_countries[a] = astro_countries[b]
+        seen.add(node)
 
-    # now process the remaining astronauts and assign a country
-    while astros:
-        a = astros.pop(0)
-        if a in astro_countries:
-            continue
-        astro_countries[a] = country
+        # traverse graph from node and visit each connected node
+        groups[country] = [node]
+        q = graph[node][:]
+        while q:
+            next = q.pop()
+            if next in seen:
+                continue
+            seen.add(next)
+            groups[country].append(next)
+            q.extend(graph[next][:])
+
         country += 1
 
     combos = set()
-    for a in astro_countries:
-        others = [
-            b for b in astro_countries if astro_countries[b] != astro_countries[a]
-        ]
-        for o in others:
-            combos.add(tuple(sorted([a, o])))
+    for c, astros in groups.items():
+        others = []
+        for d, b in groups.items():
+            if c != d:
+                others.extend(b)
+        for a in astros:
+            for o in others:
+                combos.add(tuple(sorted([a, o])))
 
-    print(f"Result: {len(combos)}")
-    print(f"{astro_countries=}")
+    print(f"{groups=}")
     print(f"{combos=}")
+    print(f"Result: {len(combos)}")
     return len(combos)
 
 
@@ -66,3 +76,6 @@ if __name__ == "__main__":
 
     result = journeyToMoon(n, astronaut)
     assert result == 23
+
+    # test case 7
+    # 11082889
