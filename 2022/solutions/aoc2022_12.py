@@ -3,6 +3,14 @@
 # import re
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
+from dataclasses import dataclass
+
+
+@dataclass
+class Node:
+    row: int = 0
+    col: int = 0
+    height: int = 0
 
 
 def load_input(f_name):
@@ -13,31 +21,54 @@ def load_input(f_name):
     """
     # return input as list of text lines
     with open(f_name, "r") as f:
-        puzzle_input = []
-        for line in f.readlines():
-            puzzle_input.append(line.strip())
+        grid = {}
+        end = Node()
+        for r, line in enumerate(f.readlines()):
+            for c, n in enumerate(line.strip()):
+                if n == "S":
+                    start = (r, c)
+                    grid[(r, c)] = Node(r, c, 0)
+                elif n == "E":
+                    end = (r, c)
+                    grid[(r, c)] = Node(r, c, 25)
+                else:
+                    grid[(r, c)] = Node(r, c, ord(n) - ord("a"))
 
-    # Extract ints from the input
-    #
-    # signed ints
-    # regex = re.compile(r"(-?\d+)")
-    #
-    # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
+    return start, end, grid
 
-    return puzzle_input
+
+def neighbors(r, c, grid):
+    """Return all valid neighbor nodes"""
+    result = []
+    for dr, dc in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
+        rr = r + dr
+        cc = c + dc
+        if (rr, cc) in grid and grid[(rr, cc)].height - grid[(r, c)].height <= 1:
+            result.append((rr, cc))
+
+    return result
+
+
+def BFS(grid, start, end):
+    q = [(start, 0)]
+    seen = set()
+
+    while q:
+        curr, steps = q.pop(0)
+
+        if curr in seen:
+            continue
+
+        if curr == end:
+            # found the end, return number of steps
+            return steps
 
 
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    start, end, grid = puzzle_input
+    print(start, end, grid)
 
     return 1
 
