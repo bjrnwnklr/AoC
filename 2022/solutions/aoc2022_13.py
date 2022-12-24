@@ -14,32 +14,69 @@ def load_input(f_name):
     # return input as list of text lines
     with open(f_name, "r") as f:
         puzzle_input = []
-        for line in f.readlines():
-            puzzle_input.append(line.strip())
-
-    # Extract ints from the input
-    #
-    # signed ints
-    # regex = re.compile(r"(-?\d+)")
-    #
-    # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
+        blocks = f.read().split("\n\n")
+        for block in blocks:
+            left, right = block.strip().split("\n")
+            puzzle_input.append((eval(left), eval(right)))
 
     return puzzle_input
+
+
+def compare(left, right):
+    print(f"Compare {left} vs {right}")
+    result = 0
+    while left and right and result == 0:
+        l = left.pop(0)
+        r = right.pop(0)
+        print(f"Compare {l} vs {r}")
+        # check what type left and right are
+        if isinstance(l, int) and isinstance(r, int):
+            # atomic case, if left is smaller than right list is valid
+            # print("Both integers")
+            if l < r:
+                print("Left side is smaller - correct")
+                result = 1
+            elif l > r:
+                print("Right side is smaller - not correct")
+                result = -1
+        elif isinstance(l, list) and isinstance(r, list):
+            # print("Both lists")
+            result = compare(l, r)
+        else:
+            if isinstance(l, int):
+                # print("l is int", type(l), type(r))
+                result = compare([l], r)
+            elif isinstance(r, int):
+                # print("r is integer", type(l), type(r))
+                result = compare(l, [r])
+
+    # print(f"Loop completed. {result=}, {left=}, {right=}")
+    if result != 0:
+        return result
+    elif not left and not right:
+        # both lists empty
+        return 0
+    else:
+        # check if one of the lists ran out early
+        if len(left) < len(right):
+            print("Left side ran out of items - correct")
+            return 1
+        elif len(left) > len(right):
+            print("Right side ran out of items - not correct")
+            return -1
 
 
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    score = 0
+    for i, (left, right) in enumerate(puzzle_input, start=1):
+        print(f"Pair {i}: {left} {right}")
+        result = compare(left, right)
+        if result == 1:
+            score += i
 
-    return 1
+    return score
 
 
 # @aoc_timer
@@ -61,5 +98,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 16:15 End: 17:35
+# Part 2: Start: 17:36 End:
