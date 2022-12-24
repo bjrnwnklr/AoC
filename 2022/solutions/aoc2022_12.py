@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from dataclasses import dataclass
 
 
@@ -34,7 +34,7 @@ def load_input(f_name):
                 else:
                     grid[(r, c)] = Node(r, c, ord(n) - ord("a"))
 
-    return start, end, grid
+    return grid, start, end
 
 
 def neighbors(pos, grid):
@@ -71,20 +71,27 @@ def BFS(grid, start, end):
                 q.append((n, steps + 1))
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
-    start, end, grid = puzzle_input
+    grid, start, end = puzzle_input
     result = BFS(grid, start, end)
 
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    grid, _, end = puzzle_input
+    low_points = [n for n in grid if grid[n].height == 0]
+    result = 10_000
+    for start in low_points:
+        steps = BFS(grid, start, end)
+        if steps:
+            result = min(result, steps)
 
-    return 1
+    return result
 
 
 if __name__ == "__main__":
@@ -100,4 +107,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 2: Start: 12:10 End: 12:18
+
+# Elapsed time to run part1: 0.01336 seconds.
+# Part 1: 339
+# Elapsed time to run part2: 1.18422 seconds.
+# Part 2: 332
