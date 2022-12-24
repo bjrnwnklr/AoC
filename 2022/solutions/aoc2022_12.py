@@ -37,9 +37,10 @@ def load_input(f_name):
     return start, end, grid
 
 
-def neighbors(r, c, grid):
+def neighbors(pos, grid):
     """Return all valid neighbor nodes"""
     result = []
+    r, c = pos
     for dr, dc in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
         rr = r + dr
         cc = c + dc
@@ -59,18 +60,24 @@ def BFS(grid, start, end):
         if curr in seen:
             continue
 
+        seen.add(curr)
+
         if curr == end:
             # found the end, return number of steps
             return steps
+
+        for n in neighbors(curr, grid):
+            if n not in seen:
+                q.append((n, steps + 1))
 
 
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     start, end, grid = puzzle_input
-    print(start, end, grid)
+    result = BFS(grid, start, end)
 
-    return 1
+    return result
 
 
 # @aoc_timer
