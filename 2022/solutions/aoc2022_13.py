@@ -4,6 +4,7 @@
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
 from dataclasses import dataclass
+from copy import deepcopy
 
 
 def load_input(f_name):
@@ -28,11 +29,10 @@ class Packet:
     payload: list
 
     def __lt__(self, other):
-        return compare(self.payload, other.payload) == 1
+        return compare(deepcopy(self.payload), deepcopy(other.payload)) == 1
 
 
 def compare(left, right):
-    print(f"Compare {left} vs {right}")
     result = 0
     while left and right and result == 0:
         l = left.pop(0)
