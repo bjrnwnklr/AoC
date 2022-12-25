@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from dataclasses import dataclass
 from copy import deepcopy
 
@@ -68,7 +68,7 @@ def compare(left, right):
             return -1
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     score = 0
@@ -80,7 +80,7 @@ def part1(puzzle_input):
     return score
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value.
 
@@ -104,10 +104,10 @@ def part2(puzzle_input):
     sorted_packets = sorted(packets)
 
     # find indices of the two packets
-    p1 = sorted_packets.index(Packet([[2]]))
-    p2 = sorted_packets.index(Packet([[6]]))
+    p1 = sorted_packets.index(Packet([[2]])) + 1
+    p2 = sorted_packets.index(Packet([[6]])) + 1
 
-    return (p1 + 1) * (p2 + 1)
+    return p1 * p2
 
 
 if __name__ == "__main__":
@@ -118,9 +118,15 @@ if __name__ == "__main__":
     p1 = part1(puzzle_input)
     print(f"Part 1: {p1}")
 
+    puzzle_input = load_input("input/13.txt")
     # Solve part 2 and print the answer
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 16:15 End: 17:35
 # Part 2: Start: 10:00 End:
+
+# Elapsed time to run part1: 0.00140 seconds.
+# Part 1: 6415
+# Elapsed time to run part2: 0.27576 seconds.
+# Part 2: 20056
