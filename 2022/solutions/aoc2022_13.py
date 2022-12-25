@@ -3,6 +3,7 @@
 # import re
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
+from dataclasses import dataclass
 
 
 def load_input(f_name):
@@ -22,47 +23,48 @@ def load_input(f_name):
     return puzzle_input
 
 
+@dataclass
+class Packet:
+    payload: list
+
+    def __lt__(self, other):
+        return compare(self.payload, other.payload) == 1
+
+
 def compare(left, right):
     print(f"Compare {left} vs {right}")
     result = 0
     while left and right and result == 0:
         l = left.pop(0)
         r = right.pop(0)
-        print(f"Compare {l} vs {r}")
         # check what type left and right are
         if isinstance(l, int) and isinstance(r, int):
             # atomic case, if left is smaller than right list is valid
-            # print("Both integers")
             if l < r:
-                print("Left side is smaller - correct")
                 result = 1
             elif l > r:
-                print("Right side is smaller - not correct")
                 result = -1
         elif isinstance(l, list) and isinstance(r, list):
-            # print("Both lists")
             result = compare(l, r)
         else:
             if isinstance(l, int):
-                # print("l is int", type(l), type(r))
                 result = compare([l], r)
             elif isinstance(r, int):
-                # print("r is integer", type(l), type(r))
                 result = compare(l, [r])
 
-    # print(f"Loop completed. {result=}, {left=}, {right=}")
+    # if one of the checks produced a result, we have a result
     if result != 0:
         return result
     elif not left and not right:
-        # both lists empty
+        # both lists empty, left and right were equal
         return 0
     else:
         # check if one of the lists ran out early
         if len(left) < len(right):
-            print("Left side ran out of items - correct")
+            # left ran out early
             return 1
         elif len(left) > len(right):
-            print("Right side ran out of items - not correct")
+            # right ran out early
             return -1
 
 
@@ -71,7 +73,6 @@ def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     score = 0
     for i, (left, right) in enumerate(puzzle_input, start=1):
-        print(f"Pair {i}: {left} {right}")
         result = compare(left, right)
         if result == 1:
             score += i
@@ -81,9 +82,32 @@ def part1(puzzle_input):
 
 # @aoc_timer
 def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
+    """Solve part 2. Return the required output value.
 
-    return 1
+    - add [[2]] and [[6]]
+    - put all packets into the right order, including the two new ones
+    - multiply the index of the new packets (starting at index 1) for the result
+
+    Implement using the `__lt__` comparison and then sort the list using `sorted`
+    """
+    # create one list of all packets
+    packets = []
+    for left, right in puzzle_input:
+        packets.append(Packet(left))
+        packets.append(Packet(right))
+
+    # add two new packets
+    packets.append(Packet([[2]]))
+    packets.append(Packet([[6]]))
+
+    # sort list
+    sorted_packets = sorted(packets)
+
+    # find indices of the two packets
+    p1 = sorted_packets.index(Packet([[2]]))
+    p2 = sorted_packets.index(Packet([[6]]))
+
+    return (p1 + 1) * (p2 + 1)
 
 
 if __name__ == "__main__":
@@ -99,4 +123,4 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 16:15 End: 17:35
-# Part 2: Start: 17:36 End:
+# Part 2: Start: 10:00 End:
