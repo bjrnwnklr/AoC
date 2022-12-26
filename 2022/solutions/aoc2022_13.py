@@ -30,7 +30,7 @@ class Packet:
     payload: list
 
     def __lt__(self, other):
-        return compare(deepcopy(self.payload), deepcopy(other.payload)) == 1
+        return compare(deepcopy(self.payload), deepcopy(other.payload)) == -1
 
 
 def compare(left, right):
@@ -42,9 +42,9 @@ def compare(left, right):
         if isinstance(l, int) and isinstance(r, int):
             # atomic case, if left is smaller than right list is valid
             if l < r:
-                result = 1
-            elif l > r:
                 result = -1
+            elif l > r:
+                result = 1
         elif isinstance(l, list) and isinstance(r, list):
             result = compare(l, r)
         else:
@@ -63,10 +63,10 @@ def compare(left, right):
         # check if one of the lists ran out early
         if len(left) < len(right):
             # left ran out early
-            return 1
+            return -1
         elif len(left) > len(right):
             # right ran out early
-            return -1
+            return 1
 
 
 @aoc_timer
@@ -75,7 +75,7 @@ def part1(puzzle_input):
     score = 0
     for i, (left, right) in enumerate(puzzle_input, start=1):
         result = compare(left, right)
-        if result == 1:
+        if result == -1:
             score += i
 
     return score
