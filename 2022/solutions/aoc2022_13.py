@@ -30,43 +30,51 @@ class Packet:
     payload: list
 
     def __lt__(self, other):
-        return compare(deepcopy(self.payload), deepcopy(other.payload)) == -1
+        return compare(self.payload, other.payload) == -1
 
 
 def compare(left, right):
-    result = 0
-    while left and right and result == 0:
-        l = left.pop(0)
-        r = right.pop(0)
-        # check what type left and right are
-        if isinstance(l, int) and isinstance(r, int):
-            # atomic case, if left is smaller than right list is valid
-            if l < r:
-                result = -1
-            elif l > r:
-                result = 1
-        elif isinstance(l, list) and isinstance(r, list):
-            result = compare(l, r)
-        else:
-            if isinstance(l, int):
-                result = compare([l], r)
-            elif isinstance(r, int):
-                result = compare(l, [r])
-
-    # if one of the checks produced a result, we have a result
-    if result != 0:
-        return result
-    elif not left and not right:
-        # both lists empty, left and right were equal
-        return 0
-    else:
-        # check if one of the lists ran out early
-        if len(left) < len(right):
-            # left ran out early
+    """Compare left and right list according to rules.
+    Return
+    - -1 if left is smaller (in correct order) than right
+    - 1 if right is smaller (not in correct order) than left
+    - 0 if left and right are equal
+    """
+    if isinstance(left, int) and isinstance(right, int):
+        # atomic case, if left is smaller than right list is valid
+        if left < right:
             return -1
-        elif len(left) > len(right):
-            # right ran out early
+        elif left > right:
             return 1
+        else:
+            return 0
+    elif isinstance(left, list) and isinstance(right, list):
+        # both are lists, compare elements one by one
+        i = 0
+        result = 0
+        while i < min(len(left), len(right)):
+            result = compare(left[i], right[i])
+            if result != 0:
+                return result
+            i += 1
+
+        # if we get here, one or both lists ran out without finding
+        # a result. Check which list ran out
+        if len(left) == i and len(right) > i:
+            # left list ran out first
+            return -1
+        elif len(right) == i and len(left) > i:
+            return 1
+        else:
+            # both lists have the same length - equal
+            return 0
+    else:
+        # one element is an int, the other a list
+        # convert int to list and compare
+        if isinstance(left, int):
+            return compare([left], right)
+        elif isinstance(right, int):
+            return compare(left, [right])
 
 
 @aoc_timer
@@ -127,7 +135,7 @@ if __name__ == "__main__":
 # Part 1: Start: 16:15 End: 17:35
 # Part 2: Start: 10:00 End:
 
-# Elapsed time to run part1: 0.00043 seconds.
+# Elapsed time to run part1: 0.00068 seconds.
 # Part 1: 6415
-# Elapsed time to run part2: 0.10146 seconds.
+# Elapsed time to run part2: 0.01076 seconds.
 # Part 2: 20056
