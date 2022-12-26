@@ -5,6 +5,7 @@
 from utils.aoctools import aoc_timer
 from dataclasses import dataclass
 from copy import deepcopy
+from ast import literal_eval
 
 
 def load_input(f_name):
@@ -19,7 +20,7 @@ def load_input(f_name):
         blocks = f.read().split("\n\n")
         for block in blocks:
             left, right = block.strip().split("\n")
-            puzzle_input.append((eval(left), eval(right)))
+            puzzle_input.append((literal_eval(left), literal_eval(right)))
 
     return puzzle_input
 
@@ -126,7 +127,7 @@ if __name__ == "__main__":
 # Part 1: Start: 16:15 End: 17:35
 # Part 2: Start: 10:00 End:
 
-# Elapsed time to run part1: 0.00140 seconds.
+# Elapsed time to run part1: 0.00043 seconds.
 # Part 1: 6415
-# Elapsed time to run part2: 0.27576 seconds.
+# Elapsed time to run part2: 0.10146 seconds.
 # Part 2: 20056
