@@ -3,6 +3,16 @@
 # import re
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
+from dataclasses import dataclass
+
+
+@dataclass
+class Node:
+    x: int = 500
+    y: int = 0
+
+    def __hash__(self) -> int:
+        return self.x * 10_000 + self.y
 
 
 def load_input(f_name):
@@ -15,31 +25,82 @@ def load_input(f_name):
     with open(f_name, "r") as f:
         puzzle_input = []
         for line in f.readlines():
-            puzzle_input.append(line.strip())
-
-    # Extract ints from the input
-    #
-    # signed ints
-    # regex = re.compile(r"(-?\d+)")
-    #
-    # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
+            segments = line.strip().split(" -> ")
+            sublist = []
+            for s in segments:
+                sublist.append(tuple(map(int, s.split(","))))
+            puzzle_input.append(sublist)
 
     return puzzle_input
+
+
+def generate_walls(puzzle_input):
+    walls = set()
+    for line in puzzle_input:
+        for i in range(len(line) - 1):
+            x1, y1 = line[i]
+            x2, y2 = line[i + 1]
+            if x1 == x2:
+                for y in range(min(y1, y2), max(y1, y2) + 1):
+                    walls.add(Node(x1, y))
+            elif y1 == y2:
+                for x in range(min(x1, x2), max(x1, x2) + 1):
+                    walls.add(Node(x, y1))
+            else:
+                raise ValueError(
+                    f"x and y coordinates differ in both places: {x1=} {y1=} {x2=} {y2=}"
+                )
+
+    return walls
+
+
+def fall(s: Node, walls, sand, abyss):
+    """Simulates a falling grain of sand.
+
+    Return True if sand comes to rest, or false if it drops into
+    the abyss.
+    """
+    while s.y < abyss:
+        s_down = Node(s.x, s.y + 1)
+        s_down_left = Node(s.x - 1, s.y + 1)
+        s_down_right = Node(s.x + 1, s.y + 1)
+        if s_down not in walls and s_down not in sand:
+            s.y += 1
+        elif s_down_left not in walls and s_down_left not in sand:
+            s.x -= 1
+            s.y += 1
+        elif s_down_right not in walls and s_down_right not in sand:
+            s.x += 1
+            s.y += 1
+        else:
+            # sand comes to rest
+            sand.add(s)
+            return True
+
+    # if we get here, and is falling into the abyss
+    return False
 
 
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    walls = generate_walls(puzzle_input)
 
-    return 1
+    # determine lower boundary (the abyss)
+    min_wall = max(walls, key=lambda n: n.y)
+    abyss = min_wall.y + 1
+
+    # track if the sand stabilizes (i.e. falls into the abyss)
+    falling = True
+    # set of grains
+    sand = set()
+    while falling:
+        # generate a new grain of sand
+        # drop sand downwards until it stops or falls to the abyss
+        s = Node()
+        falling = fall(s, walls, sand, abyss)
+
+    return len(sand)
 
 
 # @aoc_timer
