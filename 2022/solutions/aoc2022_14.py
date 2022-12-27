@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 from dataclasses import dataclass
 
 
@@ -72,6 +72,10 @@ def fall(s: Node, walls, sand, abyss):
         elif s_down_right not in walls and s_down_right not in sand:
             s.x += 1
             s.y += 1
+        elif s.x == 500 and s.y == 0:
+            # part 2 - sand comes to rest at source
+            sand.add(s)
+            return False
         else:
             # sand comes to rest
             sand.add(s)
@@ -81,7 +85,7 @@ def fall(s: Node, walls, sand, abyss):
     return False
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     walls = generate_walls(puzzle_input)
@@ -103,11 +107,37 @@ def part1(puzzle_input):
     return len(sand)
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
+    """Solve part 2. Return the required output value.
 
-    return 1
+    Simulate with floor infinite at lowest y point + 2 (11 = 9 + 2 in example.)
+
+    At what point does the source at (500, 0) fill up?
+    i.e. when does a grain come to rest at (500, 0)?
+    """
+    walls = generate_walls(puzzle_input)
+
+    # determine lower boundary (the abyss)
+    min_wall = max(walls, key=lambda n: n.y)
+    abyss = min_wall.y + 3
+
+    # add bottom to walls
+    x_span = 10_000
+    for x in range(-x_span, x_span):
+        walls.add(Node(x, abyss - 1))
+
+    # track if the sand stabilizes (i.e. falls into the abyss)
+    falling = True
+    # set of grains
+    sand = set()
+    while falling:
+        # generate a new grain of sand
+        # drop sand downwards until it stops or falls to the abyss
+        s = Node()
+        falling = fall(s, walls, sand, abyss)
+
+    return len(sand)
 
 
 if __name__ == "__main__":
@@ -124,3 +154,8 @@ if __name__ == "__main__":
 
 # Part 1: Start:  End:
 # Part 2: Start:  End:
+
+# Elapsed time to run part1: 0.20075 seconds.
+# Part 1: 1068
+# Elapsed time to run part2: 5.63967 seconds.
+# Part 2: 27936
