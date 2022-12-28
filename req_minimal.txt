@@ -6,3 +6,5 @@ jupyter
 numpy
 pandas
 requests
+tqdm
+

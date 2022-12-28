@@ -1,6 +1,7 @@
 # Load any required modules. Most commonly used:
 
 import re
+from tqdm import tqdm
 
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
@@ -65,29 +66,22 @@ def part1(puzzle_input, y=2_000_000):
     """
     positions = get_sensor_beacon_positions(puzzle_input)
     covered = set()
-    print("Initial map")
-    print_grid(positions, covered)
-    for (xs, ys), (xb, yb) in positions.items():
-        print(f"Calculating coverage for s:({xs}, {ys}) b:({xb}, {yb})")
+    for (xs, ys), (xb, yb) in tqdm(positions.items()):
         # calculate manhattan distance around each sensor
         md = manhattan_distance(xs, ys, xb, yb)
-        print(f"Manhattan distance: {md}")
         # add positions in that area to a set of covered coordinates
-        for yc in range(-md, 1):
-            for xc in range(-md - yc, md + yc + 1):
-                covered.add((xs + xc, ys + yc))
-
-        for yc in range(1, md + 1):
+        # Calculate this only for line y, i.e. only add positions
+        # that are in line y. Do not iterate if line y is not included.
+        if ys - md <= y <= ys + md + 1:
+            yc = abs(ys - y)
             for xc in range(-md + yc, md - yc + 1):
-                covered.add((xs + xc, ys + yc))
-        # count the covered coordinates in the row
-        print_grid(positions, covered)
-    result = sum(
-        1 for xc, yc in covered if yc == y and (xc, yc) not in positions.values()
-    )
 
-    print("End result")
-    print_grid(positions, covered)
+                covered.add((xs + xc, y))
+
+    # count items in covered (all positions in the line we are looking for)
+    # and subtract the number of beacons in that line (some beacons) are referenced
+    # multiple times in the coordinates so take a set
+    result = len(covered) - sum(1 for _, yb in set(positions.values()) if yb == y)
 
     return result
 
