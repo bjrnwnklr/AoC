@@ -93,7 +93,8 @@ def part2(puzzle_input, max_xy=4_000_000):
     4_000_000 and then adding its y coordinate.
     """
     positions = get_sensor_beacon_positions(puzzle_input)
-    square = {(x, y) for y in range(max_xy + 1) for x in range(max_xy + 1)}
+    # square = {(x, y) for y in range(max_xy + 1) for x in range(max_xy + 1)}
+    square = set()
     for (xs, ys), (xb, yb) in tqdm(positions.items()):
         # calculate manhattan distance around each sensor
         md = manhattan_distance(xs, ys, xb, yb)
@@ -112,20 +113,22 @@ def part2(puzzle_input, max_xy=4_000_000):
                 #     f"Checking row {row} and xc in range {xs + (-md + abs(dy))} .. {xs + (md - abs(dy) + 1)}"
                 # )
                 for xc in range(-md + abs(dy), md - abs(dy) + 1):
-                    if ((xs + xc, row)) in square:
-                        square.remove((xs + xc, row))
+                    # if ((xs + xc, row)) in square:
+                    square.add((xs + xc, row))
 
     # count items in covered (all positions in the line we are looking for)
     # and subtract the number of beacons in that line (some beacons) are referenced
     # multiple times in the coordinates so take a set
     for xb, yb in set(positions.values()):
-        if (xb, yb) in square:
-            square.remove((xb, yb))
+        # if (xb, yb) in square:
+        # square.remove((xb, yb))
+        square.add((xb, yb))
 
     # square should only have one member now
     # print(square)
-    # print(len(square))
-    assert len(square) == 1
+    print(len(square))
+    # assert len(square) == 1
+
     beacon = square.pop()
     result = beacon[0] * 4_000_000 + beacon[1]
 
