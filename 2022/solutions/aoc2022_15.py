@@ -63,7 +63,6 @@ def consolidate(intervals):
     stack = []
     # sort intervals by left boundary
     sorted_intervals = sorted(intervals, key=lambda x: x[0])
-    print(f"Sorted intervals: {sorted_intervals}")
     # push first interval onto stack
     if sorted_intervals:
         stack.append(sorted_intervals.pop(0))
@@ -75,7 +74,6 @@ def consolidate(intervals):
             stack[-1] = (stack[-1][0], max(stack[-1][1], current[1]))
         else:
             stack.append(current)
-        print(f"Added {current} to stack: {stack}")
 
     return stack
 
@@ -141,44 +139,49 @@ def part2(puzzle_input, max_xy=4_000_000):
     4_000_000 and then adding its y coordinate.
     """
     positions = get_sensor_beacon_positions(puzzle_input)
-    # square = {(x, y) for y in range(max_xy + 1) for x in range(max_xy + 1)}
-    square = set()
-    for (xs, ys), (xb, yb) in tqdm(positions.items()):
-        # calculate manhattan distance around each sensor
-        md = manhattan_distance(xs, ys, xb, yb)
-        # print(f"Checking s:({xs}, {ys}) b:({xb}, {yb}). MD = {md}")
-        # add positions in that area to a set of covered coordinates
-        # Calculate this only for line y, i.e. only add positions
-        # that are in line y. Do not iterate if line y is not included.
-        if not ((max_xy < ys - md) or (0 > ys + md)) and not (
-            (max_xy < xs - md) or (0 > xs + md)
-        ):
-            # print(f"Overlap with (0, {max_xy}), (0, {max_xy})")
-            for dy in range(-md, md + 1):
-                row = ys + dy
-                # print(f"{dy=}, {row=}")
-                # print(
-                #     f"Checking row {row} and xc in range {xs + (-md + abs(dy))} .. {xs + (md - abs(dy) + 1)}"
-                # )
-                for xc in range(-md + abs(dy), md - abs(dy) + 1):
-                    # if ((xs + xc, row)) in square:
-                    square.add((xs + xc, row))
+    intervals = []
+    for row in range(max_xy + 1):
+        print(f"Checking row {row}")
+        for (xs, ys), (xb, yb) in positions.items():
+            # calculate manhattan distance around each sensor
+            md = manhattan_distance(xs, ys, xb, yb)
+            # print(f"Calculating interval for s:({xs}, {ys}) b:({xb}, {yb}). {md=}")
+            # add positions in that area to a set of covered coordinates
+            # Calculate this only for the desired row, i.e. only add positions
+            # that are in line y. Do not iterate if line y is not included.
+            if ys - md <= row <= ys + md + 1:
+                yc = abs(ys - row)
+                # add interval to list of intervals
+                # calculate left and right side and check if within target square
+                left = xs + (-md + yc)
+                right = xs + md - yc
+                if not ((right < 0) or (left > max_xy)):
+                    intervals.append((max(0, left), min(right, max_xy)))
 
-    # count items in covered (all positions in the line we are looking for)
-    # and subtract the number of beacons in that line (some beacons) are referenced
-    # multiple times in the coordinates so take a set
-    for xb, yb in set(positions.values()):
-        # if (xb, yb) in square:
-        # square.remove((xb, yb))
-        square.add((xb, yb))
+        # print(f"Intervals: {intervals}")
+        # add existing beacons if they overlap with any of the intervals
+        num_beacons_overlap = 0
+        for xb, yb in set(positions.values()):
+            if yb == row:
+                intervals.append((xb, xb))
+                num_beacons_overlap += 1
+        # print(f"Intervals with beacons: {intervals}")
+        # consolidate intervals
+        cons_intervals = consolidate(intervals)
+        print(f"Consolidated intervals: {cons_intervals}")
 
-    # square should only have one member now
-    # print(square)
-    print(len(square))
-    # assert len(square) == 1
+        # check if the length of the covered range is different from a full line
+        # of the target square, i.e. if there is a space left - which has to be
+        # the beacon
+        if len(cons_intervals) > 1:
+            # more than one element in the list of intervals
+            # should not be more than 2!
+            assert len(cons_intervals) == 2
+            col = cons_intervals[0][1] + 1
+            print(f"Found beacon in {row} / {col}")
+            break
 
-    beacon = square.pop()
-    result = beacon[0] * 4_000_000 + beacon[1]
+    result = col * 4_000_000 + row
 
     return result
 
