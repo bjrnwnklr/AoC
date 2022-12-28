@@ -58,6 +58,38 @@ def print_grid(positions, covered):
         print(line)
 
 
+def consolidate(intervals):
+    """Consolidate a list of intervals using a stack"""
+    stack = []
+    # sort intervals by left boundary
+    sorted_intervals = sorted(intervals, key=lambda x: x[0])
+    print(f"Sorted intervals: {sorted_intervals}")
+    # push first interval onto stack
+    if sorted_intervals:
+        stack.append(sorted_intervals.pop(0))
+    while sorted_intervals:
+        current = sorted_intervals.pop(0)
+        # if current interval overlaps (i.e. left side is lower than stack's right side)
+        # update stack's right side to max of current and stack
+        if current[0] <= stack[-1][1]:
+            stack[-1] = (stack[-1][0], max(stack[-1][1], current[1]))
+        else:
+            stack.append(current)
+        print(f"Added {current} to stack: {stack}")
+
+    return stack
+
+
+def count_length(intervals):
+    """Count how many positions are in a list of intervals
+    (incl start and stop of each interval)."""
+    result = 0
+    for i in intervals:
+        result += i[1] - i[0] + 1
+
+    return result
+
+
 # @aoc_timer
 def part1(puzzle_input, y=2_000_000):
     """Solve part 1. Return the required output value.
@@ -65,22 +97,38 @@ def part1(puzzle_input, y=2_000_000):
     In the row where y=2_000_000, how many positions cannot contain a beacon?
     """
     positions = get_sensor_beacon_positions(puzzle_input)
-    covered = set()
+    intervals = []
     for (xs, ys), (xb, yb) in tqdm(positions.items()):
         # calculate manhattan distance around each sensor
         md = manhattan_distance(xs, ys, xb, yb)
+        print(f"Calculating interval for s:({xs}, {ys}) b:({xb}, {yb}). {md=}")
         # add positions in that area to a set of covered coordinates
         # Calculate this only for line y, i.e. only add positions
         # that are in line y. Do not iterate if line y is not included.
         if ys - md <= y <= ys + md + 1:
             yc = abs(ys - y)
-            for xc in range(-md + yc, md - yc + 1):
-                covered.add((xs + xc, y))
+            # add interval to list of intervals
+            print(
+                f"Interval overlaps with row {y}. Adding interval ({xs + (-md + yc)}, {xs + md - yc})"
+            )
+            intervals.append((xs + (-md + yc), xs + md - yc))
+
+    print(f"Intervals: {intervals}")
+    # remove existing beacons if they overlap with any of the intervals
+    num_beacons_overlap = 0
+    for xb, yb in set(positions.values()):
+        if yb == y:
+            intervals.append((xb, xb))
+            num_beacons_overlap += 1
+    print(f"Intervals with beacons: {intervals}")
+    # consolidate intervals
+    cons_intervals = consolidate(intervals)
+    print(f"Consolidated intervals: {cons_intervals}")
 
     # count items in covered (all positions in the line we are looking for)
     # and subtract the number of beacons in that line (some beacons) are referenced
     # multiple times in the coordinates so take a set
-    result = len(covered) - sum(1 for _, yb in set(positions.values()) if yb == y)
+    result = count_length(cons_intervals) - num_beacons_overlap
 
     return result
 
