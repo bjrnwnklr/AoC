@@ -15,8 +15,11 @@ class Test_AOC2022_15:
     """
 
     def test_1_1(self):
+        """
+        In this example, in the row where y=10, there are 26 positions where a beacon cannot be present.
+        """
         puzzle_input = load_input("testinput/15_1_1.txt")
-        assert part1(puzzle_input) == 1
+        assert part1(puzzle_input, y=10) == 26
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/15_1_1.txt')
