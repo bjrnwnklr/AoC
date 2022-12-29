@@ -46,9 +46,9 @@ def consolidate(intervals):
     sorted_intervals = sorted(intervals, key=lambda x: x[0])
     # push first interval onto stack
     if sorted_intervals:
-        stack.append(sorted_intervals.pop(0))
-    while sorted_intervals:
-        current = sorted_intervals.pop(0)
+        stack.append(sorted_intervals[0])
+    for i in range(1, len(sorted_intervals)):
+        current = sorted_intervals[i]
         # if current interval overlaps (i.e. left side is lower than stack's right side)
         # update stack's right side to max of current and stack
         if current[0] <= stack[-1][1]:
@@ -109,6 +109,15 @@ def part2(puzzle_input, max_xy=4_000_000):
     which can be found by multiplying its x coordinate by
     4_000_000 and then adding its y coordinate.
     """
+    # this implementation builds intervals for each line to check.
+    # This takes ca 30 seconds to find the only position free within the lines
+    # A much shorter implementation can be achieved:
+    # - if the position of the missing beacon is the only free space on the line,
+    #   it has to be within distance of d+1 (d == manhattan distance between sensor and
+    #   beacon) of multiple sensors
+    # - check all d+1 positions for every sensor and eliminate the ones that
+    #   are not within the target square, and that are covered by another sensor
+    # - see Jonathan Paulson's solution
     positions = get_sensor_beacon_positions(puzzle_input)
     for row in tqdm(range(max_xy + 1)):
         intervals = []
@@ -164,3 +173,8 @@ if __name__ == "__main__":
 
 # Part 1: Start:  End:
 # Part 2: Start:  End:
+
+# Elapsed time to run part1: 0.00870 seconds.
+# Part 1: 5508234
+# Elapsed time to run part2: 30.37834 seconds.
+# Part 2: 10457634860779
