@@ -4,7 +4,7 @@ import re
 from tqdm import tqdm
 
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -25,37 +25,18 @@ def load_input(f_name):
 
 
 def get_sensor_beacon_positions(puzzle_input):
-    """Convert the puzzle input (4 integers) into a dictionary:
-    (x, y) of sensor: (x, y) of beacon
+    """Convert the puzzle input (4 integers) into a list of tuples:
+    (x, y) of sensor, (x, y) of beacon, manhattan distance
     """
-    return {(xs, ys): (xb, yb) for xs, ys, xb, yb in puzzle_input}
+    return [
+        (xs, ys, xb, yb, manhattan_distance(xs, ys, xb, yb))
+        for xs, ys, xb, yb in puzzle_input
+    ]
 
 
 def manhattan_distance(x1, y1, x2, y2) -> int:
     """Calculate Manhattan distance between two points"""
     return abs(x1 - x2) + abs(y1 - y2)
-
-
-def print_grid(positions, covered):
-    all_coordinates = set(positions.keys()) | set(positions.values()) | covered
-    min_x = min(all_coordinates, key=lambda c: c[0])[0]
-    max_x = max(all_coordinates, key=lambda c: c[0])[0]
-    min_y = min(all_coordinates, key=lambda c: c[1])[1]
-    max_y = max(all_coordinates, key=lambda c: c[1])[1]
-
-    for y in range(min_y, max_y + 1):
-        line = f"{y:5} "
-        for x in range(min_x, max_x + 1):
-            if (x, y) in positions.keys():
-                c = "S"
-            elif (x, y) in positions.values():
-                c = "B"
-            elif (x, y) in covered:
-                c = "#"
-            else:
-                c = "."
-            line += c
-        print(line)
 
 
 def consolidate(intervals):
@@ -88,7 +69,7 @@ def count_length(intervals):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input, y=2_000_000):
     """Solve part 1. Return the required output value.
 
@@ -96,32 +77,22 @@ def part1(puzzle_input, y=2_000_000):
     """
     positions = get_sensor_beacon_positions(puzzle_input)
     intervals = []
-    for (xs, ys), (xb, yb) in tqdm(positions.items()):
-        # calculate manhattan distance around each sensor
-        md = manhattan_distance(xs, ys, xb, yb)
-        # print(f"Calculating interval for s:({xs}, {ys}) b:({xb}, {yb}). {md=}")
-        # add positions in that area to a set of covered coordinates
+    for xs, ys, xb, yb, md in tqdm(positions):
         # Calculate this only for line y, i.e. only add positions
         # that are in line y. Do not iterate if line y is not included.
         if ys - md <= y <= ys + md + 1:
             yc = abs(ys - y)
-            # add interval to list of intervals
-            # print(
-            #     f"Interval overlaps with row {y}. Adding interval ({xs + (-md + yc)}, {xs + md - yc})"
-            # )
             intervals.append((xs + (-md + yc), xs + md - yc))
 
-    # print(f"Intervals: {intervals}")
     # remove existing beacons if they overlap with any of the intervals
     num_beacons_overlap = 0
-    for xb, yb in set(positions.values()):
+    beacons = set((xb, yb) for _, _, xb, yb, _ in positions)
+    for xb, yb in set(beacons):
         if yb == y:
             intervals.append((xb, xb))
             num_beacons_overlap += 1
-    # print(f"Intervals with beacons: {intervals}")
     # consolidate intervals
     cons_intervals = consolidate(intervals)
-    # print(f"Consolidated intervals: {cons_intervals}")
 
     # count items in covered (all positions in the line we are looking for)
     # and subtract the number of beacons in that line (some beacons) are referenced
@@ -131,7 +102,7 @@ def part1(puzzle_input, y=2_000_000):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input, max_xy=4_000_000):
     """Solve part 2. Return the required output value.
     you need to determine its tuning frequency,
@@ -141,48 +112,41 @@ def part2(puzzle_input, max_xy=4_000_000):
     positions = get_sensor_beacon_positions(puzzle_input)
     for row in tqdm(range(max_xy + 1)):
         intervals = []
-        # print(f"Checking row {row}")
-        for (xs, ys), (xb, yb) in positions.items():
-            # calculate manhattan distance around each sensor
-            md = manhattan_distance(xs, ys, xb, yb)
-            # print(f"Calculating interval for s:({xs}, {ys}) b:({xb}, {yb}). {md=}")
-            # add positions in that area to a set of covered coordinates
+        for xs, ys, xb, yb, md in positions:
             # Calculate this only for the desired row, i.e. only add positions
-            # that are in line y. Do not iterate if line y is not included.
+            # that are in line row. Do not iterate if line row is not included.
             if ys - md <= row <= ys + md + 1:
+                # offset of the row from the current sensor, used to calculate
+                # length of the row
                 yc = abs(ys - row)
-                # add interval to list of intervals
                 # calculate left and right side and check if within target square
                 left = xs + (-md + yc)
                 right = xs + md - yc
                 if not ((right < 0) or (left > max_xy)):
+                    # add interval within the target square
                     intervals.append((max(0, left), min(right, max_xy)))
 
-        # print(f"Intervals: {intervals}")
         # add existing beacons if they overlap with any of the intervals
         num_beacons_overlap = 0
-        for xb, yb in set(positions.values()):
+        beacons = set((xb, yb) for _, _, xb, yb, _ in positions)
+        for xb, yb in set(beacons):
             if yb == row:
                 intervals.append((xb, xb))
                 num_beacons_overlap += 1
-        # print(f"Intervals with beacons: {intervals}")
         # consolidate intervals
         cons_intervals = consolidate(intervals)
-        # print(f"Consolidated intervals: {cons_intervals}")
 
         # check if the length of the covered range is different from a full line
         # of the target square, i.e. if there is a space left - which has to be
         # the beacon
         if len(cons_intervals) > 1:
             # more than one element in the list of intervals
-            # should not be more than 2!
+            # should not be more than 2.
             assert len(cons_intervals) == 2
             col = cons_intervals[0][1] + 1
-            # print(f"Found beacon in {row} / {col}")
             break
 
     result = col * 4_000_000 + row
-
     return result
 
 
