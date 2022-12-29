@@ -99,29 +99,29 @@ def part1(puzzle_input, y=2_000_000):
     for (xs, ys), (xb, yb) in tqdm(positions.items()):
         # calculate manhattan distance around each sensor
         md = manhattan_distance(xs, ys, xb, yb)
-        print(f"Calculating interval for s:({xs}, {ys}) b:({xb}, {yb}). {md=}")
+        # print(f"Calculating interval for s:({xs}, {ys}) b:({xb}, {yb}). {md=}")
         # add positions in that area to a set of covered coordinates
         # Calculate this only for line y, i.e. only add positions
         # that are in line y. Do not iterate if line y is not included.
         if ys - md <= y <= ys + md + 1:
             yc = abs(ys - y)
             # add interval to list of intervals
-            print(
-                f"Interval overlaps with row {y}. Adding interval ({xs + (-md + yc)}, {xs + md - yc})"
-            )
+            # print(
+            #     f"Interval overlaps with row {y}. Adding interval ({xs + (-md + yc)}, {xs + md - yc})"
+            # )
             intervals.append((xs + (-md + yc), xs + md - yc))
 
-    print(f"Intervals: {intervals}")
+    # print(f"Intervals: {intervals}")
     # remove existing beacons if they overlap with any of the intervals
     num_beacons_overlap = 0
     for xb, yb in set(positions.values()):
         if yb == y:
             intervals.append((xb, xb))
             num_beacons_overlap += 1
-    print(f"Intervals with beacons: {intervals}")
+    # print(f"Intervals with beacons: {intervals}")
     # consolidate intervals
     cons_intervals = consolidate(intervals)
-    print(f"Consolidated intervals: {cons_intervals}")
+    # print(f"Consolidated intervals: {cons_intervals}")
 
     # count items in covered (all positions in the line we are looking for)
     # and subtract the number of beacons in that line (some beacons) are referenced
@@ -139,9 +139,9 @@ def part2(puzzle_input, max_xy=4_000_000):
     4_000_000 and then adding its y coordinate.
     """
     positions = get_sensor_beacon_positions(puzzle_input)
-    intervals = []
-    for row in range(max_xy + 1):
-        print(f"Checking row {row}")
+    for row in tqdm(range(max_xy + 1)):
+        intervals = []
+        # print(f"Checking row {row}")
         for (xs, ys), (xb, yb) in positions.items():
             # calculate manhattan distance around each sensor
             md = manhattan_distance(xs, ys, xb, yb)
@@ -168,7 +168,7 @@ def part2(puzzle_input, max_xy=4_000_000):
         # print(f"Intervals with beacons: {intervals}")
         # consolidate intervals
         cons_intervals = consolidate(intervals)
-        print(f"Consolidated intervals: {cons_intervals}")
+        # print(f"Consolidated intervals: {cons_intervals}")
 
         # check if the length of the covered range is different from a full line
         # of the target square, i.e. if there is a space left - which has to be
@@ -178,7 +178,7 @@ def part2(puzzle_input, max_xy=4_000_000):
             # should not be more than 2!
             assert len(cons_intervals) == 2
             col = cons_intervals[0][1] + 1
-            print(f"Found beacon in {row} / {col}")
+            # print(f"Found beacon in {row} / {col}")
             break
 
     result = col * 4_000_000 + row
