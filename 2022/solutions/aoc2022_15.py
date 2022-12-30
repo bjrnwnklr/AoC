@@ -174,7 +174,7 @@ if __name__ == "__main__":
 # Part 1: Start:  End:
 # Part 2: Start:  End:
 
-# Elapsed time to run part1: 0.00870 seconds.
+# Elapsed time to run part1: 0.01006 seconds.
 # Part 1: 5508234
-# Elapsed time to run part2: 30.37834 seconds.
+# Elapsed time to run part2: 23.29471 seconds.
 # Part 2: 10457634860779
