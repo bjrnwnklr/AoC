@@ -43,32 +43,112 @@ def open_valve(ov, valve):
     return ",".join(sorted(valves + [valve]))
 
 
+def heuristic_move(minute, to_node, ov, valves, eruption):
+    """Use the estimated time * flow of the next room valve as heuristic.
+    If the valve is already open, return 0.
+    """
+    if to_node in ov:
+        return 0
+
+    return valves[to_node] * (eruption - (minute + 2))
+
+
+def heuristic_open(minute, node, valves, eruption):
+    """Use the estimated time * flow of the current node's valve as heuristic"""
+    return valves[node] * (eruption - (minute + 1))
+
+
+def astar(graph, valves):
+    q = [(0, 1, "AA", "", ["AA"])]
+    cost_so_far = {("AA", ""): 0}
+    eruption = 30
+
+    while q:
+        _, minute, node, ov, path = heapq.heappop(q)
+        print(f"Popped heapq: {minute=} {node=} {ov=} {path=}")
+        # print(f"{q=}")
+
+        if minute == eruption:
+            print("Found solution:")
+            print(f"Flow achieved: {cost_so_far[(node, ov)]}")
+            print(f"Open valves: {ov}")
+            print("Path:")
+            for n in path:
+                print(n)
+            return cost_so_far[(node, ov)]
+
+        # for next steps, we have two options
+        # - move to next node (increase minute by one, leave cost as is)
+        # - open valve (increase minute by one, increase cost by minute * flow)
+        for next_node in graph[node]:
+            new_cost = cost_so_far[(node, ov)]
+            if (next_node, ov) not in cost_so_far or new_cost > cost_so_far[
+                (next_node, ov)
+            ]:
+                cost_so_far[(next_node, ov)] = new_cost
+                priority = new_cost + heuristic_move(
+                    minute, next_node, ov, valves, eruption
+                )
+                heapq.heappush(
+                    q,
+                    (
+                        -priority,
+                        minute + 1,
+                        next_node,
+                        ov,
+                        path
+                        + [
+                            next_node,
+                        ],
+                    ),
+                )
+
+        if node not in ov:
+            new_cost = cost_so_far[(node, ov)] + heuristic_open(
+                minute, node, valves, eruption
+            )
+            cost_so_far[(node, open_valve(ov, node))] = new_cost
+            priority = new_cost
+            heapq.heappush(
+                q,
+                (
+                    -priority,
+                    minute + 1,
+                    node,
+                    open_valve(ov, node),
+                    path
+                    + [
+                        f"Open valve {node}",
+                    ],
+                ),
+            )
+
+    return -1
+
+
 def dijkstra(graph, valves):
     q = [(0, 1, "AA", "", ["AA"])]
     seen = set()
     eruption = 4
-    max_flow = 0
-    max_path = []
 
     while q:
         cost, minute, node, ov, path = heapq.heappop(q)
         print(f"Popped heapq: {minute=} {cost=} {node=} {ov=} {path=}")
         print(f"{q=}")
-        if (minute, node, ov) in seen or minute > eruption:
+        if (node, ov) in seen:
             continue
 
-        seen.add((minute, node, ov))
+        seen.add((node, ov))
 
         # check if we arrived at the end
-        if minute == eruption and -cost > max_flow:
+        if minute == eruption:
             print("Found solution:")
             print(f"Flow achieved: {cost}")
             print(f"Open valves: {ov}")
             print("Path:")
             for n in path:
                 print(n)
-            max_flow = -cost
-            max_path = path
+            return -cost
 
         # for next steps, we have two options
         # - move to next node (increase minute by one, leave cost as is)
@@ -103,7 +183,7 @@ def dijkstra(graph, valves):
                 ),
             )
 
-    return max_flow
+    return -1
 
 
 # @aoc_timer
@@ -113,8 +193,10 @@ def part1(valves, graph):
     # Cost is the number of remaining minutes * flow
     # goal is reached at 30 minutes
     # store status of valves (open / closed) as they are part of the different paths
-    # heapq needs to compare cost at minute against each other, otherwise, it will prioritize lower cost at the beginning
-    result = dijkstra(graph, valves)
+    # heapq needs to compare cost at minute against each other, otherwise, it will
+    # prioritize lower cost at the beginning
+    # result = dijkstra(graph, valves)
+    result = astar(graph, valves)
 
     return result
 
