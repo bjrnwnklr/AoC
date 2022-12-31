@@ -129,12 +129,12 @@ def astar(graph, valves):
 def dijkstra(graph, valves):
     q = [(0, 1, "AA", "", ["AA"])]
     seen = set()
-    eruption = 4
+    eruption = 30
 
     while q:
         cost, minute, node, ov, path = heapq.heappop(q)
         print(f"Popped heapq: {minute=} {cost=} {node=} {ov=} {path=}")
-        print(f"{q=}")
+        # print(f"{q=}")
         if (node, ov) in seen:
             continue
 
@@ -167,6 +167,23 @@ def dijkstra(graph, valves):
                     ],
                 ),
             )
+            # if the valve of the next node is not open, add the step to open
+            # it to the queue
+            if next_node not in ov:
+                heapq.heappush(
+                    q,
+                    (
+                        cost - (valves[next_node] * (eruption - (minute + 2))),
+                        minute + 2,
+                        next_node,
+                        open_valve(ov, next_node),
+                        path
+                        + [
+                            next_node,
+                            f"Open valve {next_node}",
+                        ],
+                    ),
+                )
 
         if node not in ov:
             heapq.heappush(
@@ -195,8 +212,8 @@ def part1(valves, graph):
     # store status of valves (open / closed) as they are part of the different paths
     # heapq needs to compare cost at minute against each other, otherwise, it will
     # prioritize lower cost at the beginning
-    # result = dijkstra(graph, valves)
-    result = astar(graph, valves)
+    result = dijkstra(graph, valves)
+    # result = astar(graph, valves)
 
     return result
 
