@@ -44,28 +44,31 @@ def open_valve(ov, valve):
 
 
 def dijkstra(graph, valves):
-    q = [(1, 0, "AA", "", ["AA"])]
+    q = [(0, 1, "AA", "", ["AA"])]
     seen = set()
-    eruption = 30
+    eruption = 4
+    max_flow = 0
+    max_path = []
 
     while q:
-        minute, cost, node, ov, path = heapq.heappop(q)
+        cost, minute, node, ov, path = heapq.heappop(q)
         print(f"Popped heapq: {minute=} {cost=} {node=} {ov=} {path=}")
         print(f"{q=}")
-        if (minute, node, ov) in seen:
+        if (minute, node, ov) in seen or minute > eruption:
             continue
 
         seen.add((minute, node, ov))
 
         # check if we arrived at the end
-        if minute == eruption:
+        if minute == eruption and -cost > max_flow:
             print("Found solution:")
             print(f"Flow achieved: {cost}")
             print(f"Open valves: {ov}")
             print("Path:")
             for n in path:
                 print(n)
-            return -cost
+            max_flow = -cost
+            max_path = path
 
         # for next steps, we have two options
         # - move to next node (increase minute by one, leave cost as is)
@@ -74,8 +77,8 @@ def dijkstra(graph, valves):
             heapq.heappush(
                 q,
                 (
-                    minute + 1,
                     cost,
+                    minute + 1,
                     next_node,
                     ov,
                     path
@@ -89,8 +92,8 @@ def dijkstra(graph, valves):
             heapq.heappush(
                 q,
                 (
-                    minute + 1,
                     cost - (valves[node] * (eruption - (minute + 1))),
+                    minute + 1,
                     node,
                     open_valve(ov, node),
                     path
@@ -100,7 +103,7 @@ def dijkstra(graph, valves):
                 ),
             )
 
-    return -1
+    return max_flow
 
 
 # @aoc_timer
