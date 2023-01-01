@@ -70,15 +70,18 @@ def open_valve(ov, valve):
 
     Order does not matter so sort them alphabetically.
     """
-    already_visited = ov.split(",")
-    return ",".join(
-        sorted(
-            already_visited
-            + [
-                valve,
-            ]
+    if ov == "":
+        return valve
+    else:
+        already_visited = ov.split(",")
+        return ",".join(
+            sorted(
+                already_visited
+                + [
+                    valve,
+                ]
+            )
         )
-    )
 
 
 def bfs(graph, valves, distances, duration):
@@ -138,17 +141,13 @@ def part1(valves, graph):
     First determine the distance between all nodes by running a BFS
     from each node across the graph and build a dictionary.
 
-    Then use Dijkstra to find the path to 30 minutes that has the highest flow.
+    Then use BFS to find paths to all states of opened valves and take the maximum
+    flow value found.
     """
     # get all distances in the graph
     distances = find_distances(graph)
 
-    # run a Dijkstra search, maximizing the cost (negative cost)
-    # Cost is the number of remaining minutes * flow
-    # goal is reached at 30 minutes
-    # store status of valves (open / closed) as they are the different states
-    # heapq needs to compare cost at minute against each other, otherwise, it will
-    # prioritize lower cost at the beginning
+    # find the flow of all states of valves, then take maximum value
     flow_per_state = bfs(graph, valves, distances, 30)
     max_flow = max(flow_per_state.values())
 
@@ -169,14 +168,21 @@ def part2(valves, graph):
     # get all distances in the graph
     distances = find_distances(graph)
 
-    # run a Dijkstra search, maximizing the cost (negative cost)
-    # Cost is the number of remaining minutes * flow
-    # goal is reached at 30 minutes
-    # store status of valves (open / closed) as they are the different states
-    # heapq needs to compare cost at minute against each other, otherwise, it will
-    # prioritize lower cost at the beginning
+    # find the combined flow of all states of valves
     flow_per_state = bfs(graph, valves, distances, 26)
-    max_flow = max(flow_per_state.values())
+    # turn all states into sets, then combine all sets together and
+    # take the ones that are mutually exclusive.
+    # The mutually exclusive ones are one person and one elephant
+    # visiting different nodes. Add the flow values for each and take
+    # the maximum of them as the result.
+    valve_sets = {k: set(k.split(",")) for k in flow_per_state}
+    max_flow = 0
+    for human in valve_sets:
+        for elephant in valve_sets:
+            if valve_sets[human].isdisjoint(valve_sets[elephant]):
+                max_flow = max(
+                    max_flow, flow_per_state[human] + flow_per_state[elephant]
+                )
 
     return max_flow
 
