@@ -40,8 +40,9 @@ def load_input(f_name):
 
 
 def find_distances(graph):
-    """Run a BFS starting from each valve to determine distance (in minutes) to each other
-    valve. Return a dictionary with (from, to): distance in minutes."""
+    """Run a BFS starting from each valve to determine distance
+    (in minutes) to each other valve. Return a dictionary with
+    (from, to): distance in minutes."""
     distances = dict()
     for from_valve in tqdm(graph):
         q = [(from_valve, 0)]
@@ -78,7 +79,6 @@ def dijkstra(graph, valves, distances):
     q = [(0, 0, "AA", "", ["AA"])]
     seen = set()
     eruption = 30
-    endstates = []
     final_cost = 0
 
     while q:
@@ -111,7 +111,8 @@ def dijkstra(graph, valves, distances):
                 final_cost = cost
         else:
             for next_node in neighbors:
-                # check that we have not yet visited the node, and that we have enough time
+                # check that we have not yet visited the node,
+                # and that we have enough time
                 # to move to the valve and open it (+1 minute)
                 new_ov = open_valve(ov, next_node)
                 new_minute = minute + distances[(node, next_node)] + 1
@@ -140,8 +141,8 @@ def part1(valves, graph):
     The cost of travel between valve openings is the distance (1 minute per node)
     that's required to go to the next valve and open it.
 
-    First determine the distance between all nodes by running a BFS from each node across
-    the graph and build a dictionary.
+    First determine the distance between all nodes by running a BFS
+    from each node across the graph and build a dictionary.
 
     Then use Dijkstra to find the path to 30 minutes that has the highest flow.
     """

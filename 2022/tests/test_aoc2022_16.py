@@ -18,6 +18,6 @@ class Test_AOC2022_16:
         valves, graph = load_input("testinput/16_1_1.txt")
         assert part1(valves, graph) == 1651
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/16_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_1(self):
+        puzzle_input = load_input("testinput/16_1_1.txt")
+        assert part2(puzzle_input) == 1707
