@@ -77,7 +77,6 @@ def open_valve(ov, valve):
 
 def dijkstra(graph, valves, distances):
     q = [(0, 0, "AA", "", ["AA"])]
-    seen = set()
     eruption = 30
     final_cost = 0
 
@@ -85,12 +84,6 @@ def dijkstra(graph, valves, distances):
         cost, minute, node, ov, path = heapq.heappop(q)
         # print(f"Popped heapq: {minute=} {cost=} {node=} {ov=} {path=}")
         # print(f"{q=}")
-        # if (node, ov) in seen:
-        if ov in seen:
-            continue
-
-        # seen.add((node, ov))
-        seen.add(ov)
 
         # next nodes are valves we can still open within the remaining time
         # - distances between valves are stored in the `distances` dictionary
@@ -116,8 +109,7 @@ def dijkstra(graph, valves, distances):
                 # to move to the valve and open it (+1 minute)
                 new_ov = open_valve(ov, next_node)
                 new_minute = minute + distances[(node, next_node)] + 1
-                # if (next_node, new_ov) not in seen and new_minute <= eruption:
-                if new_ov not in seen and new_minute <= eruption:
+                if new_minute <= eruption:
                     heapq.heappush(
                         q,
                         (
@@ -136,7 +128,6 @@ def dijkstra(graph, valves, distances):
 def dijkstra2(graph, valves, distances):
     # current cost, minute_1, minute_2, node_1, node_2, ov
     q = [(0, 0, 0, "AA", "AA", "")]
-    seen = set()
     eruption = 26
     final_cost = 0
     end_count = 0
@@ -149,11 +140,6 @@ def dijkstra2(graph, valves, distances):
         # )
         # print(f"{q=}")
         # if (node, ov) in seen:
-        if ov in seen:
-            continue
-
-        # seen.add((node, ov))
-        seen.add(ov)
 
         # next nodes are valves we can still open within the remaining time
         # - distances between valves are stored in the `distances` dictionary
@@ -199,12 +185,7 @@ def dijkstra2(graph, valves, distances):
                 new_ov = open_valve(new_ov_1, next_node_2)
                 new_minute_1 = minute_1 + distances[(node_1, next_node_1)] + 1
                 new_minute_2 = minute_2 + distances[(node_2, next_node_2)] + 1
-                # if (next_node, new_ov) not in seen and new_minute <= eruption:
-                if (
-                    new_ov not in seen
-                    and new_minute_1 <= eruption
-                    and new_minute_2 <= eruption
-                ):
+                if new_minute_1 <= eruption and new_minute_2 <= eruption:
                     heapq.heappush(
                         q,
                         (
