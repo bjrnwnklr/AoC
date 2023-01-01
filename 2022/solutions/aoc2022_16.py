@@ -4,7 +4,7 @@ import re
 
 from collections import defaultdict
 
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -130,7 +130,7 @@ def bfs(graph, valves, distances, duration):
     return flow_per_state
 
 
-# @aoc_timer
+@aoc_timer
 def part1(valves, graph):
     """Solve part 1. Return the required output value.
 
@@ -154,7 +154,7 @@ def part1(valves, graph):
     return max_flow
 
 
-# @aoc_timer
+@aoc_timer
 def part2(valves, graph):
     """Solve part 2. Return the required output value.
 
@@ -202,5 +202,7 @@ if __name__ == "__main__":
 # Part 1: Start: 17:58 End:
 # Part 2: Start:  End:
 
+# Elapsed time to run part1: 2.88282 seconds.
 # Part 1: 2320
-# Part 2: NOT 2963 (too low!)
+# Elapsed time to run part2: 2.55046 seconds.
+# Part 2: 2967
