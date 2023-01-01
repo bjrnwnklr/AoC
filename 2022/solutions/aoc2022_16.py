@@ -139,6 +139,7 @@ def dijkstra2(graph, valves, distances):
     seen = set()
     eruption = 26
     final_cost = 0
+    end_count = 0
 
     while q:
         cost, minute_1, minute_2, node_1, node_2, ov = heapq.heappop(q)
@@ -181,6 +182,12 @@ def dijkstra2(graph, valves, distances):
             neighbors.extend([(n_1, n) for n in neighbors_2])
         # if neighbors is empty, we have reached an end state
         if not neighbors:
+            end_count += 1
+            if end_count % 100_000 == 0:
+                print(
+                    f"End states found: {end_count}. Cost: {cost}. "
+                    + f"Current best result: {final_cost}. {ov=} {node_1=} {node_2=}"
+                )
             if cost < final_cost:
                 final_cost = cost
         else:
@@ -250,6 +257,9 @@ def part2(valves, graph):
     Time: 26 minutes.
     Instead of one person moving to open valves, there are now 2
     (you and one elephant).
+
+    Great solution building on mine (BFS)
+    https://www.reddit.com/r/adventofcode/comments/zo21au/comment/j0nz8df/?utm_source=share&utm_medium=web2x&context=3
     """
     # get all distances in the graph
     print("Finding distances between valves in graph.")
@@ -280,3 +290,6 @@ if __name__ == "__main__":
 
 # Part 1: Start: 17:58 End:
 # Part 2: Start:  End:
+
+# Part 1: 2320
+# Part 2: NOT 2963 (too low!)
