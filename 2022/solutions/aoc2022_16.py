@@ -133,6 +133,88 @@ def dijkstra(graph, valves, distances):
     return -final_cost
 
 
+def dijkstra2(graph, valves, distances):
+    # current cost, minute_1, minute_2, node_1, node_2, ov
+    q = [(0, 0, 0, "AA", "AA", "")]
+    seen = set()
+    eruption = 26
+    final_cost = 0
+
+    while q:
+        cost, minute_1, minute_2, node_1, node_2, ov = heapq.heappop(q)
+        # print(
+        #     f"Popped heapq: {minute_1=} {minute_2=} {cost=} {node_1=} {node_2=} {ov=} "
+        #     + f"{path=}"
+        # )
+        # print(f"{q=}")
+        # if (node, ov) in seen:
+        if ov in seen:
+            continue
+
+        # seen.add((node, ov))
+        seen.add(ov)
+
+        # next nodes are valves we can still open within the remaining time
+        # - distances between valves are stored in the `distances` dictionary
+        # - which valves are open already is stored in the `ov` string
+        # get all possible valves that can still be opened
+        # (include the current node as it is not opened when we start - we might
+        #  want to open it)
+        neighbors_1 = [
+            n
+            for n in graph
+            if n not in ov
+            and valves[n] > 0
+            and (minute_1 + distances[(node_1, n)] + 1) < eruption
+        ]
+        neighbors = []
+        for n_1 in neighbors_1:
+            # determine possible neighbors for elephant
+            neighbors_2 = [
+                n
+                for n in graph
+                if n not in ov
+                and n != n_1
+                and valves[n] > 0
+                and (minute_2 + distances[(node_2, n)] + 1) < eruption
+            ]
+            neighbors.extend([(n_1, n) for n in neighbors_2])
+        # if neighbors is empty, we have reached an end state
+        if not neighbors:
+            if cost < final_cost:
+                final_cost = cost
+        else:
+            for next_node_1, next_node_2 in neighbors:
+                # check that we have not yet visited the node,
+                # and that we have enough time
+                # to move to the valve and open it (+1 minute)
+                new_ov_1 = open_valve(ov, next_node_1)
+                new_ov = open_valve(new_ov_1, next_node_2)
+                new_minute_1 = minute_1 + distances[(node_1, next_node_1)] + 1
+                new_minute_2 = minute_2 + distances[(node_2, next_node_2)] + 1
+                # if (next_node, new_ov) not in seen and new_minute <= eruption:
+                if (
+                    new_ov not in seen
+                    and new_minute_1 <= eruption
+                    and new_minute_2 <= eruption
+                ):
+                    heapq.heappush(
+                        q,
+                        (
+                            cost
+                            - (valves[next_node_1] * (eruption - new_minute_1))
+                            - (valves[next_node_2] * (eruption - new_minute_2)),
+                            new_minute_1,
+                            new_minute_2,
+                            next_node_1,
+                            next_node_2,
+                            new_ov,
+                        ),
+                    )
+
+    return -final_cost
+
+
 # @aoc_timer
 def part1(valves, graph):
     """Solve part 1. Return the required output value.
@@ -163,9 +245,25 @@ def part1(valves, graph):
 
 # @aoc_timer
 def part2(valves, graph):
-    """Solve part 2. Return the required output value."""
+    """Solve part 2. Return the required output value.
 
-    return 1
+    Time: 26 minutes.
+    Instead of one person moving to open valves, there are now 2
+    (you and one elephant).
+    """
+    # get all distances in the graph
+    print("Finding distances between valves in graph.")
+    distances = find_distances(graph)
+
+    # run a Dijkstra search, maximizing the cost (negative cost)
+    # Cost is the number of remaining minutes * flow
+    # goal is reached at 30 minutes
+    # store status of valves (open / closed) as they are the different states
+    # heapq needs to compare cost at minute against each other, otherwise, it will
+    # prioritize lower cost at the beginning
+    result = dijkstra2(graph, valves, distances)
+
+    return result
 
 
 if __name__ == "__main__":
