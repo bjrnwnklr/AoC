@@ -4,6 +4,7 @@ import re
 
 from collections import defaultdict
 import heapq
+from tqdm import tqdm
 
 # from utils.aoctools import aoc_timer
 
@@ -38,182 +39,123 @@ def load_input(f_name):
     return valves, graph
 
 
-def open_valve(ov, valve):
-    valves = ov.split(",")
-    return ",".join(sorted(valves + [valve]))
+def find_distances(graph):
+    """Run a BFS starting from each valve to determine distance (in minutes) to each other
+    valve. Return a dictionary with (from, to): distance in minutes."""
+    distances = dict()
+    for from_valve in tqdm(graph):
+        q = [(from_valve, 0)]
+        seen = set()
 
+        while q:
+            curr_valve, distance = q.pop(0)
 
-def heuristic_move(minute, to_node, ov, valves, eruption):
-    """Use the estimated time * flow of the next room valve as heuristic.
-    If the valve is already open, return 0.
-    """
-    if to_node in ov:
-        return 0
+            if curr_valve in seen:
+                continue
 
-    return valves[to_node] * (eruption - (minute + 2))
-
-
-def heuristic_open(minute, node, valves, eruption):
-    """Use the estimated time * flow of the current node's valve as heuristic"""
-    return valves[node] * (eruption - (minute + 1))
-
-
-def astar(graph, valves):
-    q = [(0, 1, "AA", "", ["AA"])]
-    cost_so_far = {("AA", ""): 0}
-    eruption = 30
-
-    while q:
-        _, minute, node, ov, path = heapq.heappop(q)
-        print(f"Popped heapq: {minute=} {node=} {ov=} {path=}")
-        # print(f"{q=}")
-
-        if minute == eruption:
-            print("Found solution:")
-            print(f"Flow achieved: {cost_so_far[(node, ov)]}")
-            print(f"Open valves: {ov}")
-            print("Path:")
-            for n in path:
-                print(n)
-            return cost_so_far[(node, ov)]
-
-        # for next steps, we have two options
-        # - move to next node (increase minute by one, leave cost as is)
-        # - open valve (increase minute by one, increase cost by minute * flow)
-        for next_node in graph[node]:
-            new_cost = cost_so_far[(node, ov)]
-            if (next_node, ov) not in cost_so_far or new_cost > cost_so_far[
-                (next_node, ov)
+            seen.add(curr_valve)
+            if (from_valve, curr_valve) not in distances or distance < distances[
+                (from_valve, curr_valve)
             ]:
-                cost_so_far[(next_node, ov)] = new_cost
-                priority = new_cost + heuristic_move(
-                    minute, next_node, ov, valves, eruption
-                )
-                heapq.heappush(
-                    q,
-                    (
-                        -priority,
-                        minute + 1,
-                        next_node,
-                        ov,
-                        path
-                        + [
-                            next_node,
-                        ],
-                    ),
-                )
+                distances[(from_valve, curr_valve)] = distance
 
-        if node not in ov:
-            new_cost = cost_so_far[(node, ov)] + heuristic_open(
-                minute, node, valves, eruption
-            )
-            cost_so_far[(node, open_valve(ov, node))] = new_cost
-            priority = new_cost
-            heapq.heappush(
-                q,
-                (
-                    -priority,
-                    minute + 1,
-                    node,
-                    open_valve(ov, node),
-                    path
-                    + [
-                        f"Open valve {node}",
-                    ],
-                ),
-            )
+            for next_valve in graph[curr_valve]:
+                if next_valve not in seen:
+                    q.append((next_valve, distance + 1))
 
-    return -1
+    return distances
 
 
-def dijkstra(graph, valves):
-    q = [(0, 1, "AA", "", ["AA"])]
+def open_valve(ov, valve):
+    """Store state of valves opened in a text string.
+
+    Order matters so keep them in the same order as they are opened.
+    """
+    return ov + "," + valve
+
+
+def dijkstra(graph, valves, distances):
+    q = [(0, 0, "AA", "", ["AA"])]
     seen = set()
     eruption = 30
+    endstates = []
+    final_cost = 0
 
     while q:
         cost, minute, node, ov, path = heapq.heappop(q)
-        print(f"Popped heapq: {minute=} {cost=} {node=} {ov=} {path=}")
+        # print(f"Popped heapq: {minute=} {cost=} {node=} {ov=} {path=}")
         # print(f"{q=}")
-        if (node, ov) in seen:
+        # if (node, ov) in seen:
+        if ov in seen:
             continue
 
-        seen.add((node, ov))
+        # seen.add((node, ov))
+        seen.add(ov)
 
-        # check if we arrived at the end
-        if minute == eruption:
-            print("Found solution:")
-            print(f"Flow achieved: {cost}")
-            print(f"Open valves: {ov}")
-            print("Path:")
-            for n in path:
-                print(n)
-            return -cost
-
-        # for next steps, we have two options
-        # - move to next node (increase minute by one, leave cost as is)
-        # - open valve (increase minute by one, increase cost by minute * flow)
-        for next_node in graph[node]:
-            heapq.heappush(
-                q,
-                (
-                    cost,
-                    minute + 1,
-                    next_node,
-                    ov,
-                    path
-                    + [
-                        next_node,
-                    ],
-                ),
-            )
-            # if the valve of the next node is not open, add the step to open
-            # it to the queue
-            if next_node not in ov:
-                heapq.heappush(
-                    q,
-                    (
-                        cost - (valves[next_node] * (eruption - (minute + 2))),
-                        minute + 2,
-                        next_node,
-                        open_valve(ov, next_node),
-                        path
-                        + [
+        # next nodes are valves we can still open within the remaining time
+        # - distances between valves are stored in the `distances` dictionary
+        # - which valves are open already is stored in the `ov` string
+        # get all possible valves that can still be opened
+        # (include the current node as it is not opened when we start - we might
+        #  want to open it)
+        neighbors = [
+            n
+            for n in graph
+            if n not in ov
+            and valves[n] > 0
+            and (minute + distances[(node, n)] + 1) < eruption
+        ]
+        # if neighbors is empty, we have reached an end state
+        if not neighbors:
+            if cost < final_cost:
+                final_cost = cost
+        else:
+            for next_node in neighbors:
+                # check that we have not yet visited the node, and that we have enough time
+                # to move to the valve and open it (+1 minute)
+                new_ov = open_valve(ov, next_node)
+                new_minute = minute + distances[(node, next_node)] + 1
+                # if (next_node, new_ov) not in seen and new_minute <= eruption:
+                if new_ov not in seen and new_minute <= eruption:
+                    heapq.heappush(
+                        q,
+                        (
+                            cost - (valves[next_node] * (eruption - new_minute)),
+                            new_minute,
                             next_node,
-                            f"Open valve {next_node}",
-                        ],
-                    ),
-                )
+                            new_ov,
+                            path
+                            + [f"Move to valve {next_node}", f"Open valve {next_node}"],
+                        ),
+                    )
 
-        if node not in ov:
-            heapq.heappush(
-                q,
-                (
-                    cost - (valves[node] * (eruption - (minute + 1))),
-                    minute + 1,
-                    node,
-                    open_valve(ov, node),
-                    path
-                    + [
-                        f"Open valve {node}",
-                    ],
-                ),
-            )
-
-    return -1
+    return -final_cost
 
 
 # @aoc_timer
 def part1(valves, graph):
-    """Solve part 1. Return the required output value."""
+    """Solve part 1. Return the required output value.
+
+    The nodes are really only the valves being opened in a certain order.
+    The cost of travel between valve openings is the distance (1 minute per node)
+    that's required to go to the next valve and open it.
+
+    First determine the distance between all nodes by running a BFS from each node across
+    the graph and build a dictionary.
+
+    Then use Dijkstra to find the path to 30 minutes that has the highest flow.
+    """
+    # get all distances in the graph
+    print("Finding distances between valves in graph.")
+    distances = find_distances(graph)
+
     # run a Dijkstra search, maximizing the cost (negative cost)
     # Cost is the number of remaining minutes * flow
     # goal is reached at 30 minutes
-    # store status of valves (open / closed) as they are part of the different paths
+    # store status of valves (open / closed) as they are the different states
     # heapq needs to compare cost at minute against each other, otherwise, it will
     # prioritize lower cost at the beginning
-    result = dijkstra(graph, valves)
-    # result = astar(graph, valves)
+    result = dijkstra(graph, valves, distances)
 
     return result
 
