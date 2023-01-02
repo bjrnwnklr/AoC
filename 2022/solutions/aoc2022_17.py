@@ -46,7 +46,7 @@ class Shape:
         for i in range(len(self.coords)):
             self.coords[i] = (self.coords[i][0] + last_row - 4, self.coords[i][1] + 3)
 
-        logging.debug(f"Created shape: {self.coords}")
+        # logging.debug(f"Created shape: {self.coords}")
 
     def move_coords(self, direction):
         """Provide a list of updated coordinates after a move left,
@@ -57,7 +57,7 @@ class Shape:
     def move(self, direction):
         """Move the shape in the specified direction."""
         self.coords = self.move_coords(direction)
-        logging.debug(f"Moved shape in direction {direction}: {self.coords}")
+        # logging.debug(f"Moved shape in direction {direction}: {self.coords}")
 
 
 class Room:
@@ -136,7 +136,7 @@ def part1(puzzle_input):
     room = Room()
 
     while rocks < 2022:
-        logging.debug(f"New rock: {rocks}")
+        # logging.debug(f"New rock: {rocks}")
         # put next shape in at the height of the tower
         s = Shape(rocks, room.height())
         while True:
@@ -144,7 +144,7 @@ def part1(puzzle_input):
             jet += 1
 
             if not move_successful:
-                logging.debug(f"Rock stopped {rocks}, height: {room.height()}")
+                # logging.debug(f"Rock stopped {rocks}, height: {room.height()}")
                 rocks += 1
                 break
 
@@ -153,7 +153,61 @@ def part1(puzzle_input):
 
 # @aoc_timer
 def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
+    """Solve part 2. Return the required output value.
+
+    How tall will the tower be after 1000000000000 rocks have stopped?
+
+    Assumed that there is a cyclic repetition somewhere in the movements
+    of jet and blocks. Probably related to having 5 rocks and the length of the
+    jet movements.
+
+    Test case: heights repeat with the following frequency:
+
+    15 (first 15 are unique)
+    after that, every 35 rocks have the same height sequence (53 total)
+    Solution for test case:
+    ((1_000_000_000_000 - 15) / 35) * 53 = 1_514_285_714_288
+
+    Sequence for test case is 40 jet movements
+
+    For riddle:
+    sequence of jet movements is 10091 jet movements long
+
+    Need to find the sequence where the changes become the same...
+
+    """
+    rocks = 0
+    total_jet_movements = len(puzzle_input)
+    jet = 0
+    room = Room()
+    heights = []
+
+    while rocks < 10_000:
+        # put next shape in at the height of the tower
+        s = Shape(rocks, room.height())
+        while True:
+            move_successful = room.move(s, puzzle_input[jet % total_jet_movements])
+            jet += 1
+
+            if not move_successful:
+                heights.append(room.height())
+                rocks += 1
+                break
+
+    # now analyze the height differences between different frequencies (multiples of 5)
+    # # in the test case, the jet movemvents are 40 long
+    # for n in range(0, 1000, 5):
+    #     # take delta of height difference for each step and compare
+    #     print(f"Testing cycle of {n} blocks:")
+    #     if heights[n] == heights[2 * n] - heights[n]:
+    #         # found a repeated height
+    #         print(f"---- same height for {n} and {2 * n}: {heights[n]}")
+    #         break
+
+    print("Writing out heights into file.")
+    with open("202217_2_riddle.csv", "w") as f:
+        for i, n in enumerate(heights):
+            f.write(f"{i},{n}\n")
 
     return 1
 
