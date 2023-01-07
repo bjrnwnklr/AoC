@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 import logging
 import pandas as pd
 
@@ -125,7 +125,7 @@ class Room:
             return 0
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
 
@@ -153,7 +153,7 @@ def part1(puzzle_input):
     return -room.height()
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value.
 
@@ -255,3 +255,18 @@ if __name__ == "__main__":
 
 # Part 1: Start:  End:
 # Part 2: Start:  End:
+
+# Elapsed time to run part1: 0.44899 seconds.
+# Part 1: 3209
+# Search in low=0 high=1000, mid=500
+# Search in low=0 high=500, mid=250
+# Search in low=250 high=500, mid=375
+# Search in low=375 high=500, mid=437
+# Search in low=375 high=437, mid=406
+# Search in low=406 high=437, mid=421
+# Search in low=406 high=421, mid=413
+# Search in low=413 high=421, mid=417
+# Search in low=413 high=417, mid=415
+# Search in low=413 high=415, mid=414
+# Elapsed time to run part2: 24.75769 seconds.
+# Part 2: 1580758017509
