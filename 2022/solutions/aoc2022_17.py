@@ -4,6 +4,7 @@
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
 import logging
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -128,7 +129,8 @@ class Room:
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
 
-    How many units tall will the tower of rocks be after 2022 rocks have stopped falling?
+    How many units tall will the tower of rocks be after 2022 rocks
+    have stopped falling?
     """
     rocks = 0
     total_jet_movements = len(puzzle_input)
@@ -165,15 +167,7 @@ def part2(puzzle_input):
 
     15 (first 15 are unique)
     after that, every 35 rocks have the same height sequence (53 total)
-    Solution for test case:
-    ((1_000_000_000_000 - 15) / 35) * 53 = 1_514_285_714_288
 
-    Sequence for test case is 40 jet movements
-
-    For riddle:
-    sequence of jet movements is 10091 jet movements long
-
-    Need to find the sequence where the changes become the same...
 
     """
     rocks = 0
@@ -194,22 +188,57 @@ def part2(puzzle_input):
                 rocks += 1
                 break
 
-    # now analyze the height differences between different frequencies (multiples of 5)
-    # # in the test case, the jet movemvents are 40 long
-    # for n in range(0, 1000, 5):
-    #     # take delta of height difference for each step and compare
-    #     print(f"Testing cycle of {n} blocks:")
-    #     if heights[n] == heights[2 * n] - heights[n]:
-    #         # found a repeated height
-    #         print(f"---- same height for {n} and {2 * n}: {heights[n]}")
-    #         break
+    # Find the cyclic pattern with the following approach:
+    # - pick a starting point, e.g. rock 1000
+    # - check height differences for 3 cycles of length n
+    #   and see if they have the same height difference.
+    #   Start with a reasonable n, e.g. 30
+    # - Once the length of the cycle is found, find the starting point.
+    #   Do a binary search down from starting point and check if the
+    #   same height difference from n is found
+    df = pd.DataFrame(heights, columns=["height"])
+    starting_point = 1000
+    n = 30
+    while True:
+        indices = [starting_point + n * i for i in range(4)]
+        df_diff = df.iloc[indices]["height"].diff().iloc[1:]
+        if (df_diff == df_diff.iloc[0]).all():
+            break
 
-    print("Writing out heights into file.")
-    with open("202217_2_riddle.csv", "w") as f:
-        for i, n in enumerate(heights):
-            f.write(f"{i},{n}\n")
+        n += 1
 
-    return 1
+    # cycles = number of rocks that form a cycle
+    # height = height of the stack of rocks in one cycle
+    cycles = n
+    height = int(-df_diff.iloc[0])
+
+    # now binary search for the starting point where the cycle starts
+    low = 0
+    high = 1000
+    while (high - low) > 1:
+        mid = low + (high - low) // 2
+        print(f"Search in {low=} {high=}, {mid=}")
+        indices = [mid + cycles * i for i in range(4)]
+        df_diff = df.iloc[indices]["height"].diff().iloc[1:]
+        if (df_diff == df_diff.iloc[0]).all():
+            # too high, go with lower half interval
+            high = mid
+        else:
+            low = mid
+
+    # low = last rock that is not part of the cycle
+    # mid = first rock where the cycle starts
+
+    # calculate the full height of rocks:
+    # height of lower part until cycle starts
+    # + height of cycle * number of cycles in 1_000_000.... - mid
+    # + height of remaining rocks in cycle (as the last cycle will not be a full cycle)
+    low_part = -df.iloc[low]["height"]
+    mid_part = ((1_000_000_000_000 - mid) // cycles) * height
+    remaining_rocks = (1_000_000_000_000 - mid) % cycles
+    upper_part = -df.iloc[remaining_rocks + low]["height"] + df.iloc[low]["height"]
+
+    return low_part + mid_part + upper_part
 
 
 if __name__ == "__main__":
