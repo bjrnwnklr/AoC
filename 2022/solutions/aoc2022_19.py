@@ -5,7 +5,7 @@ import re
 from collections import deque, defaultdict
 
 # from utils.aoctools import aoc_timer
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 
 def load_input(f_name):
@@ -36,37 +36,40 @@ class State:
     t_ore: int = 0
     t_clay: int = 0
     t_obs: int = 0
-    geodes: int = 0
-    r_ore: int = 0
+    a_geode: int = 0
+    r_ore: int = 1
     r_clay: int = 0
     r_obs: int = 0
     r_geode: int = 0
 
     def __hash__(self) -> int:
-        return (
-            self.minute,
-            self.a_ore,
-            self.a_clay,
-            self.a_obs,
-            self.geodes,
-            self.r_ore,
-            self.r_clay,
-            self.r_obs,
-            self.r_geode,
+        return hash(
+            (
+                self.minute,
+                self.a_ore,
+                self.a_clay,
+                self.a_obs,
+                self.a_geode,
+                self.r_ore,
+                self.r_clay,
+                self.r_obs,
+                self.r_geode,
+            )
         )
 
 
 class Blueprint:
-
     def __init__(self, recipe) -> None:
         self.id = recipe[0]
         # (ore, clay, obsidian)
         self.robots = {
-            'ore': (recipe[1], 0, 0),
-            'clay': (recipe[2], 0, 0),
-            'obs': (recipe[3], recipe[4], 0),
-            'geode': (recipe[5], 0, recipe[6])
+            "ore": (recipe[1], 0, 0),
+            "clay": (recipe[2], 0, 0),
+            "obs": (recipe[3], recipe[4], 0),
+            "geode": (recipe[5], 0, recipe[6]),
+            "none": (0, 0, 0),
         }
+
 
 # @aoc_timer
 def part1(puzzle_input):
@@ -91,29 +94,73 @@ def part1(puzzle_input):
     """
     result = 0
     for blueprint in puzzle_input:
-        bp = Blueprint(*blueprint)
+        bp = Blueprint(blueprint)
+        print(f"Processing blueprint {bp.id}")
+
         max_geodes = 0
-        
+
         q = deque([State()])
         seen = set()
 
         while q:
             curr = q.popleft()
+            print(f"Popped {curr=}")
             if curr in seen:
                 continue
+
+            # get max number of geodes
+            max_geodes = max(max_geodes, curr.a_geode)
 
             # process one round
             # start construction of any possible robots
             # these are the valid neighbours
-            for 
+            for robot in bp.robots:
+                new_robot = False
+                # create a copy of the current state
+                next_state = replace(curr)
+                # check if we have the resources
+                if (
+                    next_state.a_ore >= bp.robots[robot][0]
+                    and next_state.a_clay >= bp.robots[robot][1]
+                    and next_state.a_obs >= bp.robots[robot][2]
+                ):
+                    print(f"\tAdding robot {robot}")
+                    # spend the resources
+                    next_state.a_ore -= bp.robots[robot][0]
+                    next_state.a_clay -= bp.robots[robot][1]
+                    next_state.a_obs -= bp.robots[robot][2]
+                    new_robot = True
+                # collect resources
+                next_state.a_ore += next_state.r_ore
+                next_state.a_clay += next_state.r_clay
+                next_state.a_obs += next_state.r_obs
+                next_state.a_geode += next_state.r_geode
 
-            # collect any resources
+                # add new robots
+                if new_robot:
+                    match robot:
+                        case "ore":
+                            next_state.r_ore += 1
+                        case "clay":
+                            next_state.r_clay += 1
+                        case "obs":
+                            next_state.r_obs += 1
+                        case "geode":
+                            next_state.r_geode += 1
 
-            # add new robots
+                # increase minute and add to queue
+                next_state.minute += 1
 
-            # increase minute and add to queue
+                # add to queue if we still have time
+                if next_state.minute <= 10:
+                    q.append(next_state)
+                    print(f"\tAppended {next_state}, q has {len(q)} elements")
 
-    return 1
+        # BFS finished, calculate result
+        result += bp.id * max_geodes
+        print(f"Blueprint {bp.id} finished. {max_geodes=}, {result=}")
+
+    return result
 
 
 # @aoc_timer
