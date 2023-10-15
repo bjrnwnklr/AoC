@@ -4,7 +4,7 @@ import re
 
 # from collections import defaultdict, deque
 
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -113,10 +113,12 @@ class LinkedList:
             # we insert BEFORE the pointer when moving negative direction
             # to reduce the number of steps, take the value mod the length of the
             # list, it wraps around :)
-            steps = ((-1 * n) % self.length) + 1
+            # modulo needs to be reduced by one as the node can't be counted (i.e. skipped over)
+            # once we have started moving it (this simulates individual steps moving it)
+            steps = ((-1 * n) % (self.length - 1)) + 1
         elif n > 0:
             f_move = self.shift_right
-            steps = n % self.length
+            steps = n % (self.length - 1)
 
         self.pointer = node
         # remove the node
@@ -131,7 +133,7 @@ class LinkedList:
         return f"Start: {self.start}, pointer: {self.pointer}, nodes: {self.length}"
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
     What is the sum of the three numbers that form the grove coordinates? The
@@ -173,11 +175,49 @@ def part1(puzzle_input):
     return coord
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
+    """Solve part 1. Return the required output value.
+    What is the sum of the three numbers that form the grove coordinates? The
+    grove coordinates can be found by looking at the 1000th, 2000th, and 3000th
+    numbers after the value 0, wrapping around the list as necessary.
+    """
+    count_elements = len(puzzle_input)
+    print(f"Input has {count_elements} elements.")
+    ll = LinkedList()
+    # keep a list of node elements
+    nodes = dict()
+    for i, n in enumerate(puzzle_input):
+        # part 2, multiply node number by 811589153
+        node = Node(n * 811589153)
+        ll.insert(node)
+        nodes[i] = node
+        # store zero node
+        if n == 0:
+            zero_node = node
 
-    return 1
+    # process the nodes and move each of them
+    # part 2, mix 10 times
+    for mix_round in range(10):
+        for i in range(count_elements):
+            node = nodes[i]
+            ll.move_node(node, node.value)
+
+    # calculate 1000th, 2000th and 3000th number after 0
+    # we don't need to move 1000 times, just take the modulo with the
+    # length of the linked list
+    coord = 0
+    for i in [1000, 2000, 3000]:
+        pos = i % ll.length
+        # set the pointer to the zero_node
+        ll.pointer = zero_node
+        # move by pos steps
+        for _ in range(pos):
+            ll.shift_right()
+        # get the value
+        coord += ll.pointer.value
+
+    return coord
 
 
 if __name__ == "__main__":
@@ -193,4 +233,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 14:30  End: 17:20
-# Part 2: Start:  End:
+# Part 2: Start: 17:20 End: 18:16
+
+# Elapsed time to run part1: 0.61597 seconds.
+# Part 1: 23321
+# Elapsed time to run part2: 6.81438 seconds.
+# Part 2: 1428396909280
