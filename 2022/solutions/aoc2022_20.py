@@ -145,24 +145,30 @@ def part1(puzzle_input):
         node = Node(n)
         ll.insert(node)
         nodes[i] = node
+        # store zero node
+        if n == 0:
+            zero_node = node
 
-    # print some test output:
-    print("Nodes:")
-    print(nodes)
-    print("Linked List")
-    print(ll)
-    # move to the right twice and print list
+    # process the nodes and move each of them
     for i in nodes:
         node = nodes[i]
         ll.move_node(node, node.value)
-        print(f"{node.value} moves.")
-        print(ll)
-    # to calculate the 1000th, 2000th number after 0,
-    # - find 0 and its index
-    # - take (1000 + index of 0) % <length of list>
-    # - this is the index of the number we are looking for
 
-    return 1
+    # calculate 1000th, 2000th and 3000th number after 0
+    # we don't need to move 1000 times, just take the modulo with the
+    # length of the linked list
+    coord = 0
+    for i in [1000, 2000, 3000]:
+        pos = i % ll.length
+        # set the pointer to the zero_node
+        ll.pointer = zero_node
+        # move by pos steps
+        for _ in range(pos):
+            ll.shift_right()
+        # get the value
+        coord += ll.pointer.value
+
+    return coord
 
 
 # @aoc_timer
@@ -184,5 +190,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
+# Part 1: Start: 14:30  End: 17:20
 # Part 2: Start:  End:
