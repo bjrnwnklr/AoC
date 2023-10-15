@@ -111,10 +111,12 @@ class LinkedList:
             f_move = self.shift_left
             # turn steps to a positive number and add 1 as
             # we insert BEFORE the pointer when moving negative direction
-            steps = (-1 * n) + 1
+            # to reduce the number of steps, take the value mod the length of the
+            # list, it wraps around :)
+            steps = ((-1 * n) % self.length) + 1
         elif n > 0:
             f_move = self.shift_right
-            steps = n
+            steps = n % self.length
 
         self.pointer = node
         # remove the node
