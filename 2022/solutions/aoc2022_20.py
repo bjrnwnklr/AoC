@@ -7,6 +7,25 @@ import re
 # from utils.aoctools import aoc_timer
 
 
+def load_input(f_name):
+    """Loads the puzzle input from the specified file.
+
+    Specify the relative path if loading files from a subdirectory,
+    e.g. for loading test inputs, specify `testinput/01_1_1.txt`.
+    """
+    # signed ints
+    regex = re.compile(r"(-?\d+)")
+
+    with open(f_name, "r") as f:
+        puzzle_input = []
+        for line in f.readlines():
+            matches = regex.findall(line.strip())
+            if matches:
+                puzzle_input.append(list(map(int, matches))[0])
+
+    return puzzle_input
+
+
 class Node:
     """Element in a double linked list.
     Each node has a left and right neighbor."""
@@ -30,7 +49,8 @@ class LinkedList:
         self.length = 0
 
     def insert(self, node: Node):
-        """Insert a new node after the pointer and start nodes."""
+        """Insert a new node after the current pointer."""
+
         if not self.start and not self.pointer:
             # empty list, create new start and pointer node
             self.start = node
@@ -38,13 +58,39 @@ class LinkedList:
             node.right = self.start
             self.pointer = self.start
         else:
-            # insert after pointer and before start
-            node.left = self.pointer
-            node.right = self.start
-            self.start.left = node
+            # insert between pointer (left) and pointer's right (right)
+            new_right = self.pointer.right
+            # link pointer and node
             self.pointer.right = node
+            node.left = self.pointer
+            # link new right and node
+            node.right = new_right
+            new_right.left = node
+            # set the pointer to the inserted node
             self.pointer = node
+
+        # increase length as we have added a node
         self.length += 1
+
+    def remove(self):
+        """Remove the node at the pointer and return it."""
+        # check if the list has any elements
+        if self.length < 1:
+            print("No elements to remove.")
+            return None
+        # get new left (left of the pointer)
+        new_left = self.pointer.left
+        # get new right (right of the pointer)
+        new_right = self.pointer.right
+        # get the node to remove
+        node = self.pointer
+        # relink the new_left and new_right with each other
+        new_left.right = new_right
+        new_right.left = new_left
+        # decrease the node count
+        self.length -= 1
+
+        return node
 
     def shift_left(self):
         """Move pointer to the left by one step."""
@@ -71,38 +117,16 @@ class LinkedList:
             steps = n
 
         self.pointer = node
+        # remove the node
+        popped_node = self.remove()
         # move number of steps
         for _ in range(steps):
             f_move()
-        # now repoint node and pointer
-        node.right = self.pointer.right
-        self.pointer.right.left = node
-        self.pointer.left = node.left.right
-        node.left.right = self.pointer
-        self.pointer.right = node
-        node.left = self.pointer
+        # insert the node
+        self.insert(popped_node)
 
     def __repr__(self) -> str:
         return f"Start: {self.start}, pointer: {self.pointer}, nodes: {self.length}"
-
-
-def load_input(f_name):
-    """Loads the puzzle input from the specified file.
-
-    Specify the relative path if loading files from a subdirectory,
-    e.g. for loading test inputs, specify `testinput/01_1_1.txt`.
-    """
-    # signed ints
-    regex = re.compile(r"(-?\d+)")
-
-    with open(f_name, "r") as f:
-        puzzle_input = []
-        for line in f.readlines():
-            matches = regex.findall(line.strip())
-            if matches:
-                puzzle_input.append(list(map(int, matches)))
-
-    return puzzle_input
 
 
 # @aoc_timer
