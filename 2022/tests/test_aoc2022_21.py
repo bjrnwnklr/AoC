@@ -18,6 +18,6 @@ class Test_AOC2022_21:
         monkeys_op, monkeys_n = load_input("testinput/21_1_1.txt")
         assert part1(monkeys_op, monkeys_n) == 152
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/21_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_1(self):
+        monkeys_op, monkeys_n = load_input("testinput/21_1_1.txt")
+        assert part2(monkeys_op, monkeys_n) == 301
