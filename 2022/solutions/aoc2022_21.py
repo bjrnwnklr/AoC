@@ -84,73 +84,92 @@ def part1(monkeys_op, monkeys_n):
     return monkeys_n["root"]
 
 
+def run_monkeys(humn, monkeys_op, monkeys_n):
+
+    monkeys_n["humn"] = humn
+    q = list(monkeys_n.keys())
+    while q:
+        n_key = q.pop()
+        # print(f"Looking where to replace {n_key}")
+        # check if we found root
+        if n_key == "root":
+            # print(f"Found root, likely incorrect. Value {monkeys_n[n_key]}")
+            break
+        to_remove = []
+        for o in monkeys_op:
+            if n_key in monkeys_op[o]:
+                # found a monkey that has the number key in its formula
+                # replace the monkey name with the number
+                monkeys_op[o] = tuple(
+                    x if x != n_key else monkeys_n[n_key] for x in monkeys_op[o]
+                )
+                # print(f"Replaced {n_key} in {o}: {monkeys_op[o]}")
+                # now check if we found a formula that has two ints in it
+                # we can then calculate the result
+                if sum(isinstance(x, int) for x in monkeys_op[o]) == 2:
+                    # print(f"Found a completed formula! {o}: {monkeys_op[o]}")
+                    # add to numbers monkey list
+
+                    # part 2: check if we found root and numbers match
+                    if o == "root":
+                        return monkeys_op[o]
+                    monkeys_n[o] = calc(*monkeys_op[o])
+                    q.append(o)
+                    # add to removal list
+                    to_remove.append(o)
+
+        # remove any processed numbers from the remaining formula monkeys
+        for removal in to_remove:
+            del monkeys_op[removal]
+        # print what we currently have
+        # print(f"{monkeys_n=}")
+        # print(f"{monkeys_op=}")
+        # print(f"{q=}")
+
+
 # @aoc_timer
 def part2(monkeys_op, monkeys_n):
     """Solve part 2. Return the required output value."""
-    # print(monkeys_op, monkeys_n)
-    # process numbers first and replace any occurrence in formulas
-    # check if a formula is all numbers, then calculate and add to numbers queue to process
     # Part 2:
     # replace 'humn' with an increasing number
+    # we use the fact that the formula is linear, so we can use
+    # binary search to find the right humn start value.
     monkeys_op_orig = monkeys_op.copy()
     monkeys_n_orig = monkeys_n.copy()
-    for humn in range(300000):
+    humn_lo = 0
+    humn_high = 40000000000000
+    while True:
+        humn = humn_lo + ((humn_high - humn_lo) // 2)
+        print(f"Trying {humn=}")
         monkeys_op = monkeys_op_orig.copy()
         monkeys_n = monkeys_n_orig.copy()
-        monkeys_n["humn"] = humn
-        q = list(monkeys_n.keys())
-        while q:
-            n_key = q.pop()
-            # print(f"Looking where to replace {n_key}")
-            # check if we found root
-            if n_key == "root":
-                # print(f"Found root, likely incorrect. Value {monkeys_n[n_key]}")
-                break
-            to_remove = []
-            for o in monkeys_op:
-                if n_key in monkeys_op[o]:
-                    # found a monkey that has the number key in its formula
-                    # replace the monkey name with the number
-                    monkeys_op[o] = tuple(
-                        x if x != n_key else monkeys_n[n_key] for x in monkeys_op[o]
-                    )
-                    # print(f"Replaced {n_key} in {o}: {monkeys_op[o]}")
-                    # now check if we found a formula that has two ints in it
-                    # we can then calculate the result
-                    if sum(isinstance(x, int) for x in monkeys_op[o]) == 2:
-                        # print(f"Found a completed formula! {o}: {monkeys_op[o]}")
-                        # add to numbers monkey list
-
-                        # part 2: check if we found root and numbers match
-                        if o == "root":
-                            if monkeys_op[o][0] == monkeys_op[o][2]:
-                                # both sides match, stop here
-                                print(f"Found correct value: {humn}. {monkeys_op[o]}")
-                                return humn
-                            else:
-                                print(
-                                    f"Found incorrect match for root for humn = {humn}. {monkeys_op[o]}"
-                                )
-                                # else, we do nothing, root will get calculated
-                                # after the old formula and pop up
-                                # eventually and will go to the
-                                # next iteration of humn
-                        monkeys_n[o] = calc(*monkeys_op[o])
-                        q.append(o)
-                        # add to removal list
-                        to_remove.append(o)
-
-            # remove any processed numbers from the remaining formula monkeys
-            for removal in to_remove:
-                del monkeys_op[removal]
-            # print what we currently have
-            # print(f"{monkeys_n=}")
-            # print(f"{monkeys_op=}")
-            # print(f"{q=}")
-
-        # check if root values match
-
-    return -100
+        result = run_monkeys(humn, monkeys_op, monkeys_n)
+        if result[0] == result[2]:
+            print(f"Found correct value for humn: {humn=}, {result=}")
+            break
+        elif result[0] < result[2]:
+            # decrease humn - this only works for the actual riddle, not
+            # for the test as the test formula is linear (grows for larger
+            # values of humn), while the actual riddle formular is inversely
+            # linear, i.e. result decreases for higher values of humn
+            humn_high = humn_high - ((humn_high - humn_lo) // 2)
+            print(f"Too high, trying {humn_lo=} - {humn_high=}")
+        elif result[0] > result[2]:
+            # increase humn
+            humn_lo = humn_lo + ((humn_high - humn_lo) // 2)
+            print(f"Too low, trying {humn_lo=} - {humn_high=}")
+    # if we get here, a value has been found, but it is not necessarily the
+    # lowest possible value as some humn values produce the same result
+    # check from current humn_lo to humn if they give the same results
+    print(f"Checking further results between {humn_lo} and {humn}")
+    for i in range(humn_lo, humn + 1):
+        monkeys_op = monkeys_op_orig.copy()
+        monkeys_n = monkeys_n_orig.copy()
+        result = run_monkeys(humn, monkeys_op, monkeys_n)
+        if result[0] == result[2]:
+            print(f"Found lowest value for humn with correct result: {i=}, {result=}")
+            break
+    return i
 
 
 if __name__ == "__main__":
@@ -162,9 +181,10 @@ if __name__ == "__main__":
 
     print(f"Part 1: {p1}")
 
+    monkeys_op, monkeys_n = load_input("input/21.txt")
     # Solve part 2 and print the answer
     p2 = part2(monkeys_op, monkeys_n)
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 14:09 End: 15:08
-# Part 2: Start: 15:10 End:
+# Part 2: Start: 15:10 End: 17:17
