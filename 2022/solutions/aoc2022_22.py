@@ -18,6 +18,8 @@ class Position:
 turns = {"R": 1, "L": -1}
 # move right, down, left, up
 dirs = {0: (0, 1), 1: (1, 0), 2: (0, -1), 3: (-1, 0)}
+# to draw on the map
+pointer = {0: ">", 1: "v", 2: "<", 3: "^"}
 
 
 def load_input(f_name):
@@ -61,6 +63,10 @@ def parse_instructions(instructions):
             result.append(i)
         else:
             num += i
+    # if there is anything left in num, write it out
+    if num != "0":
+        n = int(num)
+        result.append(n)
 
     return result
 
@@ -106,6 +112,11 @@ def wrap(pos, grid):
     return pos.row, pos.col
 
 
+def draw_map(pos, grid):
+    """Draw an arrow onto the map at the current position."""
+    grid[(pos.row, pos.col)] = pointer[pos.facing]
+
+
 # @aoc_timer
 def part1(raw_map, instructions):
     """Solve part 1. Return the required output value.
@@ -119,22 +130,26 @@ def part1(raw_map, instructions):
 
     # parse the map into a grid
     grid = parse_map(raw_map)
+    # create a copy of the grid
+    draw = parse_map(raw_map)
 
     # determine starting position, which is the lowest column
     # in row 0 that has a '.'.
     start_col = min(c for r, c in grid.keys() if r == 0 and grid[(r, c)] == ".")
     player = Position(0, start_col, 0)
-    print(f"Starting position: {player}")
+    print(f"Starting at {player}")
+    # draw starting pos
+    draw_map(player, draw)
 
     # parse instructions
     inst = parse_instructions(instructions)
-    print(f"Instructions: {inst}")
 
     # walk the grid
     for instruction in inst:
         if instruction in turns:
             # player turns clockwise or anti-clockwise
             player.facing = (player.facing + turns[instruction]) % 4
+            draw_map(player, draw)
         else:
             for _ in range(instruction):
                 # check next grid cell in current direction
@@ -155,35 +170,50 @@ def part1(raw_map, instructions):
                         else:
                             # player moves to new wrapped location
                             player.row, player.col = rw, cw
+                            draw_map(player, draw)
                     case ".":
                         # walkable space, player moves to new location
                         player.row, player.col = rr, cc
+                        draw_map(player, draw)
 
     # finished walking?
     # calculate score of current position (add +1 to row and col)
     score = 1000 * (player.row + 1) + 4 * (player.col + 1) + player.facing
+    print(f"Finished, {player=}, {score=}")
+
+    # dump out the instructions and map
+    with open("2022_22_instructions.txt", "w") as f:
+        for i in inst:
+            f.write(str(i) + "\n")
+    with open("2022_22_map.txt", "w") as f:
+        max_row = max(r for r, c in draw.keys())
+        max_col = max(c for r, c in draw.keys())
+        for row in range(max_row):
+            f.write("".join(draw[(row, col)] for col in range(max_col)) + "\n")
 
     return score
 
 
 # @aoc_timer
-def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
+def part2(raw_map, instructions):
 
     return 1
 
 
 if __name__ == "__main__":
     # read the puzzle input
-    puzzle_input = load_input("input/22.txt")
+    raw_map, instructions = load_input("input/22_5_steps.txt")
 
     # Solve part 1 and print the answer
-    p1 = part1(puzzle_input)
+    p1 = part1(raw_map, instructions)
     print(f"Part 1: {p1}")
 
+    raw_map, instructions = load_input("input/22.txt")
     # Solve part 2 and print the answer
-    p2 = part2(puzzle_input)
+    p2 = part2(raw_map, instructions)
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 16:44 End:
 # Part 2: Start:  End:
+
+# Part 1 wrong answer (too low): 197092
