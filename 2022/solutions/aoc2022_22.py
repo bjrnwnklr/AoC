@@ -1,8 +1,23 @@
 # Load any required modules. Most commonly used:
 
 # import re
-# from collections import defaultdict
+from collections import defaultdict
+from dataclasses import dataclass
+
 # from utils.aoctools import aoc_timer
+
+
+@dataclass
+class Position:
+    row: int
+    col: int
+    facing: int
+
+
+# turn clockwise or anti-clockwise
+turns = {"R": 1, "L": -1}
+# move right, down, left, up
+dirs = {0: (0, 1), 1: (1, 0), 2: (0, -1), 3: (-1, 0)}
 
 
 def load_input(f_name):
@@ -13,33 +28,142 @@ def load_input(f_name):
     """
     # return input as list of text lines
     with open(f_name, "r") as f:
-        puzzle_input = []
-        for line in f.readlines():
-            puzzle_input.append(line.strip())
+        raw_map, instructions = f.read().rstrip().split("\n\n")
 
-    # Extract ints from the input
-    #
-    # signed ints
-    # regex = re.compile(r"(-?\d+)")
-    #
-    # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
+    return raw_map, instructions
 
-    return puzzle_input
+
+def parse_map(raw_map):
+    """Parse the raw map into a grid, which is a defaultdict that only includes
+    entries for walkable spaces and walls."""
+    # grid returns space for any coordinates not in the map
+    grid = defaultdict(lambda: " ")
+    for r, row in enumerate(raw_map.split("\n")):
+        for c, col in enumerate(list(row)):
+            grid[(r, c)] = col
+
+    return grid
+
+
+def parse_instructions(instructions):
+    """Parse the instructions and return a list of numbers and left/right
+    movements."""
+    num = "0"
+    result = []
+    q = list(instructions)
+    while q:
+        i = q.pop(0)
+        if i in ["L", "R"]:
+            # add up numbers from previous collection
+            n = int(num)
+            num = "0"
+            result.append(n)
+            result.append(i)
+        else:
+            num += i
+
+    return result
+
+
+def next_pos(pos):
+    """Calculate the next position based on current direction."""
+    rr, cc = pos.row + dirs[pos.facing][0], pos.col + dirs[pos.facing][1]
+    return rr, cc
+
+
+def wrap(pos, grid):
+    """Calculate new wrapped position."""
+    # depending on which direction player is facing, find the min or max
+    # on the other side of the grid that is not a blank (can be a wall or
+    # walkable space)
+    good_space = [".", "#"]
+    match pos.facing:
+        case 0:
+            # facing right, wrap around to left side
+            # min of current row
+            pos.col = min(
+                c for r, c in grid.keys() if r == pos.row and grid[(r, c)] in good_space
+            )
+        case 1:
+            # facing down, wrap around to top side
+            # min of current col
+            pos.row = min(
+                r for r, c in grid.keys() if c == pos.col and grid[(r, c)] in good_space
+            )
+        case 2:
+            # facing left, wrap around to right side
+            # max of current row
+            pos.col = max(
+                c for r, c in grid.keys() if r == pos.row and grid[(r, c)] in good_space
+            )
+        case 3:
+            # facing up, wrap around to bottom side
+            # max of current col
+            pos.row = max(
+                r for r, c in grid.keys() if c == pos.col and grid[(r, c)] in good_space
+            )
+
+    return pos.row, pos.col
 
 
 # @aoc_timer
-def part1(puzzle_input):
-    """Solve part 1. Return the required output value."""
+def part1(raw_map, instructions):
+    """Solve part 1. Return the required output value.
+    Rows start from 1 at the top and count downward; columns start from 1 at the
+    left and count rightward. (In the above example, row 1, column 1 refers to
+    the empty space with no tile on it in the top-left corner.) Facing is 0 for
+    right (>), 1 for down (v), 2 for left (<), and 3 for up (^).
 
-    return 1
+    The final password is the sum of 1000 times the row, 4 times the column, and
+    the facing."""
+
+    # parse the map into a grid
+    grid = parse_map(raw_map)
+
+    # determine starting position, which is the lowest column
+    # in row 0 that has a '.'.
+    start_col = min(c for r, c in grid.keys() if r == 0 and grid[(r, c)] == ".")
+    player = Position(0, start_col, 0)
+    print(f"Starting position: {player}")
+
+    # parse instructions
+    inst = parse_instructions(instructions)
+    print(f"Instructions: {inst}")
+
+    # walk the grid
+    for instruction in inst:
+        if instruction in turns:
+            # player turns clockwise or anti-clockwise
+            player.facing = (player.facing + turns[instruction]) % 4
+        else:
+            for _ in range(instruction):
+                # check next grid cell in current direction
+                rr, cc = next_pos(player)
+                next_g = grid[(rr, cc)]
+                match next_g:
+                    case "#":
+                        # wall, process next instruction
+                        break
+                    case " ":
+                        # empty space, wrap around
+                        # check if next position is not a wall as well
+                        rw, cw = wrap(Position(rr, cc, player.facing), grid)
+                        next_gw = grid[(rw, cw)]
+                        if next_gw == "#":
+                            # hit a wall, player stays
+                            break
+                        else:
+                            # player moves to new wrapped location
+                            player.row, player.col = rw, cw
+                    case ".":
+                        # walkable space, player moves to new location
+                        player.row, player.col = rr, cc
+
+    # finished walking?
+    # calculate score of current position (add +1 to row and col)
+    score = 1000 * (player.row + 1) + 4 * (player.col + 1) + player.facing
+
+    return score
 
 
 # @aoc_timer
@@ -61,5 +185,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start: 15:54 End:
+# Part 1: Start: 16:44 End:
 # Part 2: Start:  End:
