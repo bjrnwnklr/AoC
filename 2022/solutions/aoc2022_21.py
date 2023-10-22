@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -41,7 +41,7 @@ def calc(a, op, b):
             return a - b
 
 
-# @aoc_timer
+@aoc_timer
 def part1(monkeys_op, monkeys_n):
     """Solve part 1. Return the required output value."""
     # print(monkeys_op, monkeys_n)
@@ -171,12 +171,65 @@ def part2_binary_search(monkeys_op, monkeys_n):
     return i
 
 
-# @aoc_timer
+def solve_for(start, finish, result):
+    """Arithmetically solve from start formula to finish formula / value. Value
+    is the value the formula in start equates to."""
+    if start == finish:
+        # atomic case, we have found the search value
+        return result
+    else:
+        left, op, right = global_monkey_formulas[start]
+        # extract symbol (to substitute), operator and value from left and right
+        reverse = False
+        if left in global_monkey_formulas or left == finish:
+            # substitution symbol is left of the operator, e.g. result = 'xxxx' + 5
+            # we can just revert the operator, even for - and /
+            # for result = 'xxxx' - 5, 'xxxx' = result + 5
+            # for result = 'xxxx' / 5, 'xxxx' = result * 5
+            symbol = left
+            value = right
+        else:
+            assert (right in global_monkey_formulas) or (right == finish)
+            # substitution symbol is right of the operator, e.g. result = 5 - 'xxxx'
+            # to solve for 'xxxx', for - and / we have to also reverse result and 5
+            # for result = 5 - 'xxxx', 'xxxx' = -result + 5 = -1 * result + 5
+            # for result = 5 / 'xxxx', 'xxxx' = 5 / result = 5 * 1/result
+            symbol = right
+            value = left
+            reverse = True
+        match op:
+            case "+":
+                result = result - value
+            case "*":
+                # division is always clean
+                assert result % value == 0
+                result = result // value
+            case "/":
+                if reverse:
+                    assert value % result == 0
+                    result = value // result
+                else:
+                    result = result * value
+            case "-":
+                if reverse:
+                    result = value - result
+                else:
+                    result = result + value
+
+        # recursively solve, now starting with symbol
+        return solve_for(symbol, finish, result)
+
+
+@aoc_timer
 def part2(monkeys_op, monkeys_n):
     """Solve part 2. Return the required output value."""
     # Part 2:
     # remove the humn value as we are going to solve for it
     del monkeys_n["humn"]
+
+    # do all replacements except for humn. This should then give
+    # us a half solved 'root' entry, which we can then solve
+    # recursively
     q = list(monkeys_n.keys())
     while q:
         n_key = q.pop()
@@ -204,7 +257,23 @@ def part2(monkeys_op, monkeys_n):
         for removal in to_remove:
             del monkeys_op[removal]
 
-    return i
+    # solve from root for value of humn
+    # extract the substitution symbol and value for root, as
+    # root = 'xxxx' == n or root = n == 'xxxx'
+    left, _, right = monkeys_op["root"]
+    if left in monkeys_op:
+        symbol = left
+        result = right
+    else:
+        symbol = right
+        result = left
+    # create a global copy of the monkeys_op dictionary so it can be referenced
+    # in the solve_for function
+    global global_monkey_formulas
+    global_monkey_formulas = monkeys_op.copy()
+    result = solve_for(symbol, "humn", result)
+
+    return result
 
 
 if __name__ == "__main__":
@@ -223,3 +292,8 @@ if __name__ == "__main__":
 
 # Part 1: Start: 14:09 End: 15:08
 # Part 2: Start: 15:10 End: 17:17
+
+# Elapsed time to run part1: 0.15962 seconds.
+# Part 1: 353837700405464
+# Elapsed time to run part2: 0.16406 seconds.
+# Part 2: 3678125408017
