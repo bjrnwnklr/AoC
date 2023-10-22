@@ -127,8 +127,7 @@ def run_monkeys(humn, monkeys_op, monkeys_n):
         # print(f"{q=}")
 
 
-# @aoc_timer
-def part2(monkeys_op, monkeys_n):
+def part2_binary_search(monkeys_op, monkeys_n):
     """Solve part 2. Return the required output value."""
     # Part 2:
     # replace 'humn' with an increasing number
@@ -169,6 +168,42 @@ def part2(monkeys_op, monkeys_n):
         if result[0] == result[2]:
             print(f"Found lowest value for humn with correct result: {i=}, {result=}")
             break
+    return i
+
+
+# @aoc_timer
+def part2(monkeys_op, monkeys_n):
+    """Solve part 2. Return the required output value."""
+    # Part 2:
+    # remove the humn value as we are going to solve for it
+    del monkeys_n["humn"]
+    q = list(monkeys_n.keys())
+    while q:
+        n_key = q.pop()
+        # check if we found root
+        if n_key == "root":
+            break
+        to_remove = []
+        for o in monkeys_op:
+            if n_key in monkeys_op[o]:
+                # found a monkey that has the number key in its formula
+                # replace the monkey name with the number
+                monkeys_op[o] = tuple(
+                    x if x != n_key else monkeys_n[n_key] for x in monkeys_op[o]
+                )
+                # now check if we found a formula that has two ints in it
+                # we can then calculate the result
+                if sum(isinstance(x, int) for x in monkeys_op[o]) == 2:
+                    # add to numbers monkey list
+                    monkeys_n[o] = calc(*monkeys_op[o])
+                    q.append(o)
+                    # add to removal list
+                    to_remove.append(o)
+
+        # remove any processed numbers from the remaining formula monkeys
+        for removal in to_remove:
+            del monkeys_op[removal]
+
     return i
 
 
