@@ -202,7 +202,8 @@ def part2(raw_map, instructions):
 
 if __name__ == "__main__":
     # read the puzzle input
-    raw_map, instructions = load_input("input/22_5_steps.txt")
+    raw_map, instructions = load_input("input/22.txt")
+    # raw_map, instructions = load_input("input/22_5_steps.txt")
 
     # Solve part 1 and print the answer
     p1 = part1(raw_map, instructions)
@@ -215,5 +216,3 @@ if __name__ == "__main__":
 
 # Part 1: Start: 16:44 End:
 # Part 2: Start:  End:
-
-# Part 1 wrong answer (too low): 197092
