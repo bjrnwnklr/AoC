@@ -146,6 +146,7 @@ def wrap_cube(pos, grid):
     """
     # determine which side we are on
     cube = which_side(pos)
+    print(f"Cube is on side {cube}")
     # based on side of cube and which direction we are
     # facing, calculate the new row / col and the direction
     new_pos = Position(0, 0, 0)
@@ -161,8 +162,8 @@ def wrap_cube(pos, grid):
             # we end up side 4, facing right
             # also coordinates reverse (top goes to bottom)
             new_pos.facing = 0
-            new_pos.row = 3 * l - pos.row
-            new_pos.col = pos.col - l
+            new_pos.row = (3 * l) - 1 - pos.row
+            new_pos.col = 0
         case 2, 3:
             # on side 2, facing up
             # we end up on 6, facing up
@@ -173,8 +174,8 @@ def wrap_cube(pos, grid):
             # on side 2, facing right
             # we end up on 5, facing left
             new_pos.facing = 2
-            new_pos.row = 3 * l - pos.row
-            new_pos.col = pos.col - l
+            new_pos.row = (3 * l) - 1 - pos.row
+            new_pos.col = 2 * l - 1
         case 2, 1:
             # on side 2, facing down
             # we end up on 3, facing left
