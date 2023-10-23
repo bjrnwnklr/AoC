@@ -62,20 +62,29 @@ class Test_AOC2022_22:
         assert new_pos.row == 100
         assert new_pos.col == 0
 
+    def test_2_1_wrap_2_3(self):
+        raw_map, instructions = load_input("input/22.txt")
+        grid = parse_map(raw_map)
+        pos = Position(0, 100, 3)
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 3
+        assert new_pos.row == 199
+        assert new_pos.col == 0
+
     def test_2_1_wrap_2_0(self):
         raw_map, instructions = load_input("input/22.txt")
         grid = parse_map(raw_map)
-        pos = Position(0, 100, 0)
+        pos = Position(0, 149, 0)
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 149
         assert new_pos.col == 99
-        pos = Position(10, 100, 0)
+        pos = Position(10, 149, 0)
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 139
         assert new_pos.col == 99
-        pos = Position(49, 100, 0)
+        pos = Position(49, 149, 0)
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 100
