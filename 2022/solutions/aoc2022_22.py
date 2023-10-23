@@ -214,5 +214,5 @@ if __name__ == "__main__":
     p2 = part2(raw_map, instructions)
     print(f"Part 2: {p2}")
 
-# Part 1: Start: 16:44 End:
-# Part 2: Start:  End:
+# Part 1: Start: 16:44 End: 19:00
+# Part 2: Start: 16:08 End:
