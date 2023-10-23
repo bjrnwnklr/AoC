@@ -18,6 +18,6 @@ class Test_AOC2022_22:
         raw_map, instructions = load_input("testinput/22_1_1.txt")
         assert part1(raw_map, instructions) == 6032
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/22_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_1(self):
+        raw_map, instructions = load_input("testinput/22_1_1.txt")
+        assert part2(raw_map, instructions) == 5031
