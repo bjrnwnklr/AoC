@@ -4,7 +4,7 @@
 from collections import defaultdict
 from dataclasses import dataclass
 
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 @dataclass
@@ -250,7 +250,7 @@ def draw_map(pos, grid):
     grid[(pos.row, pos.col)] = pointer[pos.facing]
 
 
-# @aoc_timer
+@aoc_timer
 def part1(raw_map, instructions):
     """Solve part 1. Return the required output value.
     Rows start from 1 at the top and count downward; columns start from 1 at the
@@ -264,13 +264,13 @@ def part1(raw_map, instructions):
     # parse the map into a grid
     grid = parse_map(raw_map)
     # create a copy of the grid
-    draw = parse_map(raw_map)
+    # draw = parse_map(raw_map)
 
     # determine starting position, which is the lowest column
     # in row 0 that has a '.'.
     start_col = min(c for r, c in grid.keys() if r == 0 and grid[(r, c)] == ".")
     player = Position(0, start_col, 0)
-    print(f"Starting at {player}")
+    # print(f"Starting at {player}")
     # draw starting pos
     # draw_map(player, draw)
 
@@ -312,7 +312,7 @@ def part1(raw_map, instructions):
     # finished walking?
     # calculate score of current position (add +1 to row and col)
     score = 1000 * (player.row + 1) + 4 * (player.col + 1) + player.facing
-    print(f"Finished, {player=}, {score=}")
+    # print(f"Finished, {player=}, {score=}")
 
     # dump out the instructions and map
     # with open("2022_22_instructions.txt", "w") as f:
@@ -327,7 +327,7 @@ def part1(raw_map, instructions):
     return score
 
 
-# @aoc_timer
+@aoc_timer
 def part2(raw_map, instructions):
     """Solve part 2. Return the required output value.
     Rows start from 1 at the top and count downward; columns start from 1 at the
@@ -347,7 +347,7 @@ def part2(raw_map, instructions):
     # in row 0 that has a '.'.
     start_col = min(c for r, c in grid.keys() if r == 0 and grid[(r, c)] == ".")
     player = Position(0, start_col, 0)
-    print(f"Starting at {player}")
+    # print(f"Starting at {player}")
     # draw starting pos
     # draw_map(player, draw)
 
@@ -402,7 +402,7 @@ def part2(raw_map, instructions):
     # finished walking?
     # calculate score of current position (add +1 to row and col)
     score = 1000 * (player.row + 1) + 4 * (player.col + 1) + player.facing
-    print(f"Finished, {player=}, {score=}")
+    # print(f"Finished, {player=}, {score=}")
 
     # dump out the instructions and map
     # with open("2022_22_instructions.txt", "w") as f:
@@ -432,4 +432,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 16:44 End: 19:00
-# Part 2: Start: 16:08 End:
+# Part 2: Start: 16:08 End: 13:30 next day
+
+# Elapsed time to run part1: 0.19385 seconds.
+# Part 1: 197160
+# Elapsed time to run part2: 0.01226 seconds.
+# Part 2: 145065
