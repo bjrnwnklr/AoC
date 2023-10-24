@@ -203,7 +203,7 @@ def wrap_cube(pos, grid):
             # on side 4, facing left
             # we end up on 1, facing right
             new_pos.facing = 0
-            new_pos.row = 3 * l - pos.row
+            new_pos.row = (3 * l) - 1 - pos.row
             new_pos.col = l
         case 5, 0:
             # on side 5, facing right

@@ -176,8 +176,24 @@ class Test_AOC2022_22:
         assert new_pos.row == 50
         assert new_pos.col == 50
         pos = Position(100, 10, 3)
-        assert which_side(pos) == 0
+        assert which_side(pos) == 4
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 0
         assert new_pos.row == 60
+        assert new_pos.col == 50
+
+    def test_2_1_wrap_4_2(self):
+        raw_map, instructions = load_input("input/22.txt")
+        grid = parse_map(raw_map)
+        pos = Position(100, 0, 2)
+        assert which_side(pos) == 4
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 0
+        assert new_pos.row == 49
+        assert new_pos.col == 50
+        pos = Position(110, 0, 2)
+        assert which_side(pos) == 4
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 0
+        assert new_pos.row == 39
         assert new_pos.col == 50
