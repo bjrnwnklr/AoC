@@ -2,9 +2,7 @@
 
 # import re
 from collections import defaultdict
-from dataclasses import dataclass
-
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -86,7 +84,7 @@ def print_rect(elves):
         print(line)
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     # step 1 - evaluate if elves can move
@@ -164,11 +162,68 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    elves = puzzle_input.copy()
 
-    return 1
+    # indicates where the moves start in this round
+    # 0: north, 1: south, 2: west, 3: east
+    move_start = 0
+
+    # loop until no elf moves
+    for round in range(100_000):
+        moved = False
+        next_positions = dict()
+        pos_count = defaultdict(int)
+
+        for elf in elves:
+            # get neighbors of each elf
+            np = evaluate(elf, elves)
+            if np.total == 0 or all(np.dirs):
+                # no other elves in any direction, or elves in all directions
+                # Elf stays where they are
+                next_positions[(elf)] = elf
+                pos_count[elf] += 1
+                # don't add to pos_count as we assume nobody is going
+                # to move to a position where there is already an elf
+                continue
+            for i in range(4):
+                look_dir = (move_start + i) % 4
+                if np.dirs[look_dir] == 0:
+                    # move to that direction and stop looking
+                    rr = elf[0] + moves[look_dir][0]
+                    cc = elf[1] + moves[look_dir][1]
+                    # register the move for next step
+                    next_positions[(elf)] = (rr, cc)
+                    # count how many moves would go to the same position
+                    pos_count[(rr, cc)] += 1
+                    # stop looking
+                    moved = True
+                    break
+
+        # part 2: break if nobody moved
+        if not moved:
+            break
+
+        # step 2, evaluate and execute moves
+        new_board = set()
+        for elf in elves:
+            assert elf in next_positions
+            assert next_positions[elf] in pos_count
+            if pos_count[next_positions[elf]] > 1:
+                # do not move
+                new_board.add(elf)
+            else:
+                # add new position to board
+                new_board.add(next_positions[elf])
+
+        # done with moves, prepare for next round
+        elves = new_board.copy()
+        # increase move_start
+        move_start += 1
+
+    return round + 1
 
 
 if __name__ == "__main__":
@@ -183,5 +238,10 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 17:00 End: 18:40
+# Part 2: Start: 18:40 End: 18:51
+
+# Elapsed time to run part1: 0.04718 seconds.
+# Part 1: 4049
+# Elapsed time to run part2: 4.12996 seconds.
+# Part 2: 1021
