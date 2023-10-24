@@ -213,3 +213,19 @@ class Test_AOC2022_22:
         assert new_pos.facing == 2
         assert new_pos.row == 39
         assert new_pos.col == 149
+
+    def test_2_1_wrap_5_1(self):
+        raw_map, instructions = load_input("input/22.txt")
+        grid = parse_map(raw_map)
+        pos = Position(149, 50, 1)
+        assert which_side(pos) == 5
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 2
+        assert new_pos.row == 150
+        assert new_pos.col == 49
+        pos = Position(149, 60, 1)
+        assert which_side(pos) == 5
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 2
+        assert new_pos.row == 160
+        assert new_pos.col == 49
