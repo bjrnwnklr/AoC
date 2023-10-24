@@ -229,6 +229,18 @@ def wrap_cube(pos, grid):
             new_pos.facing = 1
             new_pos.row = 0
             new_pos.col = pos.col + 2 * l
+        case 6, 0:
+            # on side 6, facing right
+            # we end up on 5, facing up
+            new_pos.facing = 3
+            new_pos.row = 3 * l - 1
+            new_pos.col = pos.row - 2 * l
+        case _:
+            # we found a case that isn't defined
+            # raise an exception
+            raise ValueError(
+                f"wrap_cube case not implemented: {cube=}, {pos.facing=}. {pos=}"
+            )
 
     return new_pos
 
@@ -329,7 +341,7 @@ def part2(raw_map, instructions):
     # parse the map into a grid
     grid = parse_map(raw_map)
     # create a copy of the grid
-    draw = parse_map(raw_map)
+    # draw = parse_map(raw_map)
 
     # determine starting position, which is the lowest column
     # in row 0 that has a '.'.
@@ -337,17 +349,20 @@ def part2(raw_map, instructions):
     player = Position(0, start_col, 0)
     print(f"Starting at {player}")
     # draw starting pos
-    draw_map(player, draw)
+    # draw_map(player, draw)
 
     # parse instructions
     inst = parse_instructions(instructions)
 
     # walk the grid
     for instruction in inst:
+        # print(f"Instruction: {instruction}, {player=}")
         if instruction in turns:
             # player turns clockwise or anti-clockwise
+            # print(f"Player turns from {player.facing} to ...")
             player.facing = (player.facing + turns[instruction]) % 4
-            draw_map(player, draw)
+            # print(f"\t to {player.facing}")
+            # draw_map(player, draw)
         else:
             for _ in range(instruction):
                 # check next grid cell in current direction
@@ -356,14 +371,18 @@ def part2(raw_map, instructions):
                 match next_g:
                     case "#":
                         # wall, process next instruction
+                        # print(f"Wall at {rr}, {cc}")
                         break
                     case " ":
                         # empty space, wrap around
                         # check if next position is not a wall as well
+                        # print(f"Empty space, testing wrap around...")
                         new_pos = wrap_cube(player, grid)
+                        # print(f"\t ... wrap to {new_pos}")
                         next_gw = grid[(new_pos.row, new_pos.col)]
                         if next_gw == "#":
                             # hit a wall, player stays
+                            # print(f"\t ... which is a wall. Not moving.")
                             break
                         else:
                             # player moves to new wrapped location
@@ -372,11 +391,13 @@ def part2(raw_map, instructions):
                                 new_pos.col,
                                 new_pos.facing,
                             )
-                            draw_map(player, draw)
+                            # print(f"\t ... which is free, moving to {player}")
+                            # draw_map(player, draw)
                     case ".":
                         # walkable space, player moves to new location
                         player.row, player.col = rr, cc
-                        draw_map(player, draw)
+                        # print(f"Walkable space, moving to {player}")
+                        # draw_map(player, draw)
 
     # finished walking?
     # calculate score of current position (add +1 to row and col)
@@ -384,14 +405,14 @@ def part2(raw_map, instructions):
     print(f"Finished, {player=}, {score=}")
 
     # dump out the instructions and map
-    with open("2022_22_instructions.txt", "w") as f:
-        for i in inst:
-            f.write(str(i) + "\n")
-    with open("2022_22_map.txt", "w") as f:
-        max_row = max(r for r, c in draw.keys())
-        max_col = max(c for r, c in draw.keys())
-        for row in range(max_row):
-            f.write("".join(draw[(row, col)] for col in range(max_col)) + "\n")
+    # with open("2022_22_instructions.txt", "w") as f:
+    #     for i in inst:
+    #         f.write(str(i) + "\n")
+    # with open("2022_22_map.txt", "w") as f:
+    #     max_row = max(r for r, c in draw.keys())
+    #     max_col = max(c for r, c in draw.keys())
+    #     for row in range(max_row):
+    #         f.write("".join(draw[(row, col)] for col in range(max_col)) + "\n")
 
     return score
 
