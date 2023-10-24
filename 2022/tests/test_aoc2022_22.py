@@ -8,6 +8,7 @@ from solutions.aoc2022_22 import (
     wrap_cube,
     Position,
     parse_map,
+    which_side,
 )
 
 
@@ -33,11 +34,13 @@ class Test_AOC2022_22:
         raw_map, instructions = load_input("input/22.txt")
         grid = parse_map(raw_map)
         pos = Position(0, 50, 3)
+        assert which_side(pos) == 1
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 0
         assert new_pos.row == 150
         assert new_pos.col == 0
         pos = Position(0, 52, 3)
+        assert which_side(pos) == 1
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 0
         assert new_pos.row == 152
@@ -47,16 +50,19 @@ class Test_AOC2022_22:
         raw_map, instructions = load_input("input/22.txt")
         grid = parse_map(raw_map)
         pos = Position(0, 50, 2)
+        assert which_side(pos) == 1
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 0
         assert new_pos.row == 149
         assert new_pos.col == 0
         pos = Position(10, 50, 2)
+        assert which_side(pos) == 1
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 0
         assert new_pos.row == 139
         assert new_pos.col == 0
         pos = Position(49, 50, 2)
+        assert which_side(pos) == 1
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 0
         assert new_pos.row == 100
@@ -66,16 +72,19 @@ class Test_AOC2022_22:
         raw_map, instructions = load_input("input/22.txt")
         grid = parse_map(raw_map)
         pos = Position(0, 100, 3)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 3
         assert new_pos.row == 199
         assert new_pos.col == 0
         pos = Position(0, 110, 3)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 3
         assert new_pos.row == 199
         assert new_pos.col == 10
         pos = Position(0, 149, 3)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 3
         assert new_pos.row == 199
@@ -85,16 +94,19 @@ class Test_AOC2022_22:
         raw_map, instructions = load_input("input/22.txt")
         grid = parse_map(raw_map)
         pos = Position(0, 149, 0)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 149
         assert new_pos.col == 99
         pos = Position(10, 149, 0)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 139
         assert new_pos.col == 99
         pos = Position(49, 149, 0)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 100
@@ -104,17 +116,52 @@ class Test_AOC2022_22:
         raw_map, instructions = load_input("input/22.txt")
         grid = parse_map(raw_map)
         pos = Position(49, 100, 1)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 50
         assert new_pos.col == 99
         pos = Position(49, 110, 1)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 60
         assert new_pos.col == 99
         pos = Position(49, 149, 1)
+        assert which_side(pos) == 2
         new_pos = wrap_cube(pos, grid)
         assert new_pos.facing == 2
         assert new_pos.row == 99
         assert new_pos.col == 99
+
+    def test_2_1_wrap_3_2(self):
+        raw_map, instructions = load_input("input/22.txt")
+        grid = parse_map(raw_map)
+        pos = Position(50, 50, 2)
+        assert which_side(pos) == 3
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 1
+        assert new_pos.row == 100
+        assert new_pos.col == 0
+        pos = Position(60, 50, 2)
+        assert which_side(pos) == 3
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 1
+        assert new_pos.row == 100
+        assert new_pos.col == 10
+
+    def test_2_1_wrap_3_0(self):
+        raw_map, instructions = load_input("input/22.txt")
+        grid = parse_map(raw_map)
+        pos = Position(50, 99, 0)
+        assert which_side(pos) == 3
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 3
+        assert new_pos.row == 49
+        assert new_pos.col == 100
+        pos = Position(60, 99, 0)
+        assert which_side(pos) == 3
+        new_pos = wrap_cube(pos, grid)
+        assert new_pos.facing == 3
+        assert new_pos.row == 49
+        assert new_pos.col == 110
