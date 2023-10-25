@@ -2,7 +2,7 @@
 
 import re
 
-from collections import deque
+# from collections import deque
 from copy import deepcopy
 
 # from utils.aoctools import aoc_timer
@@ -46,6 +46,11 @@ class State:
         """Returns tuple of (minute, robots). Can
         be used as a key in a dictionary."""
         return (self.minute, *self.robots)
+
+    def score(self):
+        # TODO: change params to use the blueprint values for multiplication?
+        params = [0, 10, 100, 1000]
+        return sum(a * b for a, b in zip(self.materials, params))
 
     def __repr__(self):
         return (
@@ -103,22 +108,20 @@ def part1(puzzle_input):
         # brute force it - evaluate all options
         # we can then try to find scenarios that reduce
         # the solution space
-        q = deque([State()])
+        q = [State()]
         state_max_geodes = State()
         state_register = dict()
         print(f"Starting to process blueprint {blueprint}")
         while q:
 
-            curr = q.popleft()
-            print(f"Popped {curr} from queue.")
-            print(f"Seen this state already: {not_seen(curr, state_register)}")
+            curr = q.pop(0)
+            # print(f"Popped {curr} from queue.")
+            # print(f"Seen this state already: {not_seen(curr, state_register)}")
 
             # check if state has already been seen or is lower than any previously seen:
             if not not_seen(curr, state_register):
-                print(f"\t Seen already, discarding {curr}")
+                # print(f"\t Seen already, discarding {curr}")
                 continue
-
-            state_register[curr.signature()] = curr.materials
 
             # check if minute is 24
             if curr.minute == MINUTES:
@@ -147,13 +150,13 @@ def part1(puzzle_input):
                         if new_state.materials[0] >= blueprint[1]:
                             production.append((0, new_state))
                             new_state.materials[0] -= blueprint[1]
-                            print(f"\t Can afford an ore robot, buying.")
+                            # print(f"\t Can afford an ore robot, buying.")
                     case 1:
                         # clay robot, costs x ore
                         if new_state.materials[0] >= blueprint[2]:
                             production.append((1, new_state))
                             new_state.materials[0] -= blueprint[2]
-                            print(f"\t Can afford a clay robot, buying.")
+                            # print(f"\t Can afford a clay robot, buying.")
                     case 2:
                         # obsidian robot, costs x ore and y clay
                         if (
@@ -163,7 +166,7 @@ def part1(puzzle_input):
                             production.append((2, new_state))
                             new_state.materials[0] -= blueprint[3]
                             new_state.materials[1] -= blueprint[4]
-                            print(f"\t Can afford an obsidian robot, buying.")
+                            # print(f"\t Can afford an obsidian robot, buying.")
                     case 3:
                         # geode robot, costs x ore and y obsidian
                         if (
@@ -173,14 +176,14 @@ def part1(puzzle_input):
                             production.append((3, new_state))
                             new_state.materials[0] -= blueprint[5]
                             new_state.materials[2] -= blueprint[6]
-                            print(f"\t Can afford a geode robot, buying.")
+                            # print(f"\t Can afford a geode robot, buying.")
 
             # process all purchases and add new states to the queue
             for robot_to_purchase, next_state in production:
-                print(
-                    f"\t Purchasing {robot_to_purchase}, "
-                    + f"creating a new state {next_state}"
-                )
+                # print(
+                #     f"\t Purchasing {robot_to_purchase}, "
+                #     + f"creating a new state {next_state}"
+                # )
 
                 # produce any material
                 for m in range(4):
@@ -192,10 +195,23 @@ def part1(puzzle_input):
 
                 # add new state to queue and increase minute
                 next_state.minute += 1
-                q.append(next_state)
+
+                # go through queue and remove any states that have already been seen
+                temp_queue = q[:]
+                q = []
+                max_score = next_state.score()
+                max_state = next_state
+                for t in temp_queue:
+                    if t.signature() == next_state.signature():
+                        if t.score() > max_score:
+                            max_score = t.score()
+                            max_state = t
+                    else:
+                        q.append(t)
+                q.append(max_state)
 
             # print current queue
-            print(f"Current queue: {q}")
+            # print(f"Current queue: {q}")
 
     return 1
 
