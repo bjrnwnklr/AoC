@@ -106,12 +106,12 @@ def part1(puzzle_input):
                     case 0:
                         # ore robot, costs x ore
                         if curr.materials[0] >= blueprint[0]:
-                            to_purchase = 0
+                            production.append(0)
                             curr.materials[0] -= blueprint[0]
                     case 1:
                         # clay robot, costs x ore
                         if curr.materials[0] >= blueprint[1]:
-                            to_purchase = 1
+                            production.append(1)
                             curr.materials[0] -= blueprint[0]
                     case 2:
                         # obsidian robot, costs x ore and y clay
@@ -119,7 +119,7 @@ def part1(puzzle_input):
                             curr.materials[0] >= blueprint[2]
                             and curr.materials[1] >= blueprint[3]
                         ):
-                            to_purchase = 2
+                            production.append(2)
                             curr.materials[0] -= blueprint[2]
                             curr.materials[1] -= blueprint[3]
                     case 3:
@@ -128,12 +128,9 @@ def part1(puzzle_input):
                             curr.materials[0] >= blueprint[4]
                             and curr.materials[2] >= blueprint[5]
                         ):
-                            to_purchase = 3
+                            production.append(3)
                             curr.materials[0] -= blueprint[4]
                             curr.materials[2] -= blueprint[5]
-
-                # if we were able to produce a robot, create a new state
-                production.append(to_purchase)
 
             for s in production:
                 # create new state
