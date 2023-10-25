@@ -3,9 +3,12 @@
 import re
 
 from collections import deque, defaultdict
+from copy import deepcopy
 
 # from utils.aoctools import aoc_timer
-from dataclasses import dataclass, replace
+# from dataclasses import dataclass
+
+MINUTES = 2
 
 
 def load_input(f_name):
@@ -27,48 +30,23 @@ def load_input(f_name):
     return puzzle_input
 
 
-@dataclass
 class State:
-    minute: int = 1
-    a_ore: int = 0
-    a_clay: int = 0
-    a_obs: int = 0
-    t_ore: int = 0
-    t_clay: int = 0
-    t_obs: int = 0
-    a_geode: int = 0
-    r_ore: int = 1
-    r_clay: int = 0
-    r_obs: int = 0
-    r_geode: int = 0
+    def __init__(self):
+        # number of ore, clay, obsidian, geode robots
+        self.robots = [1, 0, 0, 0]
+        # number of collected ore, clay, obsidian, geode materials
+        self.materials = [0, 0, 0, 0]
+        # minute
+        self.minute = 0
+        # the path taken to this solution
+        # this is a list of States appended to a list
+        # self.path = []
 
-    def __hash__(self) -> int:
-        return hash(
-            (
-                self.minute,
-                self.a_ore,
-                self.a_clay,
-                self.a_obs,
-                self.a_geode,
-                self.r_ore,
-                self.r_clay,
-                self.r_obs,
-                self.r_geode,
-            )
+    def __repr__(self):
+        return (
+            f"State: minute {self.minute}, robots: {self.robots},"
+            + f" materials: {self.materials}"
         )
-
-
-class Blueprint:
-    def __init__(self, recipe) -> None:
-        self.id = recipe[0]
-        # (ore, clay, obsidian)
-        self.robots = {
-            "ore": (recipe[1], 0, 0),
-            "clay": (recipe[2], 0, 0),
-            "obs": (recipe[3], recipe[4], 0),
-            "geode": (recipe[5], 0, recipe[6]),
-            "none": (0, 0, 0),
-        }
 
 
 # @aoc_timer
@@ -92,75 +70,91 @@ def part1(puzzle_input):
       and geodes opened is larger for the same minute (regardless of number
       of robots i.e. how it was spent)
     """
-    result = 0
+    # each blueprint is returned as a list of numbers
+    # ore robot costs x ore
+    # clay robot costs x ore
+    # obsidian robot costs x ore and y clay
+    # geode robot costs x ore and y obsidian
     for blueprint in puzzle_input:
-        bp = Blueprint(blueprint)
-        print(f"Processing blueprint {bp.id}")
-
-        max_geodes = 0
-
+        # brute force it - evaluate all options
+        # we can then try to find scenarios that reduce
+        # the solution space
         q = deque([State()])
-        seen = set()
-
+        state_max_geodes = State()
         while q:
+
             curr = q.popleft()
-            print(f"Popped {curr=}")
-            if curr in seen:
-                continue
+            # check if minute is 24
+            if curr.minute == MINUTES:
+                # time is up for this state, break and store the current state
+                if curr.materials[3] > state_max_geodes.materials[3]:
+                    print(f"Finished at minute {curr.minute}: state {curr}")
+                    state_max_geodes = curr
+                break
 
-            # get max number of geodes
-            max_geodes = max(max_geodes, curr.a_geode)
+            # work through purchasing options
+            # this will get messy as purchasing the cheapest option will always come first
+            # states are the same if the same number of robots and materials are detected
+            # for the same minute
+            # robots to purchase: ore, clay, obsidian, geode
+            production = [-1]
+            for m in range(4):
+                to_purchase = (
+                    -1
+                )  # purchase nothing (-1), or purchase a robot represented by m
+                match m:
+                    case 0:
+                        # ore robot, costs x ore
+                        if curr.materials[0] >= blueprint[0]:
+                            to_purchase = 0
+                            curr.materials[0] -= blueprint[0]
+                    case 1:
+                        # clay robot, costs x ore
+                        if curr.materials[0] >= blueprint[1]:
+                            to_purchase = 1
+                            curr.materials[0] -= blueprint[0]
+                    case 2:
+                        # obsidian robot, costs x ore and y clay
+                        if (
+                            curr.materials[0] >= blueprint[2]
+                            and curr.materials[1] >= blueprint[3]
+                        ):
+                            to_purchase = 2
+                            curr.materials[0] -= blueprint[2]
+                            curr.materials[1] -= blueprint[3]
+                    case 3:
+                        # geode robot, costs x ore and y obsidian
+                        if (
+                            curr.materials[0] >= blueprint[4]
+                            and curr.materials[2] >= blueprint[5]
+                        ):
+                            to_purchase = 3
+                            curr.materials[0] -= blueprint[4]
+                            curr.materials[2] -= blueprint[5]
 
-            # process one round
-            # start construction of any possible robots
-            # these are the valid neighbours
-            for robot in bp.robots:
-                new_robot = False
-                # create a copy of the current state
-                next_state = replace(curr)
-                # check if we have the resources
-                if (
-                    next_state.a_ore >= bp.robots[robot][0]
-                    and next_state.a_clay >= bp.robots[robot][1]
-                    and next_state.a_obs >= bp.robots[robot][2]
-                ):
-                    print(f"\tAdding robot {robot}")
-                    # spend the resources
-                    next_state.a_ore -= bp.robots[robot][0]
-                    next_state.a_clay -= bp.robots[robot][1]
-                    next_state.a_obs -= bp.robots[robot][2]
-                    new_robot = True
-                # collect resources
-                next_state.a_ore += next_state.r_ore
-                next_state.a_clay += next_state.r_clay
-                next_state.a_obs += next_state.r_obs
-                next_state.a_geode += next_state.r_geode
+                # if we were able to produce a robot, create a new state
+                production.append(to_purchase)
 
-                # add new robots
-                if new_robot:
-                    match robot:
-                        case "ore":
-                            next_state.r_ore += 1
-                        case "clay":
-                            next_state.r_clay += 1
-                        case "obs":
-                            next_state.r_obs += 1
-                        case "geode":
-                            next_state.r_geode += 1
+            for s in production:
+                # create new state
+                new_state = deepcopy(curr)
 
-                # increase minute and add to queue
-                next_state.minute += 1
+                # produce any material
+                for m in range(4):
+                    new_state.materials[m] += new_state.robots[m]
 
-                # add to queue if we still have time
-                if next_state.minute <= 10:
-                    q.append(next_state)
-                    print(f"\tAppended {next_state}, q has {len(q)} elements")
+                # lastly, production finishes, add robot to list
+                if s >= 0:
+                    new_state.robots[s] += 1
 
-        # BFS finished, calculate result
-        result += bp.id * max_geodes
-        print(f"Blueprint {bp.id} finished. {max_geodes=}, {result=}")
+                # add new state to queue and increase minute
+                new_state.minute += 1
+                q.append(new_state)
 
-    return result
+            # print current queue
+            print(f"Current queue: {q}")
+
+    return 1
 
 
 # @aoc_timer
