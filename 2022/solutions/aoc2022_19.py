@@ -68,7 +68,8 @@ def score(state, blueprint):
 
     def ore(n):
         if n > 0:
-            return blueprint[1] + n
+            return n
+            # return blueprint[1] + n
         else:
             return 0
 
