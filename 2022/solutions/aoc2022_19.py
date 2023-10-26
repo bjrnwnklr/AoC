@@ -8,7 +8,7 @@ from copy import deepcopy
 # from utils.aoctools import aoc_timer
 # from dataclasses import dataclass
 
-MINUTES = 12
+MINUTES = 3
 
 
 def load_input(f_name):
@@ -47,11 +47,6 @@ class State:
         be used as a key in a dictionary."""
         return (self.minute, *self.robots)
 
-    def score(self):
-        # TODO: change params to use the blueprint values for multiplication?
-        params = [0, 10, 100, 1000]
-        return sum(a * b for a, b in zip(self.materials, params))
-
     def __repr__(self):
         return (
             f"State: minute {self.minute}, robots: {self.robots},"
@@ -59,16 +54,30 @@ class State:
         )
 
 
-def le(a_state, b_state):
-    """Returns if a <= b.
+def score(state, blueprint):
+    """Returns the cost of a state's materials based
+    on ore and minutes spent to produce.
 
-    a <= b if:
-    - a.signature() == b.signature() and
-      all(a.materials <= b.materials)
+    Score(x) = (ore_for_robot + minutes to produce x materials)
+    E.g. if blueprint is
+    - ore robot: 4 ore
+    - clay robot: 2 ore
+    then score for 1 ore + 1 clay is
+    (4 + 1) + (2 + 1)
     """
-    return a_state.signature() == b_state.signature() and all(
-        a <= b for a, b in zip(a_state.materials, b_state.materials)
+    ore = lambda x: blueprint[1] + x
+    clay = lambda x: blueprint[2] + x
+    obsidian = lambda x: blueprint[3] + clay(blueprint[4]) + x
+    geode = lambda x: blueprint[5] + obsidian(blueprint[6]) + x
+    # ore = ore, consider just using the materials as we start with one
+    # ore bot?
+    result = (
+        ore(state.materials[0])
+        + clay(state.materials[1])
+        + obsidian(state.materials[2])
+        + geode(state.materials[3])
     )
+    return result
 
 
 # @aoc_timer
