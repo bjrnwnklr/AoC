@@ -68,14 +68,14 @@ def score(state, blueprint):
 
     def ore(n):
         if n > 0:
-            return n
-            # return blueprint[1] + n
+            return blueprint[1] + n
         else:
             return 0
 
     def clay(n):
         if n > 0:
-            return blueprint[2] + n
+            return ore(blueprint[2]) + n
+            # return blueprint[2] + n
         else:
             return 0
 
@@ -145,7 +145,7 @@ def part1(puzzle_input):
             # check if minute is 24
             if curr.minute == MINUTES:
                 # time is up for this state, break and store the current state
-                print(f"Finished at minute {curr.minute}: state {curr}")
+                # print(f"Finished at minute {curr.minute}: state {curr}")
                 finished_states.append(curr)
                 continue
 

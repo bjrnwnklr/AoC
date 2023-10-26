@@ -1,0 +1,22 @@
+0: "0,1,0,0,0,0"
+1: "1,1,0,0,0,0"
+2: "2,1,0,0,0,0"
+3: "1,2,0,0,0,0" - minute 3, build ore robot
+4: "3,2,0,0,0,0"
+5: "3,3,0,0,0,0" - minute 5, build ore robot
+6: "3,3,0,1,0,0" - minute 6, build clay robot
+7: "3,3,1,2,0,0" - minute 7, build clay robot
+8: "3,3,3,3,0,0" - minute 8, build clay robot
+9: "3,3,6,4,0,0" - minute 9, build clay robot
+10: "3,3,10,5,0,0" - minute 10, build clay robot
+11: "3,3,7,5,0,1" - minute 11, build obsidian robot
+12: "6,3,12,5,1,1"
+13: "6,3,9,5,2,2" - minute 13, build obsidian robot
+14: "6,3,6,5,4,3" - minute 14, build obsidian robot
+15: "6,3,11,6,7,3" - minute 15, build clay robot
+16: "6,3,9,6,10,4" - minute 16, build obsidian robot
+17: "6,3,7,6,14,5" - minute 17, build obsidian robot
+18: "6,3,13,6,7,5" - minute 18, build geode robot
+19: "6,3,11,6,12,6" - minute 19, build obsidian robot
+20: "6,3,17,6,6,6" - minute 20, build geode robot
+(minute 22, build geode robot, which my code doesn't show for some reason)
