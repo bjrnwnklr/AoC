@@ -8,7 +8,7 @@ from copy import deepcopy
 # from utils.aoctools import aoc_timer
 # from dataclasses import dataclass
 
-MINUTES = 24
+MINUTES = 12
 
 
 def load_input(f_name):
@@ -59,22 +59,16 @@ class State:
         )
 
 
-def not_seen(next_state, state_register):
-    """Returns if next_state not been seen yet, or if
-    the number of produced materials is higher than previously
-    seen state.
+def le(a_state, b_state):
+    """Returns if a <= b.
 
-    Uses the state's signature (minute and number of robots) to
-    store and compare the same states."""
-    if next_state.signature() not in state_register:
-        return True
-    else:
-        return any(
-            a > b
-            for a, b in zip(
-                next_state.materials, state_register[next_state.signature()]
-            )
-        )
+    a <= b if:
+    - a.signature() == b.signature() and
+      all(a.materials <= b.materials)
+    """
+    return a_state.signature() == b_state.signature() and all(
+        a <= b for a, b in zip(a_state.materials, b_state.materials)
+    )
 
 
 # @aoc_timer
@@ -109,26 +103,19 @@ def part1(puzzle_input):
         # we can then try to find scenarios that reduce
         # the solution space
         q = [State()]
-        state_max_geodes = State()
-        state_register = dict()
         print(f"Starting to process blueprint {blueprint}")
+        finished_states = []
         while q:
 
             curr = q.pop(0)
             # print(f"Popped {curr} from queue.")
             # print(f"Seen this state already: {not_seen(curr, state_register)}")
 
-            # check if state has already been seen or is lower than any previously seen:
-            if not not_seen(curr, state_register):
-                # print(f"\t Seen already, discarding {curr}")
-                continue
-
             # check if minute is 24
             if curr.minute == MINUTES:
                 # time is up for this state, break and store the current state
-                if curr.materials[3] > state_max_geodes.materials[3]:
-                    print(f"Finished at minute {curr.minute}: state {curr}")
-                    state_max_geodes = curr
+                print(f"Finished at minute {curr.minute}: state {curr}")
+                finished_states.append(curr)
                 continue
 
             # work through purchasing options
@@ -196,22 +183,34 @@ def part1(puzzle_input):
                 # add new state to queue and increase minute
                 next_state.minute += 1
 
+                # PRUNING of the queue
                 # go through queue and remove any states that have already been seen
                 temp_queue = q[:]
                 q = []
-                max_score = next_state.score()
-                max_state = next_state
+                max_state = deepcopy(next_state)
                 for t in temp_queue:
                     if t.signature() == next_state.signature():
-                        if t.score() > max_score:
-                            max_score = t.score()
-                            max_state = t
+                        print(
+                            "Found same signature in queue: \n"
+                            + f"\t {t=}\n"
+                            + f"\t {next_state=}\n"
+                            + f"\t {max_state=}"
+                        )
+                        if le(max_state, t):
+                            max_state = deepcopy(t)
+                            # debug to see what happens here
+                            print(
+                                f"max state: {max_state} <= {t}, next_state {next_state}, "
+                            )
                     else:
                         q.append(t)
                 q.append(max_state)
 
             # print current queue
             # print(f"Current queue: {q}")
+        # done with processing queue, evaluate largest geode output
+        highest_geodes = max(finished_states, key=lambda x: x.materials[3])
+        print(f"Finished processing blueprint, highest geodes in {highest_geodes}")
 
     return 1
 
