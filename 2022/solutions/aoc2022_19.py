@@ -8,7 +8,7 @@ from copy import deepcopy
 # from utils.aoctools import aoc_timer
 # from dataclasses import dataclass
 
-MINUTES = 3
+MINUTES = 24
 
 
 def load_input(f_name):
@@ -65,10 +65,31 @@ def score(state, blueprint):
     then score for 1 ore + 1 clay is
     (4 + 1) + (2 + 1)
     """
-    ore = lambda x: blueprint[1] + x
-    clay = lambda x: blueprint[2] + x
-    obsidian = lambda x: blueprint[3] + clay(blueprint[4]) + x
-    geode = lambda x: blueprint[5] + obsidian(blueprint[6]) + x
+
+    def ore(n):
+        if n > 0:
+            return blueprint[1] + n
+        else:
+            return 0
+
+    def clay(n):
+        if n > 0:
+            return blueprint[2] + n
+        else:
+            return 0
+
+    def obsidian(n):
+        if n > 0:
+            return blueprint[3] + clay(blueprint[4]) + n
+        else:
+            return 0
+
+    def geode(n):
+        if n > 0:
+            return blueprint[5] + obsidian(blueprint[6]) + n
+        else:
+            return 0
+
     # ore = ore, consider just using the materials as we start with one
     # ore bot?
     result = (
@@ -199,20 +220,25 @@ def part1(puzzle_input):
                 max_state = deepcopy(next_state)
                 for t in temp_queue:
                     if t.signature() == next_state.signature():
-                        print(
-                            "Found same signature in queue: \n"
-                            + f"\t {t=}\n"
-                            + f"\t {next_state=}\n"
-                            + f"\t {max_state=}"
-                        )
-                        if le(max_state, t):
+                        # print(
+                        #     "Found same signature in queue: \n"
+                        #     + f"\t {t=}\n"
+                        #     + f"\t {next_state=}\n"
+                        #     + f"\t {max_state=}"
+                        # )
+                        if score(max_state, blueprint) <= score(t, blueprint):
+                            # found that an existing entry in the queue is higher
+                            # than the current state, so keep the t entry from the queue
+                            # as new max
                             max_state = deepcopy(t)
                             # debug to see what happens here
-                            print(
-                                f"max state: {max_state} <= {t}, next_state {next_state}, "
-                            )
+                            # print(
+                            #     f"max state: {max_state} <= {t}, next_state {next_state}, "
+                            # )
                     else:
+                        # t is not the same state as next, so add back to queue
                         q.append(t)
+                # append next state or highest state with same signature (already in the queue)
                 q.append(max_state)
 
             # print current queue
