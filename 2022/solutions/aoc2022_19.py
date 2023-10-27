@@ -96,7 +96,9 @@ def bfs(blueprint, minutes):
     Returns the state with the highest number of geodes found
     after minutes have passed.
     """
-    seen = ()
+    # generate a reusable recipe from the blueprint
+    recipe = recipes(blueprint)
+    seen = set()
     # minutes, robots, materials
     start = (0, [1, 0, 0, 0], [0, 0, 0, 0])
     highest_geode_state = start
@@ -104,6 +106,7 @@ def bfs(blueprint, minutes):
     while q:
         # next element
         curr_state = q.popleft()
+        # print(f"BFS evaluation {curr_state}")
 
         # proceed only if we have not seen the current state
         if state_hash(curr_state) in seen:
@@ -116,8 +119,10 @@ def bfs(blueprint, minutes):
         # if the current state has a higher number of geodes produced
         # than previous states
         if curr_state[0] == minutes:
+            # print(f"Minute {minutes} reached, {curr_state}")
             if curr_state[2][3] > highest_geode_state[2][3]:
                 highest_geode_state = curr_state
+            continue
 
         # process next states
         # each state is either
@@ -134,14 +139,40 @@ def bfs(blueprint, minutes):
 
         # assess which robots can be built in which time and
         # add them to the queue
-        for r in range(4):
-            match r:
-                case 0:
-                    # ore robot, check if we have the required robot
-                    if curr_state[1][0] > 0:
-                        # calculate the number of minutes required to build
-                        # based on existing materials
-                        materials_required = [0]
+        for robot in range(4):
+            # print(f"Checking if we can produce robot {robot} from {curr_state}")
+            # only create a robot if we have the robots to produce materials
+            # we don't need to check if we have enough materials, as that is
+            # calculated as part of the minutes_to_build function
+            # and we wouldnt have any relevant materials if we didnt have the
+            # corresponding robots
+            if all(curr_state[1][r] > 0 for r, m in enumerate(recipe[robot]) if m > 0):
+                # calculate the number of minutes required to build
+                # based on existing materials
+                m = minutes_to_build(recipe, curr_state, robot)
+                # create a new state
+                new_minute = curr_state[0] + m
+                # only produce robots if the minute is less than the target minute
+                if new_minute <= minutes:
+                    new_robots = curr_state[1][:]
+                    # add any materials produced during the time (including one minute to
+                    # produce robot as we continue to produce materials during that minute)
+                    # and remove any materials spent on the new robot
+                    new_materials = [
+                        (m * new_robots[i]) + curr_state[2][i] - recipe[robot][i]
+                        for i in range(4)
+                    ]
+                    # create new robot
+                    new_robots[robot] += 1
+                    # add new robot to the queue
+                    # print(
+                    #     f"Produced new robot ({new_minute}, {new_robots}, {new_materials})"
+                    # )
+                    q.append((new_minute, new_robots, new_materials))
+
+    # once all states have been evaluated and q is empty, return
+    # the state with the highest geode count
+    return highest_geode_state
 
 
 # @aoc_timer
@@ -159,10 +190,15 @@ def part1(puzzle_input):
     # clay robot costs x ore
     # obsidian robot costs x ore and y clay
     # geode robot costs x ore and y obsidian
+    result = 0
     for blueprint in puzzle_input:
         print()
+        print(f"Evaluating blueprint: {blueprint}")
+        highest_geode_state = bfs(blueprint, MINUTES)
+        print(f"Highest geode count for state: {highest_geode_state}")
+        result += blueprint[0] * highest_geode_state[2][3]
 
-    return 1
+    return result
 
 
 # @aoc_timer
