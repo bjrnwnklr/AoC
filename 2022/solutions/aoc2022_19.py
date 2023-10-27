@@ -143,16 +143,30 @@ def bfs(blueprint, minutes):
         if default_state[2][3] > highest_geode_state[2][3]:
             q.append(default_state)
 
+        # next optimization - massive increase again
+        # calculate maximum possible number of geodes
+        # assumption is that one bot built per minute
+        # if theoretical value of geodes is less than current highest
+        # count, do not build bot
+        remaining_time = minutes - curr_state[0]
+        if (
+            curr_state[2][3] + (remaining_time * (remaining_time + 1)) // 2
+            < highest_geode_state[2][3]
+        ):
+            continue
+
         # assess which robots can be built in which time and
         # add them to the queue
         for robot in range(4):
             # print(f"Checking if we can produce robot {robot} from {curr_state}")
+
             # optimization - brings massive speed increase:
             # only build ore, clay or obsidian bots if we have less bots
             # than we can spend in 1 minute (doesn't work for geodes as
             # there is no spend per minute on geodes)
             if robot < 3 and curr_state[1][robot] > max_materials[robot]:
                 continue
+
             # only create a robot if we have the robots to produce materials
             # we don't need to check if we have enough materials, as that is
             # calculated as part of the minutes_to_build function
