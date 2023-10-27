@@ -135,7 +135,11 @@ def bfs(blueprint, minutes):
         #   materials with existing robots for the remaining time
 
         # Default state
-        q.append(produce(curr_state, minutes - curr_state[0]))
+        # optimization: only add if number of geodes is higher than
+        # current max
+        default_state = produce(curr_state, minutes - curr_state[0])
+        if default_state[2][3] > highest_geode_state[2][3]:
+            q.append(default_state)
 
         # assess which robots can be built in which time and
         # add them to the queue
@@ -153,7 +157,7 @@ def bfs(blueprint, minutes):
                 # create a new state
                 new_minute = curr_state[0] + m
                 # only produce robots if the minute is less than the target minute
-                if new_minute <= minutes:
+                if new_minute < minutes:
                     new_robots = curr_state[1][:]
                     # add any materials produced during the time (including one minute to
                     # produce robot as we continue to produce materials during that minute)
