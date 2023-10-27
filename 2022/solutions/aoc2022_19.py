@@ -2,8 +2,8 @@
 
 import re
 
-# from collections import deque
-from copy import deepcopy
+from collections import deque
+from math import ceil
 
 # from utils.aoctools import aoc_timer
 # from dataclasses import dataclass
@@ -28,6 +28,120 @@ def load_input(f_name):
                 puzzle_input.append(list(map(int, matches)))
 
     return puzzle_input
+
+
+def state_hash(state):
+    """Return a comparable hash of a state consisting of
+    (minute, [robots], [materials]).
+    """
+    return (state[0], *state[1], *state[2])
+
+
+def produce(state, minutes):
+    """Return an updated state that has all materials
+    that will be produced by the robots in the number of
+    minutes provided. Minutes is updated to current minutes
+    plus the minutes provided.
+    """
+    return (
+        minutes + state[0],
+        state[1][:],
+        [m + r * minutes for r, m in zip(state[1], state[2])],
+    )
+
+
+def recipes(blueprint):
+    """Returns a dictionary of recipes for a robot:
+
+    robot to build: [materials required] e.g.
+    ore:
+    0: [4, 0, 0, 0]
+    geode:
+    3: [2, 0, 7, 0]
+    """
+    d = dict()
+    d[0] = [blueprint[1], 0, 0, 0]
+    d[1] = [blueprint[2], 0, 0, 0]
+    d[2] = [blueprint[3], blueprint[4], 0, 0]
+    d[3] = [blueprint[5], 0, blueprint[6], 0]
+    return d
+
+
+def minutes_to_build(recipe, state, robot):
+    """Calculates the number of minutes required to build a robot given
+    the current robots and materials, based on the recipe in the blueprint.
+    Returns the number of minutes required to mine any missing materials plus
+    the 1 minute to build."""
+    # fail if robots required to build are not available
+    assert all(state[1][r] > 0 for r, m in enumerate(recipe[robot]) if m > 0)
+    return (
+        max(
+            max(
+                0,
+                ceil((r - state[2][m]) / state[1][m]),
+            )
+            for m, r in enumerate(recipe[robot])
+            if r > 0  # only process recipe elements if required
+        )
+        + 1
+    )
+
+
+def bfs(blueprint, minutes):
+    """Run a BFS across all states that are possible.
+    Transitions / states are what robots can be bought next, plus
+    one default state that just continues producing materials
+    with the existing robots until time (minutes) is reached.
+
+    Returns the state with the highest number of geodes found
+    after minutes have passed.
+    """
+    seen = ()
+    # minutes, robots, materials
+    start = (0, [1, 0, 0, 0], [0, 0, 0, 0])
+    highest_geode_state = start
+    q = deque([start])
+    while q:
+        # next element
+        curr_state = q.popleft()
+
+        # proceed only if we have not seen the current state
+        if state_hash(curr_state) in seen:
+            continue
+
+        # add current state to seen so we don't process it again
+        seen.add(state_hash(curr_state))
+
+        # if we have reached the maximum minutes, check
+        # if the current state has a higher number of geodes produced
+        # than previous states
+        if curr_state[0] == minutes:
+            if curr_state[2][3] > highest_geode_state[2][3]:
+                highest_geode_state = curr_state
+
+        # process next states
+        # each state is either
+        # - the next robot that can be bought with the current materials and
+        #   robots (i.e. we can only build a robot where we have the robots that
+        #   are required to mine the materials required for the robot). The minute
+        #   is set to the time required to mine the required materials and build
+        #   the robot (i.e. +1).
+        # - a default where we do not purchase any further robots and just mine
+        #   materials with existing robots for the remaining time
+
+        # Default state
+        q.append(produce(curr_state, minutes - curr_state[0]))
+
+        # assess which robots can be built in which time and
+        # add them to the queue
+        for r in range(4):
+            match r:
+                case 0:
+                    # ore robot, check if we have the required robot
+                    if curr_state[1][0] > 0:
+                        # calculate the number of minutes required to build
+                        # based on existing materials
+                        materials_required = [0]
 
 
 # @aoc_timer
