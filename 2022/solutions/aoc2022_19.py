@@ -98,6 +98,8 @@ def bfs(blueprint, minutes):
     """
     # generate a reusable recipe from the blueprint
     recipe = recipes(blueprint)
+    # calculate max materials required for any robot
+    max_materials = [max(r[i] for r in recipe.values()) for i in range(4)]
     seen = set()
     # minutes, robots, materials
     start = (0, [1, 0, 0, 0], [0, 0, 0, 0])
@@ -145,6 +147,12 @@ def bfs(blueprint, minutes):
         # add them to the queue
         for robot in range(4):
             # print(f"Checking if we can produce robot {robot} from {curr_state}")
+            # optimization - brings massive speed increase:
+            # only build ore, clay or obsidian bots if we have less bots
+            # than we can spend in 1 minute (doesn't work for geodes as
+            # there is no spend per minute on geodes)
+            if robot < 3 and curr_state[1][robot] > max_materials[robot]:
+                continue
             # only create a robot if we have the robots to produce materials
             # we don't need to check if we have enough materials, as that is
             # calculated as part of the minutes_to_build function

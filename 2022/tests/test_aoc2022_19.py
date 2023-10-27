@@ -17,9 +17,9 @@ class Test_AOC2022_19:
 
     @aoc_timer
     def test_1_1(self):
-        puzzle_input = load_input("testinput/19_1_1_short.txt")
-        assert part1(puzzle_input) == 9
-        # assert part1(puzzle_input) == 33
+        puzzle_input = load_input("testinput/19_1_1.txt")
+        # assert part1(puzzle_input) == 9
+        assert part1(puzzle_input) == 33
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/19_1_1.txt')
