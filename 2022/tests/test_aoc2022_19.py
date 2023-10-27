@@ -21,19 +21,3 @@ class Test_AOC2022_19:
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/19_1_1.txt')
     #     assert part2(puzzle_input) == 1
-
-    def test_score_1(self):
-        blueprint = [1, 4, 2, 3, 14, 2, 7]
-        a = State()
-        a.minute = 3
-        a.robots = [1, 2, 3, 4]
-        a.materials = [1, 0, 0, 0]
-        assert score(a, blueprint) == 5
-        a.materials = [1, 1, 0, 0]
-        assert score(a, blueprint) == 8
-        a.materials = [1, 1, 1, 0]
-        assert score(a, blueprint) == 28
-        a.materials = [1, 7, 1, 0]
-        assert score(a, blueprint) == 34
-        a.materials = [1, 10, 0, 0]
-        assert score(a, blueprint) == 17
