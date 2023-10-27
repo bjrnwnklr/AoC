@@ -148,12 +148,12 @@ def bfs(blueprint, minutes):
         # assumption is that one bot built per minute
         # if theoretical value of geodes is less than current highest
         # count, do not build bot
-        remaining_time = minutes - curr_state[0]
-        if (
-            curr_state[2][3] + (remaining_time * (remaining_time + 1)) // 2
-            < highest_geode_state[2][3]
-        ):
-            continue
+        # remaining_time = minutes - curr_state[0]
+        # if (
+        #     curr_state[2][3] + (remaining_time * (remaining_time + 1)) // 2
+        #     < highest_geode_state[2][3]
+        # ):
+        #     continue
 
         # assess which robots can be built in which time and
         # add them to the queue
@@ -246,5 +246,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start: 17:00 End:
+# Part 1: Start: 17:00 End: 19:38 many days later
 # Part 2: Start:  End:
