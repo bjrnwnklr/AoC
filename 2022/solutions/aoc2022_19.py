@@ -231,7 +231,15 @@ def part1(puzzle_input):
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    result = 1
+    for blueprint in puzzle_input[:3]:
+        print()
+        print(f"Evaluating blueprint: {blueprint}")
+        highest_geode_state = bfs(blueprint, 32)
+        print(f"Highest geode count for state: {highest_geode_state}")
+        result *= highest_geode_state[2][3]
+
+    return result
 
 
 if __name__ == "__main__":
