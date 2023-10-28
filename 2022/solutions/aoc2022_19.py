@@ -5,7 +5,8 @@ import re
 from collections import deque
 from math import ceil
 
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
+
 # from dataclasses import dataclass
 
 MINUTES = 24
@@ -108,7 +109,6 @@ def bfs(blueprint, minutes):
     while q:
         # next element
         curr_state = q.popleft()
-        # print(f"BFS evaluation {curr_state}")
 
         # proceed only if we have not seen the current state
         if state_hash(curr_state) in seen:
@@ -121,44 +121,13 @@ def bfs(blueprint, minutes):
         # if the current state has a higher number of geodes produced
         # than previous states
         if curr_state[0] == minutes:
-            # print(f"Minute {minutes} reached, {curr_state}")
             if curr_state[2][3] > highest_geode_state[2][3]:
                 highest_geode_state = curr_state
             continue
 
-        # process next states
-        # each state is either
-        # - the next robot that can be bought with the current materials and
-        #   robots (i.e. we can only build a robot where we have the robots that
-        #   are required to mine the materials required for the robot). The minute
-        #   is set to the time required to mine the required materials and build
-        #   the robot (i.e. +1).
-        # - a default where we do not purchase any further robots and just mine
-        #   materials with existing robots for the remaining time
-
-        # Default state
-        # optimization: only add if number of geodes is higher than
-        # current max
-        default_state = produce(curr_state, minutes - curr_state[0])
-        if default_state[2][3] > highest_geode_state[2][3]:
-            q.append(default_state)
-
-        # next optimization - massive increase again
-        # calculate maximum possible number of geodes
-        # assumption is that one bot built per minute
-        # if theoretical value of geodes is less than current highest
-        # count, do not build bot
-        # remaining_time = minutes - curr_state[0]
-        # if (
-        #     curr_state[2][3] + (remaining_time * (remaining_time + 1)) // 2
-        #     < highest_geode_state[2][3]
-        # ):
-        #     continue
-
         # assess which robots can be built in which time and
         # add them to the queue
         for robot in range(4):
-            # print(f"Checking if we can produce robot {robot} from {curr_state}")
 
             # optimization - brings massive speed increase:
             # only build ore, clay or obsidian bots if we have less bots
@@ -190,18 +159,26 @@ def bfs(blueprint, minutes):
                     ]
                     # create new robot
                     new_robots[robot] += 1
-                    # add new robot to the queue
-                    # print(
-                    #     f"Produced new robot ({new_minute}, {new_robots}, {new_materials})"
-                    # )
-                    q.append((new_minute, new_robots, new_materials))
+                    # update highest geode count this state can achieve if it just
+                    # continues producing every minute with the robots it has
+                    potential = produce(
+                        (new_minute, new_robots, new_materials), minutes - new_minute
+                    )
+                    if potential[2][3] > highest_geode_state[2][3]:
+                        highest_geode_state = potential
+                    # optimization: only add new robot if the highest number of geodes
+                    # it can produce (when creating a new geode robot) is higher than the
+                    # current best estimate
+                    best_estimate = potential[2][3] + sum(range(minutes - new_minute))
+                    if best_estimate > highest_geode_state[2][3]:
+                        q.append((new_minute, new_robots, new_materials))
 
     # once all states have been evaluated and q is empty, return
     # the state with the highest geode count
     return highest_geode_state
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value.
 
@@ -218,25 +195,21 @@ def part1(puzzle_input):
     # geode robot costs x ore and y obsidian
     result = 0
     for blueprint in puzzle_input:
-        print()
-        print(f"Evaluating blueprint: {blueprint}")
         highest_geode_state = bfs(blueprint, MINUTES)
-        print(f"Highest geode count for state: {highest_geode_state}")
+        # print(f"Highest geode count for state: {highest_geode_state}")
         result += blueprint[0] * highest_geode_state[2][3]
 
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
     result = 1
     for blueprint in puzzle_input[:3]:
-        print()
-        print(f"Evaluating blueprint: {blueprint}")
         highest_geode_state = bfs(blueprint, 32)
-        print(f"Highest geode count for state: {highest_geode_state}")
+        # print(f"Highest geode count for state: {highest_geode_state}")
         result *= highest_geode_state[2][3]
 
     return result
@@ -255,4 +228,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 17:00 End: 19:38 many days later
-# Part 2: Start:  End:
+# Part 2: Start: 11:30 End: 14:45
+
+# Elapsed time to run part1: 3.81205 seconds.
+# Part 1: 1981
+# Elapsed time to run part2: 9.60628 seconds.
+# Part 2: 10962
