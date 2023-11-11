@@ -1,5 +1,7 @@
 # Load any required modules. Most commonly used:
 
+from dataclasses import dataclass
+
 # import re
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
@@ -35,9 +37,141 @@ def load_input(f_name):
     return puzzle_input
 
 
+# directions of the blizzards and movements (so including a 'wait' state)
+directions = {">": (0, 1), "v": (1, 0), "<": (0, -1), "^": (-1, 0), "w": (0, 0)}
+
+
+@dataclass
+class Blizzard:
+    r: int
+    c: int
+    d: str
+
+
+def generate_map(puzzle_input):
+    """Generate two outputs from the puzzle_input:
+    - walls: a tuple of coordinates for the bottom right
+             corner e.g. (8, 10). Walls are then in
+             row 0 and 8, and columns 0 and 10.
+
+    - blizzards: a list of blizzards, which are
+                 instances of the blizzard dataclass
+                 with r, c, dir.
+    """
+    walls = (len(puzzle_input) - 1, len(puzzle_input[0]) - 1)
+    blizzards = []
+    for r, row in enumerate(puzzle_input):
+        for c, col in enumerate(row):
+            if col in directions:
+                blizzards.append(Blizzard(r, c, col))
+    return walls, blizzards
+
+
+def move_blizzards(walls, blizzards):
+    """Generate the next state of the blizzards by moving forward
+    by one minute. Returns a new list of blizzard coordinates.
+
+    Assumption is that no blizzard moves to the start or end position!
+    """
+    next_state = []
+    for b in blizzards:
+        # add direction
+        new_row = b.r + directions[b.d][0]
+        new_col = b.c + directions[b.d][1]
+        # check if any wall was hit
+        # a modulo calculation
+        new_row = ((new_row - 1) % (walls[0] - 1)) + 1
+        new_col = ((new_col - 1) % (walls[1] - 1)) + 1
+        next_state.append(Blizzard(new_row, new_col, b.d))
+
+    return next_state
+
+
+def draw_state(walls, blizzards):
+    """Draw the current state."""
+    # calculate blizzard coordinates
+    b_coords = dict()
+    for b in blizzards:
+        if (b.r, b.c) in b_coords:
+            b_coords[(b.r, b.c)] = (
+                b_coords[(b.r, b.c)][1] + 1,
+                b_coords[(b.r, b.c)][1] + 1,
+            )
+        else:
+            b_coords[(b.r, b.c)] = (b.d, 1)
+
+    print("#." + "#" * (walls[1] - 1))
+    for r in range(1, walls[0]):
+        s = "#"
+        for c in range(1, walls[1]):
+            if (r, c) in b_coords:
+                s += str(b_coords[(r, c)][0])
+            else:
+                s += "."
+        s += "#"
+        print(s)
+    print("#" * (walls[1] - 1) + ".#")
+
+
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    # generate the map - top left corner is (0, 0) (r, c)
+    # start point - (0, 1)
+    # end point - bottom right -1
+    # walls
+    # blizzards
+    walls, blizzards = generate_map(puzzle_input)
+    start = (0, 1)
+    end = (walls[0], walls[1] - 1)
+
+    """
+    # run a BFS:
+    # - each minute is a state. Minutes have the same configuration of blizzards
+    # - state stores: (current pos, minute)
+    # - we have a dictionary with minutes which retrieve the map of blizzards for
+    #   the respective minute so it doesnt have to be generated again
+    state = (start, 0)
+    blizzard_state = {0: blizzards[:]}
+    seen = set()
+    q = [state]
+    while q:
+        curr_pos, minute = q.pop(0)
+        print(f"Next item from queue: {curr_pos}, minute {minute}")
+        if (curr_pos, minute) in seen:
+            continue
+        seen.add((curr_pos, minute))
+
+        # check if we have reached the end
+        if curr_pos == end:
+            print(f"Reached target after {minute} minutes.")
+            break
+
+        # add next states:
+        # - move in any direction
+        # - wait (there is probably some optimization here - wait only if no
+        #   possible next step?)
+        next_minute = minute + 1
+        # check if blizzard state for this minute has been generated before
+        if next_minute not in blizzard_state:
+            # generate new state
+            blizzard_state[next_minute] = move_blizzards(
+                walls, blizzard_state[next_minute - 1]
+            )
+        next_state = blizzard_state[next_minute]
+        for d in directions.values():
+            rr = curr_pos[0] + d[0]
+            cc = curr_pos[1] + d[1]
+            if 0 < rr < walls[0] and 0 < cc < walls[1] and (rr, cc) not in next_state:
+                q.append(((rr, cc), next_minute))
+
+    return minute
+    """
+    for minute in range(19):
+        print(f"Minute {minute}")
+        draw_state(walls, blizzards)
+        blizzards = move_blizzards(walls, blizzards)
+        print()
 
     return 1
 
