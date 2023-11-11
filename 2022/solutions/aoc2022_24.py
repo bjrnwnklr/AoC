@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -116,17 +116,7 @@ def draw_state(walls, blizzards):
     print("#" * (walls[1] - 1) + ".#")
 
 
-# @aoc_timer
-def part1(puzzle_input):
-    """Solve part 1. Return the required output value."""
-    # generate the map - top left corner is (0, 0) (r, c)
-    # start point - (0, 1)
-    # end point - bottom right -1
-    # walls
-    # blizzards
-    walls, blizzards = generate_map(puzzle_input)
-    start = (0, 1)
-    end = (walls[0], walls[1] - 1)
+def BFS(start, end, blizzards, walls):
 
     # run a BFS:
     # - each minute is a state. Minutes have the same configuration of blizzards
@@ -134,7 +124,9 @@ def part1(puzzle_input):
     # - we have a dictionary with minutes which retrieve the map of blizzards for
     #   the respective minute so it doesnt have to be generated again
     state = (start, 0)
-    blizzard_state = {0: (blizzards[:], set())}
+    # calculate initial blizzard coordinates from blizzards
+    b_coords = set((b.r, b.c) for b in blizzards)
+    blizzard_state = {0: (blizzards[:], b_coords)}
     seen = set()
     q = [state]
     while q:
@@ -146,7 +138,6 @@ def part1(puzzle_input):
 
         # check if we have reached the end
         if curr_pos == end:
-            print(f"Reached target after {minute} minutes.")
             break
 
         # add next states:
@@ -164,26 +155,63 @@ def part1(puzzle_input):
         for d in directions.values():
             rr = curr_pos[0] + d[0]
             cc = curr_pos[1] + d[1]
-            if (rr, cc) == end or (
-                0 < rr < walls[0] and 0 < cc < walls[1] and (rr, cc) not in b_coords
+            if (
+                (rr, cc) == end
+                or (rr, cc) == start
+                or (
+                    0 < rr < walls[0] and 0 < cc < walls[1] and (rr, cc) not in b_coords
+                )
             ):
                 q.append(((rr, cc), next_minute))
 
-    return minute
+    # return the earliest minute and the state of the blizzards during that minute
+    return minute, blizzard_state[minute][0]
+
+
+@aoc_timer
+def part1(puzzle_input):
+    """Solve part 1. Return the required output value."""
+    # generate the map - top left corner is (0, 0) (r, c)
+    # start point - (0, 1)
+    # end point - bottom right -1
+    # walls
+    # blizzards
+    walls, blizzards = generate_map(puzzle_input)
+    start = (0, 1)
+    end = (walls[0], walls[1] - 1)
+
+    minute, blizzards = BFS(start, end, blizzards, walls)
     # for minute in range(19):
     #     print(f"Minute {minute}")
     #     draw_state(walls, blizzards)
     #     blizzards = move_blizzards(walls, blizzards)
     #     print()
 
-    # return 1
+    return minute
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    result = 0
+    walls, blizzards = generate_map(puzzle_input)
+    start = (0, 1)
+    end = (walls[0], walls[1] - 1)
+
+    # first pass, from start to end
+    minute, blizzards = BFS(start, end, blizzards, walls)
+    result += minute
+
+    # second pass, from end to start
+    minute, blizzards = BFS(end, start, blizzards, walls)
+    result += minute
+
+    # third pass, from start to end
+    minute, blizzards = BFS(start, end, blizzards, walls)
+    result += minute
+
+    return result
 
 
 if __name__ == "__main__":
@@ -198,5 +226,10 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start: 14:09 End:
-# Part 2: Start:  End:
+# Part 1: Start: 14:09 End: 15:59
+# Part 2: Start: 16:00 End: 16:12
+
+# Elapsed time to run part1: 0.86204 seconds.
+# Part 1: 221
+# Elapsed time to run part2: 3.19891 seconds.
+# Part 2: 739
