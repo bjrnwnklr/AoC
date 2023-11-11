@@ -61,5 +61,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
+# Part 1: Start: 14:09 End:
 # Part 2: Start:  End:
