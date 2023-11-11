@@ -2,7 +2,7 @@
 
 # import re
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -71,7 +71,7 @@ def dec_to_snafu(dn):
     return "".join(result[::-1])
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     # SNAFU numbers:
@@ -83,21 +83,12 @@ def part1(puzzle_input):
     #   - == -1
     #   = == -2
 
-    # convert all SNAFU input numbers to decimal
-    # sum up
+    # convert all SNAFU input numbers to decimal and sum up
     dec_sum = sum(snafu_to_dec(sn) for sn in puzzle_input)
-    print(f"SNAFU sum is {dec_sum} in decimal.")
     # convert back to SNAFU number
     snafu = dec_to_snafu(dec_sum)
 
     return snafu
-
-
-# @aoc_timer
-def part2(puzzle_input):
-    """Solve part 2. Return the required output value."""
-
-    return 1
 
 
 if __name__ == "__main__":
@@ -108,9 +99,8 @@ if __name__ == "__main__":
     p1 = part1(puzzle_input)
     print(f"Part 1: {p1}")
 
-    # Solve part 2 and print the answer
-    p2 = part2(puzzle_input)
-    print(f"Part 2: {p2}")
 
-# Part 1: Start: 17:21 End:
-# Part 2: Start:  End:
+# Part 1: Start: 17:21 End: 18:30
+
+# Elapsed time to run part1: 0.00019 seconds.
+# Part 1: 2-0==21--=0==2201==2
