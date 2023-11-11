@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2022_25 import load_input, part1, part2
+from solutions.aoc2022_25 import load_input, part1, part2, snafu_to_dec, dec_to_snafu
 
 
 class Test_AOC2022_25:
@@ -16,7 +16,21 @@ class Test_AOC2022_25:
 
     def test_1_1(self):
         puzzle_input = load_input("testinput/25_1_1.txt")
-        assert part1(puzzle_input) == 1
+        assert part1(puzzle_input) == "2=-1=0"
+
+    def test_snafu_to_dec(self):
+        sn = "1=-0-2"
+        assert snafu_to_dec(sn) == 1747
+
+    def test_dec_to_snafu(self):
+        dn = 3
+        assert dec_to_snafu(dn) == "1="
+        dn = 4
+        assert dec_to_snafu(dn) == "1-"
+        dn = 8
+        assert dec_to_snafu(dn) == "2="
+        dn = 2022
+        assert dec_to_snafu(dn) == "1=11-2"
 
     # def test_2_1(self):
     #     puzzle_input = load_input('testinput/25_1_1.txt')

@@ -35,11 +35,62 @@ def load_input(f_name):
     return puzzle_input
 
 
+snafu_dec = {"2": 2, "1": 1, "0": 0, "-": -1, "=": -2}
+dec_snafu = {2: "2", 1: "1", 0: "0", -1: "-", -2: "="}
+
+
+def snafu_to_dec(sn):
+    """Convert a number from SNAFU to decimal."""
+    dec = 0
+    for i, n in enumerate(sn[::-1]):
+        dec += snafu_dec[n] * 5**i
+    return dec
+
+
+def dec_to_snafu(dn):
+    """Convert SNAFU number to decimal."""
+    # this is tricky but can be done similar to
+    # converting from base 10 to base 5 by taking the
+    # factor and remainder from dividing by 5 and
+    # increasing the factor by 1 if a remainder > 2 is
+    # found. The remainder is then decreased by 5 to
+    # give the negative increment for this position.
+
+    # base 5 of a decimal number n is
+    # a_n * 5**n + a_(n-1) * 5**(n-1) + .. + a_0 * 5**0
+    # the base 5 is then expressed as "a_n a_(n-1) .. a_0"
+    result = []
+    while dn != 0:
+        r = dn % 5
+        dn = dn // 5
+        if r > 2:
+            dn += 1
+            r -= 5
+        result.append(dec_snafu[r])
+
+    return "".join(result[::-1])
+
+
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    # SNAFU numbers:
+    # - digits are multiples of 5
+    # - numbers are
+    #   2 == 2
+    #   1 == 1
+    #   0 == 0
+    #   - == -1
+    #   = == -2
 
-    return 1
+    # convert all SNAFU input numbers to decimal
+    # sum up
+    dec_sum = sum(snafu_to_dec(sn) for sn in puzzle_input)
+    print(f"SNAFU sum is {dec_sum} in decimal.")
+    # convert back to SNAFU number
+    snafu = dec_to_snafu(dec_sum)
+
+    return snafu
 
 
 # @aoc_timer
@@ -61,5 +112,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
+# Part 1: Start: 17:21 End:
 # Part 2: Start:  End:
