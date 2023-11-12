@@ -28,7 +28,7 @@ Help()
    echo "the current folder, if not existing, then copies files from the"
    echo "'template' folder into the new folder and does some renaming."
    echo
-   echo "Syntax: aocsetup [-h|v|V] YEAR DAY"
+   echo "Syntax: aocsetup [-h|V] YEAR DAY"
    echo "Set up Advent of Code folder <DAY> in current directory."
    echo
    echo "Options:"
