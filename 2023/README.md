@@ -30,7 +30,6 @@ $ curl https://adventofcode.com/2023/day/3/input -A "bjoern@bjoern-winkler.de vi
 Session cookie can be found by:
 
 -   Chrome> Inspect
--   tab over to `Application`
 -   Under `Storage`, expand `Cookies`
 -   click on the `https://adventofcode.com` cookie
 -   grab the value for session.
