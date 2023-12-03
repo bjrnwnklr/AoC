@@ -2,8 +2,8 @@
 
 import re
 
-# from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from collections import defaultdict
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -21,7 +21,7 @@ def load_input(f_name):
     return puzzle_input
 
 
-def parse_grid_regex(inp):
+def parse_grid_regex(inp, symbol_def):
     """Find numbers including their start position, and symbols.
     return two objects:
     - set of symbol coordinates
@@ -32,7 +32,7 @@ def parse_grid_regex(inp):
     of the number as string.
     """
     regex_num = re.compile(r"(\d+)")
-    regex_sym = re.compile(r"([\@+\-#/*$%=&])")
+    regex_sym = re.compile(symbol_def)
     re_numbers = []
     re_symbols = set()
     for r, row in enumerate(inp):
@@ -62,23 +62,20 @@ def has_symbol_neighbor(n, r, c, symbols):
             rr = r + dr
             if (rr, cc) in symbols:
                 # found a symbol, stop and return True
-                return True
+                return (rr, cc)
 
     # check for coordinates directly left and right
     for cc in [c_start - 1, c_end + 1]:
         if (r, cc) in symbols:
-            return True
+            return (r, cc)
 
-    return False
+    return None
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
-    # check that we have the correct number of numbers found
-    # detect numbers with regex
-
-    symbols, numbers = parse_grid_regex(puzzle_input)
+    symbols, numbers = parse_grid_regex(puzzle_input, r"([\@+\-#/*$%=&])")
 
     result = 0
     for n, r, c in numbers:
@@ -89,11 +86,27 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    symbols, numbers = parse_grid_regex(puzzle_input, r"([*])")
 
-    return 1
+    result = 0
+    # store neighboring numbers in this defaultdict
+    gears = defaultdict(list)
+    for n, r, c in numbers:
+        # find neighbors of a number
+        sym = has_symbol_neighbor(n, r, c, symbols)
+        if sym:
+            gears[sym].append(n)
+
+    # gears are any symbols where the list of numbers
+    # has exactly two entries
+    for s in gears:
+        if len(gears[s]) == 2:
+            result += gears[s][0] * gears[s][1]
+
+    return result
 
 
 if __name__ == "__main__":
@@ -110,4 +123,9 @@ if __name__ == "__main__":
 
 # Part 1: Start: 9:00 End: 11:10 (wrong end coordinate on numbers
 #                                 at the end of the line)
-# Part 2: Start:  End:
+# Part 2: Start: 11:15  End: 11:43
+
+# Elapsed time to run part1: 0.00242 seconds.
+# Part 1: 535235
+# Elapsed time to run part2: 0.00225 seconds.
+# Part 2: 79844424
