@@ -103,3 +103,17 @@ After trying flood fill from the outside and building logic to find gaps in the 
 -   do a second BFS from the top left corner to fill all outside tiles. This now also works where you need to squeeze between parallel pipes
 -   mark the middle of each visited tile
 -   calculate the remaining tiles by subtracting the number of pipeloop tiles from the unmarked tiles
+
+# Day 11
+
+-   Difficulty: Easy
+-   Problem: scan through a 2d grid to identify galaxies. If column or row is empty, add additional empty columns or rows. Part 2 added 1_000_000 rows, so simulating with brute force (expanding the grid before going through galaxies) would be very slow. Instead, calculate number of empty rows and just increase the coordinates of the galaxies accordingly.
+
+# Day 12
+
+-   Difficulty: Hard
+-   Problem: Matching a pattern '???..###' with groups of numbers that represent '#'. '?' is a wildcard for either '.' or '#'. Groups of # need to be separated by '.'. Problem was hard because a brute force (trying all possible combinations where wild cards are substituted) takes a long time already for part 1, and is impossible for part 2 (e.g. combinations with 29 wildcards don't finish).
+
+First used all possible combinations and then generated a regex that matched any valid configuration. This worked fine for part 1, but part 2 required multiplying the part 1 input times 5, so resulted in lots of possible combinations.
+
+Then tried recursively parsing the string, which worked fine but was tricky to get all possible cases. Part 2 required memoization to make it perform ok. Solved in under 1 second.
