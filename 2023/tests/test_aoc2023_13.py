@@ -16,8 +16,18 @@ class Test_AOC2023_13:
 
     def test_1_1(self):
         puzzle_input = load_input("testinput/13_1_1.txt")
-        assert part1(puzzle_input) == 1
+        assert part1(puzzle_input) == 405
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/13_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_2_1(self):
+        puzzle_input = load_input("testinput/13_1_1.txt")
+        assert part2(puzzle_input) == 400
+
+    def test_2_2(self):
+        puzzle_input = load_input("testinput/13_2_2.txt")
+        # original result 1100, new score 2
+        assert part2(puzzle_input) == 2
+
+    def test_2_3(self):
+        puzzle_input = load_input("testinput/13_2_3.txt")
+        # original result 1000, new result 200
+        assert part2(puzzle_input) == 1200
