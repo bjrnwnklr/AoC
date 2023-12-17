@@ -117,3 +117,13 @@ After trying flood fill from the outside and building logic to find gaps in the 
 First used all possible combinations and then generated a regex that matched any valid configuration. This worked fine for part 1, but part 2 required multiplying the part 1 input times 5, so resulted in lots of possible combinations.
 
 Then tried recursively parsing the string, which worked fine but was tricky to get all possible cases. Part 2 required memoization to make it perform ok. Solved in under 1 second.
+
+# Day 13
+
+-   Difficulty: Medium
+-   Problem: Find symmetry (vertical / horizontal) in a grid of . and #. Part 2 required flipping one cell to the other value and then checking if any different reflection line was found. This was the hard part, but brute force (just iterating through all changes) worked well enough.
+
+I probably overcomplicated the solution by:
+
+-   calculating MD5 hash per row and column - instead of comparing each cell. but this was very fast.
+-   part 2 got very complicated as i found that some examples just returned the same reflecting line as in part 1, so had to use lists of returned reflecting lines and compare these (there seem to be easier solutions but have not yet understood how they work)
