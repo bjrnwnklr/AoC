@@ -127,3 +127,12 @@ I probably overcomplicated the solution by:
 
 -   calculating MD5 hash per row and column - instead of comparing each cell. but this was very fast.
 -   part 2 got very complicated as i found that some examples just returned the same reflecting line as in part 1, so had to use lists of returned reflecting lines and compare these (there seem to be easier solutions but have not yet understood how they work)
+
+# Day 14
+
+-   Difficulty: Medium
+-   Problem: Simulate tilting a surface so that rocks roll and stop either at the edge or at other rocks. Calculate weight by counting rocks per row. Part 2 required simulating this 1_000_000_000 times. As usual there was a repeating pattern, which was easy to find.
+
+Did this with brute force by simulating rotating the platform and rolling the rocks, then store a string of the pattern of the rocks and look up if the same pattern was seen multiple times. Spend a lot of time on calculating the actual result, which could have been done manually by looking up the periodicity. I found the result by then iterating through possible starting offsets where the pattern repeats - there is likely a better way to calculate this, but it works.
+
+Runtime for part 2 is almost 5 seconds, so could probably be improved.

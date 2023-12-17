@@ -1,1 +1,10 @@
-REPLACE ME WITH THE ACTUAL EXAMPLE!
+O....#....
+O.OO#....#
+.....##...
+OO.#O....O
+.O.....O#.
+O.#..O.#.#
+..O..#O..O
+.......O..
+#....###..
+#OO..#....
