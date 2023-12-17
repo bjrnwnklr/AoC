@@ -34,62 +34,62 @@ def load_input(f_name):
     return puzzle_input
 
 
-def solve_line(springs, broken_groups, result, memo):
+def solve_line(springs, broken_groups, memo):
     """Attempt to solve a line of springs recursively."""
-    if (springs, tuple(broken_groups), result) in memo:
-        return memo[(springs, tuple(broken_groups), result)]
+    key = (springs, tuple(broken_groups))
+    if key in memo:
+        return memo[key]
 
-    if springs == "" and len(broken_groups) > 0:
-        # empty string but groups left to do, so no match
-        inner_result = 0
-    elif springs == "" and len(broken_groups) == 0:
-        # empty string and no groups left do, must be a match
-        inner_result = 1
-    elif len(springs) > 0 and len(broken_groups) == 0:
+    result = 0
+
+    if springs == "":
+        if len(broken_groups) == 0:
+            # empty string and no groups left do, must be a match
+            result = 1
+    elif len(broken_groups) == 0:
         # no groups left, but string left
-        if "#" in springs:
-            # no groups left but # still in remaining string
-            # means no match
-            inner_result = 0
-        else:
-            inner_result = 1
+        if "#" not in springs:
+            # no groups left and no further # in the remaining string
+            # means it's a match
+            result = 1
     # if we get here, there is still string left and also groups
     elif springs[0] == ".":
         # remove as not useful, and process from next char
-        inner_result = result + solve_line(springs[1:], broken_groups, result, memo)
+        result = solve_line(springs[1:], broken_groups, memo)
     elif springs[0] == "?":
-        inner_result = (
-            result
-            + solve_line("." + springs[1:], broken_groups, result, memo)
-            + solve_line("#" + springs[1:], broken_groups, result, memo)
+        # found a wildcard, evaluate both options by replacing the ? with
+        # a . and a #. Add results of both subtrees together
+        result = solve_line("." + springs[1:], broken_groups, memo) + solve_line(
+            "#" + springs[1:], broken_groups, memo
         )
     elif springs[0] == "#":
-        # check if the first group fits in (must be ? or #)
+        # found a #, so:
+        # check if the next group fits into the next sequence of ? and #
         group = broken_groups[0]
-        if len(springs) >= group and all(c != "." for c in springs[:group]):
-            if len(springs[group:]) == 0 or springs[group] != "#":
-                # we found an exact count of # - no directly following #
-                # means we can continue searching after the group
-                # skip the next character as it needs to be a .
-                # a ? would result in double counts as it would be
-                # valid for #
-                inner_result = result + solve_line(
-                    springs[group + 1 :], broken_groups[1:], result, memo
-                )
-            else:
-                # # is directly following, but group is shorter. we can stop here
-                inner_result = 0
-        else:
-            # string is either shorter than required length of group,
-            # or there are . in the length of the group
-            inner_result = 0
-    else:
-        # group is longer than the next # and ? combined
-        # we can stop searching with this configuration
-        inner_result = 0
+        # Logic:
+        # - the remaining string has to be longer than the length of the group
+        #   of #s required
+        # - for the length of the group, the next characters have
+        #   to be either ? or # (no .)
+        # - after the group, there is either no further string, or the next
+        #   character is not a # (either a . or a ? that has to be substituted
+        #   by a '.'.
+        #   We skip the next character after the group as it has to be a '.'.
+        #   Otherwise we could create a double count if the next character is
+        #   a #, as the function has no knowledge # of any prior characters.
+        if (
+            len(springs) >= group
+            and all(c != "." for c in springs[:group])
+            and (len(springs[group:]) == 0 or springs[group] != "#")
+        ):
+            # we found an exact count of # - no directly following #
+            # means we can continue searching after the group.
+            # Skip the next character as it needs to be a .
+            # A ? would result in double counts as it would be valid for #
+            result = solve_line(springs[group + 1 :], broken_groups[1:], memo)
 
-    memo[(springs, tuple(broken_groups), result)] = inner_result
-    return inner_result
+    memo[key] = result
+    return result
 
 
 @aoc_timer
@@ -101,7 +101,7 @@ def part1(puzzle_input):
     for line in puzzle_input:
         springs, groups = line.split()
         broken_groups = list(map(int, groups.split(",")))
-        line_result = solve_line(springs, broken_groups, 0, memo)
+        line_result = solve_line(springs, broken_groups, memo)
         result += line_result
 
     return result
@@ -120,7 +120,7 @@ def part2(puzzle_input):
         springs = "?".join(springs for _ in range(5))
         broken_groups = broken_groups * 5
 
-        line_result = solve_line(springs, broken_groups, 0, memo)
+        line_result = solve_line(springs, broken_groups, memo)
         result += line_result
 
     return result
