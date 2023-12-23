@@ -143,3 +143,12 @@ Runtime for part 2 is almost 5 seconds, so could probably be improved.
 -   Problem: build a hash function and an implementation of a hashmap / dictionary.
 
 Part 1 was very easy - just calculate a simple hash value for a comma separated list. Part 2 was implementing a hashmap and required adding, replacing or removing elements from the lists stored in the hashmap without changing the order. Not difficult, only slighlty problematic as the items in each list are tuples and you had to find / replace based on the first tuple value. This required iterating through each element and compare if the first tuple value was the same, then popping the item at that index from the list or replacing it.
+
+# Day 16
+
+-   Difficulty: Easy
+-   Problem: in a 2d grid, generate a beam that gets redirected or split into two depending on mirrors or splitters it hits. Calculate how many cells of the grid get hit by the beam(s).
+
+This was easy to solve with a BFS that just added each new cell the beam travels to into the queue and then process what the next steps are (e.g. continue in current direction, redirect when hitting a mirror, split when hitting a splitter). The `seen` set can be used to stop going through cells we have already visited.
+
+Part 2 required the same algorithm but with starting points from each cell on the edge of the grid. This was easy to do by just running the BFS from each edge cell and looking for the maximum of visited cells. Runs in 2.5s.
