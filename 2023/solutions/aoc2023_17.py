@@ -250,7 +250,7 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 9:28 End: 10:55
-# Part 2: Start: 10:56 End:
+# Part 2: Start: 10:56 End: 11:25
 
 # Elapsed time to run part1: 0.98373 seconds.
 # Part 1: 956

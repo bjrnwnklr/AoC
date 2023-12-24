@@ -161,3 +161,18 @@ Part 2 required the same algorithm but with starting points from each cell on th
 This was easy to recognize as a case for Dijkstra's algorithm, with the states represented by a tuple of (r, c, number_steps_straight, current_direction). The neighbours in the graph could be represented by steps allowed under the constraints (only moving straight when number of steps allow it, turning if we have to etc). Part 2 was only marginally more difficult because of the condition that you can only stop after a minimum of 4 steps straight, so just another check to find the end.
 
 Implementing Dijkstra without any further optimization worked well on the examples but did not finish on the puzzle. Optimization was required by only adding next steps that allowed to reach a given cell if it was cheaper than previously seen. This could be done by keeping a defaultdict with the penalty to reach that cell with a number of steps straight from a given direction.
+
+# Day 18
+
+-   Difficulty: Hard
+-   Problem: Measure the area contained by a wall in a 2d grid. Part 2 was exactly the same but on a much larger scale.
+
+Part 1 was relatively easy to solve by creating the wall elements and then either using scanline or a flood fill to calculate the inner area. Scanline took me a while to implement but worked ok.
+
+Part 2 made the dimensions of the grid so much bigger that brute force did not work. However the count of the nodes did not increase, just the distance.
+
+Using the Shoelace formula you can calculate the area contained within the nodes, however this does not give the correct answer as it calculates the exact area in a cartesian grid, but does not account for the walls.
+
+Using Pick's theorem, you can account half of the size of the walls as additional area, plus add one for the last closing piece of the wall. This gives the correct answer.
+
+Hardest puzzle so far?
