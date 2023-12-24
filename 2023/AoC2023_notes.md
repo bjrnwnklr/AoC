@@ -152,3 +152,12 @@ Part 1 was very easy - just calculate a simple hash value for a comma separated 
 This was easy to solve with a BFS that just added each new cell the beam travels to into the queue and then process what the next steps are (e.g. continue in current direction, redirect when hitting a mirror, split when hitting a splitter). The `seen` set can be used to stop going through cells we have already visited.
 
 Part 2 required the same algorithm but with starting points from each cell on the edge of the grid. This was easy to do by just running the BFS from each edge cell and looking for the maximum of visited cells. Runs in 2.5s.
+
+# Day 17
+
+-   Difficulty: Medium
+-   Problem: Shortest path in a weighted graph with additional constraints. Each grid cell has a number from 1-9 that is a movement penalty. Calculate the cheapest way to get from top left to bottom right. Constraints were that you have to turn left or right after 3 steps straight ahead (part 1), and that you need to move at least 4 steps before you can turn or stop (i.e. reach the end) and turn after a maximum of 10 steps straight.
+
+This was easy to recognize as a case for Dijkstra's algorithm, with the states represented by a tuple of (r, c, number_steps_straight, current_direction). The neighbours in the graph could be represented by steps allowed under the constraints (only moving straight when number of steps allow it, turning if we have to etc). Part 2 was only marginally more difficult because of the condition that you can only stop after a minimum of 4 steps straight, so just another check to find the end.
+
+Implementing Dijkstra without any further optimization worked well on the examples but did not finish on the puzzle. Optimization was required by only adding next steps that allowed to reach a given cell if it was cheaper than previously seen. This could be done by keeping a defaultdict with the penalty to reach that cell with a number of steps straight from a given direction.
