@@ -176,3 +176,10 @@ Using the Shoelace formula you can calculate the area contained within the nodes
 Using Pick's theorem, you can account half of the size of the walls as additional area, plus add one for the last closing piece of the wall. This gives the correct answer.
 
 Hardest puzzle so far?
+
+# Day 19
+
+-   Difficulty: Easy - Medium
+-   Problem: Some complex parsing of workflow rules (name{s<1423:hdj,m>12,A}) and attributs of machine parts (dictionary of keys and int values). Required a bit of parsing gymnastics. Part 1: run each part through the workflow, either ending in Accepted or Rejected. Sum up the parts that were accepted. Part 2: The same, but instead of parts, calculate the number of possible combinations that will be accepted from 4000\*\*4 possible combinations of values, so not possible to use brute force.
+
+Easily solved both parts with a recursive function. Part 1 worked immediately; part 2 used the same solution as day 5, where you split the intervals of possible values into smaller intervals that you process further. Worked on first try with the recursive function. No memoization required either. Very easy for day 19.
