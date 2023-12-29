@@ -183,3 +183,18 @@ Hardest puzzle so far?
 -   Problem: Some complex parsing of workflow rules (name{s<1423:hdj,m>12,A}) and attributs of machine parts (dictionary of keys and int values). Required a bit of parsing gymnastics. Part 1: run each part through the workflow, either ending in Accepted or Rejected. Sum up the parts that were accepted. Part 2: The same, but instead of parts, calculate the number of possible combinations that will be accepted from 4000\*\*4 possible combinations of values, so not possible to use brute force.
 
 Easily solved both parts with a recursive function. Part 1 worked immediately; part 2 used the same solution as day 5, where you split the intervals of possible values into smaller intervals that you process further. Worked on first try with the recursive function. No memoization required either. Very easy for day 19.
+
+# Day 20
+
+-   Difficulty: Medium - Hard
+-   Problem: build a virtual computer with flip-flop memory and registers. For part 1, count how many pulses / signals are sent between flipflops and registers. For part 2, calculate when a register was flipped from 0 to 1. This could not be simulated as it required a lot of cycles.
+
+Part 1 was easy but the text was very complicated. My solution is probably a bit over engineered with a full simulation of the virtual computer, which was not really required. The brute force solution runs in well under 1 second to find the solution by just simulating the memory state of the machine and counting the number of pulses.
+
+Part 2 was more complicated, but in the end very simple to resolve. By looking at the input, you could see that the final register depends on 4 different registers, which each get fed by 8 (3 of them) or 11 (1 of them) flipflops. The flipflops change status each cycle and can be ordered to show they are counting up binary numbers.
+
+The solution was simply finding the first time each of the 4 registers sent a High pulse (i.e. all flipflops were 1) to the target register, then taking the Least Common Multiple (LCM) of the 4 values.
+
+I also logged a lot more than required and found the correct order for all of the flipflops to show they are counting up. I also proved that the 4 registers hit HIGH on fixed cycles, but the first value is already enough.
+
+This was a fun problem with ultimately a very simple solution. Great that we had to analyze the input to get to the solution - first time this year.
