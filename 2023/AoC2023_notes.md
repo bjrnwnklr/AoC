@@ -198,3 +198,16 @@ The solution was simply finding the first time each of the 4 registers sent a Hi
 I also logged a lot more than required and found the correct order for all of the flipflops to show they are counting up. I also proved that the 4 registers hit HIGH on fixed cycles, but the first value is already enough.
 
 This was a fun problem with ultimately a very simple solution. Great that we had to analyze the input to get to the solution - first time this year.
+
+# Day 21
+
+-   Difficulty: HARD!!!!
+-   Problem: a 2d grid with rocks and unoccupied patches. Part 1: find all possible positions that can be reached in a given number of steps. Part 2: the grid can be expanded infinitely by copying the existing grid onto each side. Find the number of positions that can be reached in a ridiculously high number of steps.
+
+Part 1: solved with BFS by observing that each position can be reached only in a even number of steps (because of backtracking - we can just step back and forth a number of times).
+
+Part 2: very hard, didnt solve. I observed that the input square has the same side lengths, and that there is a highway of open positions from the middle (starting position) to each of the four sides. So you can reach each adjacent tile by just stepping along the middle. Once you reach an adjacent tile, you can reach the same number of positions as you can originally reach.
+
+But didnt manage to solve the puzzle and used an answer from Reddit: [Python solution](https://topaz.github.io/paste/#XQAAAQDcAQAAAAAAAAAjiAOiE/kRLeQB1cGmfHakawz7UqVcDEZjf/KvIQv859I/42EN77Dcrnn9OX4FZv4wI5s+SrfDTO0LC2XuzGLqJC3wjkKvWuB2LyCUL9Z0QcLJrFUbwmkf77Xq5P/O0E/YvoPpuiZVCOiCrdCJbvp5VBGgQUq2W/lUzZg+PHeNUjAlNFqvlj1jujOY0TpNzYDQdntQcWEhTSTAtYFxi522TTRfEu4jFlD9SPQXH0epmzLFNfOh2NWtcKCsG9fOG+xMPub2Q02v/lxdMrdGjzPz5itqxUavxBQUUZd1UnLEYxPfyqSEEx6u74yM0rCaLDvdDY8CXPWhAd3CvQbHWN3SdWFhoZdao7GALjuB/fO2t5EIT+rTCSJ7japFhWfDagOF31XVKofp2eYnwA0NM3EE3dcDqv7RYc8=)
+
+This was by far the hardest puzzle so far.
