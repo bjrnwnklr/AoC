@@ -211,3 +211,20 @@ Part 2: very hard, didnt solve. I observed that the input square has the same si
 But didnt manage to solve the puzzle and used an answer from Reddit: [Python solution](https://topaz.github.io/paste/#XQAAAQDcAQAAAAAAAAAjiAOiE/kRLeQB1cGmfHakawz7UqVcDEZjf/KvIQv859I/42EN77Dcrnn9OX4FZv4wI5s+SrfDTO0LC2XuzGLqJC3wjkKvWuB2LyCUL9Z0QcLJrFUbwmkf77Xq5P/O0E/YvoPpuiZVCOiCrdCJbvp5VBGgQUq2W/lUzZg+PHeNUjAlNFqvlj1jujOY0TpNzYDQdntQcWEhTSTAtYFxi522TTRfEu4jFlD9SPQXH0epmzLFNfOh2NWtcKCsG9fOG+xMPub2Q02v/lxdMrdGjzPz5itqxUavxBQUUZd1UnLEYxPfyqSEEx6u74yM0rCaLDvdDY8CXPWhAd3CvQbHWN3SdWFhoZdao7GALjuB/fO2t5EIT+rTCSJ7japFhWfDagOF31XVKofp2eYnwA0NM3EE3dcDqv7RYc8=)
 
 This was by far the hardest puzzle so far.
+
+RETRY part 2 with the diamond solution - see notes. Finish in January.
+
+# Day 22
+
+-   Difficulty: Medium
+-   Problem: Jenga - bricks falling down in a 3d grid. Bricks are described by their 3 corners and can stretch in 1 dimension. Part 1: Determine how bricks fall and come to rest. Then determine which of the bricks can be removed without impacting the bricks above (i.e. the brick is still supported by another brick). Part 2: Determine how many bricks would fall if any one brick was removed.
+
+Part 1 was easy:
+
+-   sort bricks by their z coordinate so we can process them from bottom to top. Then calculate all x/y coordinates occupied by the brick. Then check from current z height downwards if the brick would fit. This was easily done with a defaultdict storing the x/y/z coordinates of the grid. To determine dependencies, use two dictionaries for a bi-directional graph: depends_on and supported_by. Using the dictionaries, it was easy to see which bricks cannot be removed as they are the only brick supporting another brick.
+
+Part 2 was not much more difficult:
+
+-   Use solution from part 1
+-   then use a BFS for each brick to be removed and remove the brick from the list of bricks the brick depends on. Once a brick has no more dependencies, it will fall down, so add to queue.
+-   Part 2 took 5 seconds to run, could possibly be optimized with memoization - check if removing a brick was already seen to cause other bricks to fall?
