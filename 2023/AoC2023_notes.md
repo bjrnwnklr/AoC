@@ -228,3 +228,14 @@ Part 2 was not much more difficult:
 -   Use solution from part 1
 -   then use a BFS for each brick to be removed and remove the brick from the list of bricks the brick depends on. Once a brick has no more dependencies, it will fall down, so add to queue.
 -   Part 2 took 5 seconds to run, could possibly be optimized with memoization - check if removing a brick was already seen to cause other bricks to fall?
+
+# Day 23
+
+-   Difficulty: Hard
+-   Problem: 2d grid with walls and floor, and additionally slopes that can only be passed in one direction. Part 1: find the LONGEST path from start to end while only passing the slopes in the one allowed direction. Part 2: find the LONGEST path but ignore the slope direction.
+
+Part 1 was easily done with BFS (bit slower) and Dijkstra (1.5s).
+
+Part 2 was difficult as the grids had some intersections that didnt work with the Dijkstra algorithm as it would never evaluate them as they were shorter than the path to another grid, but resulting in an overall longer path. So tried BFS but this ran much too long without finishing.
+
+The intersections were special in that each of them was surrounded by slopes. So we could build a much smaller graph by just using the intersections as nodes. This resulted in a graph with ca 30 nodes. BFS found all possible paths within 73 seconds. Slow, but worked.
