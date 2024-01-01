@@ -132,13 +132,17 @@ def part2(puzzle_input):
     result = 0
     for b in range(1, len(bricks) + 1):
         dp = deepcopy(depends_on)
+        fallen = set()
         falling = 0
         q = [b]
         while q:
             to_remove = q.pop(0)
+            if to_remove in fallen:
+                continue
+            fallen.add(to_remove)
             for remove_from in supported_by[to_remove]:
                 dp[remove_from].remove(to_remove)
-                if len(dp[remove_from]) == 0:
+                if len(dp[remove_from]) == 0 and remove_from not in fallen:
                     # brick is not supported anymore, falls down
                     falling += 1
                     q.append(remove_from)
