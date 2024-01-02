@@ -239,3 +239,14 @@ Part 1 was easily done with BFS (bit slower) and Dijkstra (1.5s).
 Part 2 was difficult as the grids had some intersections that didnt work with the Dijkstra algorithm as it would never evaluate them as they were shorter than the path to another grid, but resulting in an overall longer path. So tried BFS but this ran much too long without finishing.
 
 The intersections were special in that each of them was surrounded by slopes. So we could build a much smaller graph by just using the intersections as nodes. This resulted in a graph with ca 30 nodes. BFS found all possible paths within 73 seconds. Slow, but worked.
+
+# Day 24
+
+-   Difficulty: Hard
+-   Problem: Find intersections between trajectories of hailstones, defined by a x,y,z starting position and vx, vy, vz velocities. Part 1 required to find if any two of the hailstones have intersecting trajectories. Part 2 required to find starting x, y and z values for a rock that is thrown from the position at a velocity and hits all hailstones on it's way.
+
+Part 1 was fairly easy again. A closed form could be found by resolving the equations given by the linear trajectories for each coordinate. This required transforming the parameterized equations (one equation for x, y each) into one rectangular (cartesian) equation f(x) = y = px + vx \* x
+
+Part 2 was very hard. I tried with multiple equations e.g. since the rock travels at a constant speed, the distances between hits on hailstones needs to be similar to the distance of the hailstones. This yields some complicated equations that can be used to simplify further, where values for vx and vy could be tried out since they are very small.
+
+In the end, after writing formulas for several pages, used z3 solver to define the constraints and have z3 solve. Used Jonathan Paulson's solution as an example for this.
