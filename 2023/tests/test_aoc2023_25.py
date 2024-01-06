@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2023_25 import load_input, part1, part2
+from solutions.aoc2023_25 import load_input, part1, part1_karger
 
 
 class Test_AOC2023_25:
@@ -16,8 +16,8 @@ class Test_AOC2023_25:
 
     def test_1_1(self):
         puzzle_input = load_input("testinput/25_1_1.txt")
-        assert part1(puzzle_input) == 1
+        assert part1(puzzle_input) == 54
 
-    # def test_2_1(self):
-    #     puzzle_input = load_input('testinput/25_1_1.txt')
-    #     assert part2(puzzle_input) == 1
+    def test_1_2(self):
+        puzzle_input = load_input("testinput/25_1_1.txt")
+        assert part1_karger(puzzle_input) == 54

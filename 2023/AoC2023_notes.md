@@ -252,3 +252,34 @@ Part 2 was very hard. I tried with multiple equations e.g. since the rock travel
 In the end, after writing formulas for several pages, used z3 solver to define the constraints and have z3 solve.
 
 Addition: Tried resolving by hand by defining 6 equations based on 3 hailstones and resolving for the 6 unknowns (xr, yr, zr, vxr, vyr, vzr). After rearranging into 6 linear equations, tried to use numpy.linalg.solve to resolve the coefficient matrix into the correct values, but due to the large numbers in the input, numpy has some imprecision and the numbers are slightly off (off by 3 when summing up xr + yr + zr).
+
+# Day 25
+
+-   Difficulty: Medium
+-   Problem: In a bi-directional graph, find 3 edges that if cut split the graph into two clusters ("communities" in graph terminology). Multiply the size of the communities for the result.
+
+1. converted the graph into an image using Networkx. This showed for the example and the input that there are exactly three edges that split the graph into two.
+2. Googling found a number of algorithms that split graphs into communities. The Girvan-Newman algorithm calculates a score (Edge betweeness) for each edge and the iteratively removes the highest scored edges from the graph, splitting the graph into two, then three, etc communities.
+3. Networkx has a method nx.communities.girvan_newman() that does exactly this and returns the two partitions when called once.
+4. Multiplying the size of the two partitions was the correct answer.
+5. Another way to calculate is the minimum-cut for the graph, which can be done using Karger's algorithm. Networkx has a `minimum_cut` method that calculates the minimum cut required between two given nodes to split the graph in into two partitions. This could be used as well.
+
+Manually writing the algorithms:
+
+-   [Girvan-Newman](https://medium.com/analytics-vidhya/girvan-newman-the-clustering-technique-in-network-analysis-27fe6d665c92):
+
+    -   basically run a BFS from each node in the graph to calculate the number of minimum length paths that can be taken to each node. Assign this number of paths to each node
+    -   then calculate a score for each edge based on the number of paths
+    -   Do this for all nodes
+    -   Calculate another score out of the sum of the edge scores for each score
+    -   Remove the edges with the highest scores to split the graph (here - remove the three edges with the highest scores)
+    -   There is also a formula to calculate if the resulting partitions are truly partitions or not
+
+-   [Karger's algorithm](https://medium.com/@dev.elect.iitd/kargers-algorithm-d8067eb1b790)
+    -   Repeat this algorithm a number of times as it uses randomized selection, so is not guaranteed to give the best result on each single run
+    -   select a random edge
+    -   contract the edge together i.e. consolidate the nodes
+    -   repeat until only 2 edges remain
+    -   the minimum cut is the number of edges between the two nodes
+
+I implemented Karger's algorithm and it runs actually much faster than the Network X Girvan-Newman. We could probably compare against the Networkx.minimum_cut function and see how fast that runs?
