@@ -7,4 +7,5 @@ numpy
 pandas
 requests
 tqdm
+z3-solver
 
