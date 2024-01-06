@@ -249,4 +249,6 @@ Part 1 was fairly easy again. A closed form could be found by resolving the equa
 
 Part 2 was very hard. I tried with multiple equations e.g. since the rock travels at a constant speed, the distances between hits on hailstones needs to be similar to the distance of the hailstones. This yields some complicated equations that can be used to simplify further, where values for vx and vy could be tried out since they are very small.
 
-In the end, after writing formulas for several pages, used z3 solver to define the constraints and have z3 solve. Used Jonathan Paulson's solution as an example for this.
+In the end, after writing formulas for several pages, used z3 solver to define the constraints and have z3 solve.
+
+Addition: Tried resolving by hand by defining 6 equations based on 3 hailstones and resolving for the 6 unknowns (xr, yr, zr, vxr, vyr, vzr). After rearranging into 6 linear equations, tried to use numpy.linalg.solve to resolve the coefficient matrix into the correct values, but due to the large numbers in the input, numpy has some imprecision and the numbers are slightly off (off by 3 when summing up xr + yr + zr).

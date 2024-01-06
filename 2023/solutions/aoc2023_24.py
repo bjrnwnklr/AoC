@@ -3,6 +3,8 @@
 import re
 from itertools import combinations
 import z3
+import numpy as np
+import scipy as sp
 
 # from collections import defaultdict
 from utils.aoctools import aoc_timer
@@ -141,6 +143,117 @@ def part2(puzzle_input):
     model = solver.model()
     # run model and return the sum of x y and z that satisfy all the constraints
     result = model.eval(x + y + z)
+    print(model.eval(x), model.eval(y), model.eval(z))
+    print(model.eval(vx), model.eval(vy), model.eval(vz))
+
+    return result
+
+
+def get_independent_hailstones(puzzle_input, n=3):
+    """Get n independent hailstones, i.e. the curves
+    of the stones are not parallel."""
+    result = [puzzle_input[0]]
+    curr_stone = 1
+    while len(result) < n:
+        # compare all stones in the result with the current stones
+        # and check if their curves are not parallel
+        # Parallel = all their v values are the same multiple of the
+        # corresponding v value i.e. vx1 == n * vx2, vy1 == n * vy2 etc
+        k = puzzle_input[curr_stone]
+        parallel = False
+        for h in result:
+            if (h[3] / k[3]) == (h[4] / k[4]) == (h[5] / k[5]):
+                parallel = True
+                break
+        if not parallel:
+            result.append(k)
+        curr_stone += 1
+
+    return result
+
+
+@aoc_timer
+def part2_np_solve(puzzle_input):
+    """Using 6 linear equations for the 6 variables (xr, yr, zr, vxr, vyr, vzr),
+    solve the equations using np.linalg.solve."""
+    # get 3 independent hailstones from the input
+    stones = get_independent_hailstones(puzzle_input, 3)
+
+    """
+    We have 6 unknowns for the rock r:
+    xr, yr, zr, vxr, vyr, vzr
+
+    The x position of a hailstone at time t can be expressed as x = x1 + vx1 * t
+    Similarly, the y position can be expressed as y = y1 + vx1 * t
+
+    For the rock, similar calculation: x = xr + vxr * t, y = yr + vyr * t, z = zr + vzr * t
+
+    The rock and a hailstone h1 are at the same position at the same time t if the 
+    following equation is satisfied:
+    x1 + vx1 * t = xr + vxr * t
+    y1 + vy1 * t = yr + vyr * t
+    z1 + vy1 * t = zr + vzr * t
+
+    Rearrange to isolate t:
+    t = (x1 - xr) / (vxr - vx1) = (y1 - yr) / (vyr - vy1)
+
+    Rearrange these equations for x, y; x, z; y, z pairs gives 3 equations
+    (x1 - xr) * (vyr - vy1) = (y1 - yr) * (vxr - vx1) for each of the pairs
+    Rearrange into linear equations with the non-linear terms on the left:
+    yr * vxr - xr * vyr = -vy1 * xr + vx1 * yr + vxr * y1 - vyr * x1 + vy1 * x1 - vx1 * y1
+
+    The non-linear term on the left side is constant and the same for other hailstones h2 and h3,
+    so set this to equal for another hailstone and group by the unknowns. Then do this for pairs
+    x, y; x, z and y, z, and for hailstones h1 and h3. This yields 6 equations for 6 unknowns, so
+    can be resolved using Gauss-Jordan matrix elimination etc.
+
+    Formulas for hailstones 1 and 2:
+    (vy2 - vy1) * xr + (vx1 - vx2) * yr + (y1 - y2) * vxr + (x2 - x1) * vyr = y1 * vx1 - x1 * vy1 + x2 * vy2 - y2 * vx2 
+    (vz2 - vz1) * xr + (vx1 - vx2) * zr + (z1 - z2) * vxr + (x2 - x1) * vzr = z1 * vx1 - x1 * vz1 + x2 * vz2 - z2 * vx2 
+    (vy2 - vy1) * zr + (vz1 - vz2) * yr + (y1 - y2) * vzr + (z2 - z1) * vyr = y1 * vz1 - z1 * vy1 + z2 * vy2 - y2 * vz2 
+    Formulas for hailstones 1 and 3:
+    (vy3 - vy1) * xr + (vx1 - vx3) * yr + (y1 - y3) * vxr + (x3 - x1) * vyr = y1 * vx1 - x1 * vy1 + x3 * vy3 - y3 * vx3 
+    (vz3 - vz1) * xr + (vx1 - vx3) * zr + (z1 - z3) * vxr + (x3 - x1) * vzr = z1 * vx1 - x1 * vz1 + x3 * vz3 - z3 * vx3 
+    (vy3 - vy1) * zr + (vz1 - vz3) * yr + (y1 - y3) * vzr + (z3 - z1) * vyr = y1 * vz1 - z1 * vy1 + z3 * vy3 - y3 * vz3 
+    
+
+    Use np.linalg.solve to solve equation: ax = b, where
+    - a: N*N matrix of coefficients
+    - b: N vector of dependent variables
+    - x: N vector of variables to be solved for
+    
+    a (coefficient matrix) is in format [[xr, yr, zr, vxr, vyr, vzr], []]
+
+    Unfortunately, due to the large numbers involved this is not precise and the
+    values for xr, yr, and zr are slightly off the real values :(
+    """
+    a = []
+    b = []
+    for h, k in [[stones[0], stones[1]], [stones[0], stones[2]]]:
+        # x, y
+        a.append([k[4] - h[4], h[3] - k[3], 0, h[1] - k[1], k[0] - h[0], 0])
+        # x, z
+        a.append([k[5] - h[5], 0, h[3] - k[3], h[2] - k[2], 0, k[0] - h[0]])
+        # y, z
+        a.append([0, h[5] - k[5], k[4] - h[4], 0, k[2] - h[2], h[1] - k[1]])
+        # x, y
+        b.append(h[1] * h[3] - h[0] * h[4] + k[0] * k[4] - k[1] * k[3])
+        # x, z
+        b.append(h[2] * h[3] - h[0] * h[5] + k[0] * k[5] - k[2] * k[3])
+        # y, z
+        b.append(h[1] * h[5] - h[2] * h[4] + k[2] * k[4] - k[1] * k[5])
+
+    a = np.array(a)
+    b = np.array(b)
+
+    x = sp.linalg.solve(a, b)
+    print(x[0], x[1], x[2])
+    print(x[3], x[4], x[5])
+    print(np.round(x[0]), np.round(x[1]), np.round(x[2]))
+    result = int(np.sum(x[:3]))
+    # unfortunately, this is not fully correct for the large numbers
+    # used here, the solve method does seem to make some floating point
+    # rounding during the decomposition so the values are off by 3 in total :(
 
     return result
 
@@ -155,6 +268,10 @@ if __name__ == "__main__":
 
     # Solve part 2 and print the answer
     p2 = part2(puzzle_input)
+    print(f"Part 2: {p2}")
+
+    # Solve part 2 using the equations and np.linalg.solve
+    p2 = part2_np_solve(puzzle_input)
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 10:11 End: 12:24
