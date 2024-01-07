@@ -251,7 +251,18 @@ Part 2 was very hard. I tried with multiple equations e.g. since the rock travel
 
 In the end, after writing formulas for several pages, used z3 solver to define the constraints and have z3 solve.
 
-Addition: Tried resolving by hand by defining 6 equations based on 3 hailstones and resolving for the 6 unknowns (xr, yr, zr, vxr, vyr, vzr). After rearranging into 6 linear equations, tried to use numpy.linalg.solve to resolve the coefficient matrix into the correct values, but due to the large numbers in the input, numpy has some imprecision and the numbers are slightly off (off by 3 when summing up xr + yr + zr).
+Alternative solution 1 (linear algebra):
+
+-   Tried resolving by hand by defining 6 equations based on 3 hailstones and resolving for the 6 unknowns (xr, yr, zr, vxr, vyr, vzr). After rearranging into 6 linear equations, tried to use numpy.linalg.solve to resolve the coefficient matrix into the correct values, but due to the large numbers in the input, numpy has some imprecision and the numbers are slightly off (off by 3 when summing up xr + yr + zr).
+-   This finally worked after running the same equations with multiple combinations of 3 hailstones and taking the most frequent values for xr, yr, zr (vxr, vyr, vzr were always the same)
+
+Alternative solution 2 (converging rocks):
+
+-   This uses the knowledge that all hailstones will pass through the same coordinates at given times t1, t2, etc with the coordinates being the starting position of the rock - assuming the rock stays static and the hailstones' curves all intersect at the same point, the starting point of the rock.
+-   In this case, xr = x1 + (vx1 - vxr) _ t1, yr = y1 + (vy1 - vyr) _ t1 etc (for z too, and for different hailstones h2, h3)
+-   This then allows us to use the same methods as for part 1 and just trying out values for vxr and vyr, which are in a relatively small range.
+-   We can calculate intersections between hailstones h1 and h2 with the velocities adjusted for vxr and vyr. This yields a number of values for xr and yr where the hailstones intersect. We can then do the same for h1 and h3 and this yields only one pair of xr and yr values where both stones intersect.
+-   From there on, we can formulate 2 equations based on the x values and derive zr and vzr using substitions. This results in the formula zr = (t2 _ t1 _ (vz2 - vz1) + t1 _ z2 - t2 _ z1) / (t1 - t2), which allows us to calculate z3.
 
 # Day 25
 
