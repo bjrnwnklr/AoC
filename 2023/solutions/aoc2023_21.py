@@ -39,7 +39,7 @@ def parse_grid(puzzle_input):
     return rocks, start, width, height
 
 
-def BFS(rocks, start, width, height, steps):
+def BFS(rocks, start, width, height, steps, even=True):
     """Run a BFS on the grid to find the number of possible positions
     that can be reached within given number of steps.
 
@@ -75,53 +75,10 @@ def BFS(rocks, start, width, height, steps):
     # this is determined by all possible positions that can be reached in an
     # even number of steps - as we can just step back and forth, so reach
     # the same position in 2, 4, 6, 8 etc steps
+    step_remainder = 0 if even else 1
     all_positions = set()
     for x in reached_by_steps:
-        if x % 2 == 0:
-            all_positions |= reached_by_steps[x]
-
-    return len(all_positions)
-
-
-def BFS_2(rocks, start, width, height, steps):
-    """Run a BFS on the grid to find the number of possible positions
-    that can be reached within given number of steps.
-
-    This could also mean that we just step back and forth multiple times."""
-    seen = set()
-    # dictionary: number of steps: [positions reached]
-    reached_by_steps = defaultdict(set)
-    # position, number of steps taken
-    q = [(start, 0)]
-    while q:
-        curr_pos, curr_steps = q.pop(0)
-
-        if curr_pos in seen:
-            continue
-
-        seen.add(curr_pos)
-        reached_by_steps[curr_steps].add(curr_pos)
-
-        # generate next steps
-        for dr, dc in [[-1, 0], [0, 1], [1, 0], [0, -1]]:
-            next_pos = (curr_pos[0] + dr, curr_pos[1] + dc)
-            if (
-                0 <= next_pos[0] < height
-                and 0 <= next_pos[1] < width
-                and next_pos not in rocks
-                and curr_steps + 1 <= steps
-            ):
-                q.append((next_pos, curr_steps + 1))
-
-    # when we get here, we have evaluated all possible steps to reach each cell
-    # while not going over the number of required steps
-    # return the number of positions that can be reached in number of steps
-    # this is determined by all possible positions that can be reached in an
-    # even number of steps - as we can just step back and forth, so reach
-    # the same position in 2, 4, 6, 8 etc steps
-    all_positions = set()
-    for x in reached_by_steps:
-        if x % 2 == 0:
+        if x % 2 == step_remainder:
             all_positions |= reached_by_steps[x]
 
     return len(all_positions)

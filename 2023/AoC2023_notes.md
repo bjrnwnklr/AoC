@@ -213,6 +213,7 @@ But didnt manage to solve the puzzle and used an answer from Reddit: [Python sol
 This was by far the hardest puzzle so far.
 
 RETRY part 2 with the diamond solution - see notes. Finish in January.
+https://www.reddit.com/r/adventofcode/comments/18o4y0m/2023_day_21_part_2_algebraic_solution_using_only/
 
 # Day 22
 
