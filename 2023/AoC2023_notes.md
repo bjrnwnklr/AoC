@@ -206,14 +206,22 @@ This was a fun problem with ultimately a very simple solution. Great that we had
 
 Part 1: solved with BFS by observing that each position can be reached only in a even number of steps (because of backtracking - we can just step back and forth a number of times).
 
-Part 2: very hard, didnt solve. I observed that the input square has the same side lengths, and that there is a highway of open positions from the middle (starting position) to each of the four sides. So you can reach each adjacent tile by just stepping along the middle. Once you reach an adjacent tile, you can reach the same number of positions as you can originally reach.
+Part 2: Finally solved with massive writeup.
 
-But didnt manage to solve the puzzle and used an answer from Reddit: [Python solution](https://topaz.github.io/paste/#XQAAAQDcAQAAAAAAAAAjiAOiE/kRLeQB1cGmfHakawz7UqVcDEZjf/KvIQv859I/42EN77Dcrnn9OX4FZv4wI5s+SrfDTO0LC2XuzGLqJC3wjkKvWuB2LyCUL9Z0QcLJrFUbwmkf77Xq5P/O0E/YvoPpuiZVCOiCrdCJbvp5VBGgQUq2W/lUzZg+PHeNUjAlNFqvlj1jujOY0TpNzYDQdntQcWEhTSTAtYFxi522TTRfEu4jFlD9SPQXH0epmzLFNfOh2NWtcKCsG9fOG+xMPub2Q02v/lxdMrdGjzPz5itqxUavxBQUUZd1UnLEYxPfyqSEEx6u74yM0rCaLDvdDY8CXPWhAd3CvQbHWN3SdWFhoZdao7GALjuB/fO2t5EIT+rTCSJ7japFhWfDagOF31XVKofp2eYnwA0NM3EE3dcDqv7RYc8=)
+-   Draw the diamond shape that results from tiling the grid with additional copies of the original tile
+-   Since the middle lanes from start are all free, we can move in 131 (width of the tile) steps to the next tile
+-   Tiles are either even number of steps or odd number of steps - alternating
+-   3 different types of tiles on the edges:
+    -   Corners - these have 130 steps left from the edge of the tile, so even steps
+    -   Type A (large tiles with one corner cut off) - these have 131 + 65 - 1 steps left, so odd steps
+    -   Type B (small tiles with just one corner counted and the rest cut off) - these have 65 - 1 steps, so even steps counted
+-   We can then sum up the number of tiles:
 
-This was by far the hardest puzzle so far.
+Result = (n-1)**2 \* Odd + n**2 _ Even + Corners + (n-1) _ A + n \* B
 
-RETRY part 2 with the diamond solution - see notes. Finish in January.
-https://www.reddit.com/r/adventofcode/comments/18o4y0m/2023_day_21_part_2_algebraic_solution_using_only/
+Got initially stuck on the corners using 131 / odd number of steps, but drawing it in detail showed that we already spend the first of the 131 remaining steps stepping **into** the tile, so can only make 130 more steps, which is an even number.
+
+This was by far the hardest puzzle in 2023.
 
 # Day 22
 

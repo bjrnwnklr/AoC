@@ -32,61 +32,25 @@ class Test_AOC2023_21:
         print(f"Reachable in odd {steps} steps from position: start {start}: {result}")
         assert result == 3877
 
-        # 131 + 65 steps, even count
-        for n in range(1, 5):
+        # We establish that 131 steps, starting from the middle already
+        # reaches all possible positions in the tile
+        for n in range(1, 3):
             steps = n * 131
             result = BFS(rocks, start, width, height, steps, even=True)
             print(
                 f"Reachable in even {steps} steps from position: start {start}: {result}"
             )
-            # assert result == 7688
-            # 131 + 65 steps, odd count
+            assert result == 7688
             result = BFS(rocks, start, width, height, steps, even=False)
             print(
                 f"Reachable in odd {steps} steps from position: start {start}: {result}"
             )
-            # assert result == 7656
+            assert result == 7656
 
-        # # 131 steps, even count, start from middle left
-        # start = (65, 0)
-        # steps = 131
-        # result = BFS(rocks, start, width, height, steps, even=True)
-        # print(f"Reachable in even {steps} steps from position: start {start}: {result}")
-        # assert result == 5766
-        # # 131 steps, odd count
-        # result = BFS(rocks, start, width, height, steps, even=False)
-        # print(f"Reachable in odd {steps} steps from position: start {start}: {result}")
-        # assert result == 5851
-
-        # # 131 steps, even count, start from middle right
-        # start = (65, 130)
-        # steps = 131
-        # result = BFS(rocks, start, width, height, steps, even=True)
-        # print(f"Reachable in even {steps} steps from position: start {start}: {result}")
-        # assert result == 5767
-        # # 131 steps, odd count
-        # result = BFS(rocks, start, width, height, steps, even=False)
-        # print(f"Reachable in odd {steps} steps from position: start {start}: {result}")
-        # assert result == 5865
-
-        # # 131 steps, even count, start from middle top
-        # start = (0, 65)
-        # steps = 131
-        # result = BFS(rocks, start, width, height, steps, even=True)
-        # print(f"Reachable in even {steps} steps from position: start {start}: {result}")
-        # # assert result == 5775
-        # # 131 steps, odd count
-        # result = BFS(rocks, start, width, height, steps, even=False)
-        # print(f"Reachable in odd {steps} steps from position: start {start}: {result}")
-        # # assert result == 5877
-
-        # # 131 steps, even count, start from middle bottom
-        # start = (130, 65)
-        # steps = 131
-        # result = BFS(rocks, start, width, height, steps, even=True)
-        # print(f"Reachable in even {steps} steps from position: start {start}: {result}")
-        # # assert result == 5758
-        # # 131 steps, odd count
-        # result = BFS(rocks, start, width, height, steps, even=False)
-        # print(f"Reachable in odd {steps} steps from position: start {start}: {result}")
-        # # assert result == 5839
+        # from the corner, not every position is reachable in w+s (131 + 65) steps
+        steps = 131 + 65
+        start = (0, 0)
+        result = BFS(rocks, start, width, height, steps, even=True)
+        print(f"Reachable in even {steps} steps from position: start {start}: {result}")
+        result = BFS(rocks, start, width, height, steps, even=False)
+        print(f"Reachable in odd {steps} steps from position: start {start}: {result}")
