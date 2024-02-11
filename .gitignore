@@ -1,3 +1,9 @@
+# AOC input files are ignored
+# input.txt
+input.txt
+# 01-25.txt in input/ directory
+**/input/*.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
