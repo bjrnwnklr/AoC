@@ -88,15 +88,15 @@ fi
 # https://stackoverflow.com/a/246128
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# check if the solutions, tests and testinput folders exist
+# check if the solutions, input, tests and testinput folders exist
 # if not, create them
 # List of directories to check
-DIRECTORIES=("solutions" "testinput" "tests")
+DIRECTORIES=("solutions" "testinput" "tests" "input")
 
 # Loop through each directory
 for dir in "${DIRECTORIES[@]}"; do
   # Check if directory exists
-  if [ ! -d "$dir" ]; then
+  if [[ ! -d "$dir" ]]; then
     # If it doesn't exist, create it
     mkdir "$dir"
     echo "Created directory: $dir"
