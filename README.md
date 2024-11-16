@@ -2,7 +2,7 @@
 
 My Advent of Code repositories.
 
-Currently running on Python 3.11.6. Main requirements are:
+Currently running on Python 3.12.7. Main requirements are:
 
 -   pytest
 -   black (for formatting)
@@ -12,3 +12,4 @@ Currently running on Python 3.11.6. Main requirements are:
 -   jupyter
 -   matplotlib
 -   ipython
+-   tqdm

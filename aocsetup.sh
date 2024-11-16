@@ -2,7 +2,7 @@
 ############################################################
 # AoC Setup script.
 #
-# - Creates a folder for the AoC day in the folder it is 
+# - Creates a folder for the AoC day in the folder it is
 #   called from
 # - Copies the contents of the `template` folder into the
 #   new folder
@@ -87,6 +87,21 @@ fi
 # get the directory the script is run from
 # https://stackoverflow.com/a/246128
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# check if the solutions, tests and testinput folders exist
+# if not, create them
+# List of directories to check
+DIRECTORIES=("solutions" "testinput" "tests")
+
+# Loop through each directory
+for dir in "${DIRECTORIES[@]}"; do
+  # Check if directory exists
+  if [ ! -d "$dir" ]; then
+    # If it doesn't exist, create it
+    mkdir "$dir"
+    echo "Created directory: $dir"
+  fi
+done
 
 # check if templates directory exists
 if [[ -d "${SCRIPT_DIR}/template" ]];
