@@ -8,4 +8,7 @@ pandas
 requests
 tqdm
 z3-solver
+scipy
+networkx
+matplotlib
 
