@@ -1,8 +1,9 @@
 # Load any required modules. Most commonly used:
 
 # import re
-# from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from collections import Counter
+
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -20,9 +21,10 @@ def load_input(f_name):
     return puzzle_input
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
+    # transpose lists
     left, right = [*zip(*puzzle_input)]
     # sort both sides, then zip up
     s_left = sorted(left)
@@ -34,11 +36,19 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
+    # transpose lists
+    left, right = [*zip(*puzzle_input)]
+    # count each number in each side, then calculate the score
+    left_counter = Counter(left)
+    right_counter = Counter(right)
+    result = 0
+    for n in left_counter:
+        result += n * left_counter[n] * right_counter[n]
 
-    return 1
+    return result
 
 
 if __name__ == "__main__":
@@ -54,4 +64,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 15:10 End: 15:26
-# Part 2: Start: 15:27 End:
+# Part 2: Start: 15:27 End: 15:35
+
+# Elapsed time to run part1: 0.00036 seconds.
+# Part 1: 1319616
+# Elapsed time to run part2: 0.00044 seconds.
+# Part 2: 27267728
