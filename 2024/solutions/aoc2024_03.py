@@ -3,7 +3,7 @@
 import re
 
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -36,7 +36,7 @@ def load_input(f_name):
     return puzzle_input
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
     regex = re.compile(r"mul\((\d{1,3}),(\d{1,3})\)")
@@ -55,11 +55,33 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
-
-    return 1
+    regex = re.compile(r"mul\((\d{1,3}),(\d{1,3})\)|(don\'t\(\))|(do\(\))")
+    result = 0
+    do = True
+    for line in puzzle_input:
+        line_result = 0
+        matches = regex.findall(line)
+        if matches:
+            for m in matches:
+                # matches have format of ('2', '4', 'don't()', 'do()')
+                if m[3] == "do()":
+                    do = True
+                elif m[2] == "don't()":
+                    do = False
+                else:
+                    if do:
+                        group_score = 1
+                        # only take first two elements of the list as the matches will have format
+                        # ('2', '4', '', '')
+                        numbers = list(map(int, m[:2]))
+                        for n in numbers:
+                            group_score *= n
+                        line_result += group_score
+        result += line_result
+    return result
 
 
 if __name__ == "__main__":
@@ -75,4 +97,9 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 13:30 End: 13:47
-# Part 2: Start: 13:48 End:
+# Part 2: Start: 13:48 End: 16:25 (didnt read instructions properly...)
+
+# Elapsed time to run part1: 0.00060 seconds.
+# Part 1: 178794710
+# Elapsed time to run part2: 0.00080 seconds.
+# Part 2: 76729637
