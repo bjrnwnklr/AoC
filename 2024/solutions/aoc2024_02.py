@@ -83,3 +83,8 @@ if __name__ == "__main__":
 
 # Part 1: Start: 11:49 End: 12:06
 # Part 2: Start: 12:07 End: 12:23
+
+# Elapsed time to run part1: 0.00157 seconds.
+# Part 1: 631
+# Elapsed time to run part2: 0.00536 seconds.
+# Part 2: 665
