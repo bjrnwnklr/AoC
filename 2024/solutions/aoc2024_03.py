@@ -1,6 +1,7 @@
 # Load any required modules. Most commonly used:
 
-# import re
+import re
+
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
 
@@ -38,8 +39,20 @@ def load_input(f_name):
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
-
-    return 1
+    regex = re.compile(r"mul\((\d{1,3}),(\d{1,3})\)")
+    result = 0
+    for line in puzzle_input:
+        line_result = 0
+        matches = regex.findall(line)
+        if matches:
+            for m in matches:
+                group_score = 1
+                numbers = list(map(int, m))
+                for n in numbers:
+                    group_score *= n
+                line_result += group_score
+        result += line_result
+    return result
 
 
 # @aoc_timer
@@ -61,5 +74,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 13:30 End: 13:47
+# Part 2: Start: 13:48 End:
