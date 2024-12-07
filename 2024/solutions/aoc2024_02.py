@@ -3,7 +3,7 @@
 import re
 
 # from collections import defaultdict
-# from utils.aoctools import aoc_timer
+from utils.aoctools import aoc_timer
 
 
 def load_input(f_name):
@@ -43,7 +43,7 @@ def safe_report(l):
     return False
 
 
-# @aoc_timer
+@aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
@@ -51,11 +51,22 @@ def part1(puzzle_input):
     return result
 
 
-# @aoc_timer
+@aoc_timer
 def part2(puzzle_input):
     """Solve part 2. Return the required output value."""
 
-    return 1
+    result = 0
+    for l in puzzle_input:
+        if safe_report(l):
+            result += 1
+        # report is unsafe, try different combinations of subgroups
+        else:
+            for i in range(len(l)):
+                new_list = l[:i] + l[i + 1 :]
+                if safe_report(new_list):
+                    result += 1
+                    break
+    return result
 
 
 if __name__ == "__main__":
@@ -71,4 +82,4 @@ if __name__ == "__main__":
     print(f"Part 2: {p2}")
 
 # Part 1: Start: 11:49 End: 12:06
-# Part 2: Start: 12:07 End:
+# Part 2: Start: 12:07 End: 12:23
