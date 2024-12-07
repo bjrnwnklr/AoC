@@ -1,7 +1,7 @@
 """Test the examples given in the puzzle to verify the solution is working."""
 
 # load the required functions from the actual solution
-from solutions.aoc2024_3 import load_input, part1, part2
+from solutions.aoc2024_03 import load_input, part1, part2
 
 
 class Test_AOC2024_3:

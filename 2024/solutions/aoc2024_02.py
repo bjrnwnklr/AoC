@@ -1,6 +1,7 @@
 # Load any required modules. Most commonly used:
 
-# import re
+import re
+
 # from collections import defaultdict
 # from utils.aoctools import aoc_timer
 
@@ -11,11 +12,6 @@ def load_input(f_name):
     Specify the relative path if loading files from a subdirectory,
     e.g. for loading test inputs, specify `testinput/01_1_1.txt`.
     """
-    # return input as list of text lines
-    with open(f_name, "r") as f:
-        puzzle_input = []
-        for line in f.readlines():
-            puzzle_input.append(line.strip())
 
     # Extract ints from the input
     #
@@ -23,23 +19,36 @@ def load_input(f_name):
     # regex = re.compile(r"(-?\d+)")
     #
     # unsigned ints
-    # regex = re.compile(r"(\d+)")
-    #
-    # with open(f_name, "r") as f:
-    #     puzzle_input = []
-    #     for line in f.readlines():
-    #         matches = regex.findall(line.strip())
-    #         if matches:
-    #             puzzle_input.append(list(map(int, matches)))
+    regex = re.compile(r"(\d+)")
+
+    with open(f_name, "r") as f:
+        puzzle_input = []
+        for line in f.readlines():
+            matches = regex.findall(line.strip())
+            if matches:
+                puzzle_input.append(list(map(int, matches)))
 
     return puzzle_input
+
+
+def safe_report(l):
+    """Calculates if all numbers are either increasing or decreasing, and if
+    the absolute increments are all between 1 and 3."""
+    increments = [l[i] - l[i + 1] for i in range(len(l) - 1)]
+    # check if all increments are positive, or all negative
+    if all(n > 0 for n in increments) or all(n < 0 for n in increments):
+        # check if all absolute increments are between 1 and 3
+        if all(1 <= abs(n) <= 3 for n in increments):
+            return True
+    return False
 
 
 # @aoc_timer
 def part1(puzzle_input):
     """Solve part 1. Return the required output value."""
 
-    return 1
+    result = sum(safe_report(l) for l in puzzle_input)
+    return result
 
 
 # @aoc_timer
@@ -51,7 +60,7 @@ def part2(puzzle_input):
 
 if __name__ == "__main__":
     # read the puzzle input
-    puzzle_input = load_input("input/2.txt")
+    puzzle_input = load_input("input/02.txt")
 
     # Solve part 1 and print the answer
     p1 = part1(puzzle_input)
@@ -61,5 +70,5 @@ if __name__ == "__main__":
     p2 = part2(puzzle_input)
     print(f"Part 2: {p2}")
 
-# Part 1: Start:  End:
-# Part 2: Start:  End:
+# Part 1: Start: 11:49 End: 12:06
+# Part 2: Start: 12:07 End:
