@@ -18,6 +18,6 @@ class Test_AOC2024_5:
         rules, printing = load_input("testinput/05_1_1.txt")
         assert part1(rules, printing) == 143
 
-    # def test_2_1(self):
-    #     rules, printing = load_input('testinput/05_1_1.txt')
-    #     assert part2(rules, printing) == 1
+    def test_2_1(self):
+        rules, printing = load_input("testinput/05_1_1.txt")
+        assert part2(rules, printing) == 123
