@@ -17,4 +17,12 @@ Easy to solve, part 2 required dropping one element from each input list at a ti
 
 # Day 3
 
+Difficulty: Easy
+
+Regular expression matching across a corrupted list of code. Detect patterns. Part 2 required simple logic to switch between two states.
+
+I lost a few hours by not reading the description correctly as i assumed the switch would reset for every line of the code, but it was just set to an initial state at the beginning and then kept the state. Solution worked as designed after realizing that...
+
+# Day 4
+
 Difficulty:
