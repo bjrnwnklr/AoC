@@ -25,4 +25,6 @@ I lost a few hours by not reading the description correctly as i assumed the swi
 
 # Day 4
 
-Difficulty:
+Difficulty: Easy
+
+A bit more work: find words in a crossword. Part 1 required checking all horizontal, vertical and diagonal neighbors to find XMAS. Part 2 required finding cross sections where MAS was found diagonally around an A. Simple generating of neighbor coordinates and then checking if the word is matched.
