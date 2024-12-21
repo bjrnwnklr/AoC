@@ -3,6 +3,8 @@
 input.txt
 # 01-25.txt in input/ directory
 **/input/*.txt
+# riddles are ignored
+**/riddles/*.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
